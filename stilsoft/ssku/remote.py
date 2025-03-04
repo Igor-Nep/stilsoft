@@ -55,7 +55,7 @@ class Remote:
         stdin.flush()
         print(stderr.read().decode())
 
-        print('current version:\n')
+        print('\ncurrent version:')
         stdin, stdout, stderr = ssh.exec_command(f'cd {registry_dir}/origin; cat package.json')
         outer = stdout.read().decode()
         for line in outer.split('\n'):
@@ -68,11 +68,11 @@ class Remote:
             first_curl = first_curl.replace("%%BACK_DIR%%", self.back[self.ip])
 
         stdin, stdout, stderr = ssh.exec_command(first_curl)
-        print('first curl')
+        print('\nfirst curl')
         print(stdout.read().decode())
         print(stderr.read().decode())
         sleep(10)
-        print('second curl')
+        print('\nsecond curl')
         with open('D:/work/WHPython/stilsoft/ssku/second_curl.txt', 'r', encoding='utf-8') as file:
             second_curl = file.read()
             second_curl = second_curl.replace("%%MODULE_NAME%%", module_name)
@@ -81,17 +81,15 @@ class Remote:
         stdin, stdout, stderr = ssh.exec_command(second_curl)
         print(stdout.read().decode())
         print(stderr.read().decode())
-        print('down compose >')
+        print('\ndown compose >')
         stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose down')
-        sleep(5)
+        sleep(10)
         print(stdout.read().decode())
         print(stderr.read().decode())
-        print('up compose >')
-        stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose up')
-        sleep(3)
-        print(stdout.read().decode())
-        print(stderr.read().decode())
-        print('updated version:\n')
+        print('\nup compose >')
+        ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose up')
+        sleep(15)
+        print('\nupdated version:')
         stdin, stdout, stderr = ssh.exec_command(f'cd {registry_dir}/origin; cat package.json')
         outer = stdout.read().decode()
         for line in outer.split('\n'):
@@ -99,4 +97,39 @@ class Remote:
                 print(line)
         client.close()
         ssh.close()
-        print('Done')        
+        print('Done')
+
+    def update_docker(self, name, secret):
+        import paramiko, json 
+        from time import sleep
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=name, password=secret)
+        finding_services = []
+        not_findind_servers = []
+        with open('D:\work\WHPython\stilsoft\ssku/app_service_list.json', 'r', encoding='utf-8') as file:   
+            service_list = json.load(file)
+            service_count = len(service_list)
+            name_index = 0
+            keys_list = list(service_list.keys())
+            for k,v in service_list.items():
+                service_name = keys_list[name_index]
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; cat docker-compose.yml')
+                outer = stdout.read().decode()
+                for line in outer.split('\n'):
+                    word_1 = line.find('image:')
+                    word_2 = line.find(service_name)
+                    if word_1 != -1 and word_2 != -1:
+                        item = line.split(':', 3)
+                        serv_serv = item[-1]
+                        finding_services.append(service_name)
+                        if v == serv_serv:
+                            print(f'{service_name} DONE')
+                        else:
+                            print(f'{service_name} on server is {serv_serv}')
+                   
+                name_index+=1
+            for item in list(service_list.keys()):
+                if item not in finding_services:
+                    not_findind_servers.append(item)
+            print(not_findind_servers)             

@@ -16,7 +16,7 @@ class ApiSsku():
     glob_start_time = time.time()
     token = ''
 
-    def __init__(self, url):
+    def __init__(self, url='https://gate.synerget.ru:8179'):
         self.url = url
 
     
@@ -280,7 +280,7 @@ class ApiSsku():
             os.system('cls')
             for i in range (0, self.get_module_count()):
                 print(f"{i} {self.get_modules()['data'][i]['title']}"+f" тип камеры: {self.get_modules()['data'][i]['type']}")
-            e_codes = [1751, 3751, 3401, 1401, 1351, 1930, 1921, 1922, 1923, 1924, 3923]
+            e_codes = [1930,1918,3919]
                 
             d = int(input(f'Введите номер устройства из списка: '))
             device = (self.get_module(d)['id'])
