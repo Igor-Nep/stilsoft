@@ -1,0 +1,100 @@
+from sqlalchemy import create_engine 
+
+class DbSsku:
+    '''
+    удалить все архивные модули - del_archived_modules\n
+    получить все подключенные и не удаленные модули - get_not_archived_modules\n
+    получить количество модулей по типам: все / подключенные / архивные - get_modules_count\n
+    записать ID всех заведенных модулей в файл (kill_modules_ssku) - write_not_archived_modules\n
+    запись ID всех заведенных модулей с последующим их удалением - archive_and_del_all_modules\n
+    запись ID всех заведенных модулей с передачей названия файла - archive_all_modules
+    '''
+
+    def __init__(self, ip):
+        self.ip = ip
+        db_connection_string = f"postgresql+psycopg2://postgres:postgrespassword@{self.ip}:5432/postgres"
+        self.db = create_engine(db_connection_string)
+
+
+    def get_not_archived_modules(self):
+        rows = self.db.execute(f"select * from system.module where archived=false").fetchall()
+        return rows
+    
+
+    def get_modules_count(self,type) -> str:
+        '''принимает type ("all" / "archived" / "not_archived")'''
+        if type == 'all':
+            count_all = self.db.execute("select * from system.module").fetchall()
+            return len(count_all)
+        elif type == 'archived':
+            count_archived = self.db.execute("select * from system.module where archived=true").fetchall()
+            return len(count_archived)
+        elif type == 'not_archived':
+            count_not_archived = self.db.execute("select * from system.module where archived=false").fetchall()
+            return len(count_not_archived)
+        elif type != 'all' and type != 'archived' and type != 'not archived':
+            return 'ERROR! Not supprted type'
+    
+
+    def del_archived_modules(self):
+        count = self.db.execute("select * from system.module where archived=true").fetchall()
+        self.db.execute("delete from system.module where archived=true")
+        return len(count)
+
+
+    def write_not_archived_modules(self, file='kill_modules_ssku'):
+        rows = self.get_not_archived_modules()
+        with open(f'C:\work\WHPython\stilsoft\ssku\{file}', 'w') as file:
+            for i in range(len(rows)):
+                file.write(str(rows[i]['id'])+'\n')
+
+
+    def archive_and_del_all_modules(self, file='kill_modules_ssku'):
+        self.write_not_archived_modules(file)
+        self.db.execute(f"update system.module set archived=true WHERE archived=false")
+
+
+    def archive_all_modules(self, file='archived_modules'):
+        '''возможно передать название файла как параметр'''
+        self.write_not_archived_modules(file)
+        return file
+        
+
+    def reset_archived_modules(self):
+        import os
+        with open('C:\work\WHPython\stilsoft\ssku/kill_modules_ssku', 'r', encoding='utf-8') as file:
+            massive = file.read().split('\n')
+            for row in massive:
+                if row.split() != []:
+                    self.db.execute(f"update system.module set archived=false where id='{row}'")
+        if os.path.exists('C:\work\WHPython\stilsoft\ssku/kill_modules_ssku'):
+            os.remove('C:\work\WHPython\stilsoft\ssku/kill_modules_ssku')
+
+    def get_user_id_by_login(self, login):
+        rows = self.db.execute(f"select * from security.users where login='{login}'").fetchall()
+        return rows[0]['id']
+    
+
+    def get_user_login_by_id(self, id):
+        rows = self.db.execute(f"select * from security.users where id='{id}'").fetchall()
+        return rows[0]['login']
+
+
+    def get_user_argon_password(self, id):
+        rows = self.db.execute(f"select * from security.users where id='{id}'").fetchall()
+        return rows[0]['password']
+                           
+    
+    def change_password(self, login, new_password):
+        from time import sleep
+        import sys
+        sys.path.append('C:\work\WHPython\stilsoft')
+        from murom.api import ApiMurom
+        apim = ApiMurom('https://gate.synerget.ru:8179')
+        apim.add_user(login, login, new_password)
+        from murom.db import DbMurom
+        dbm = DbMurom('192.168.202.238')
+        changed_password = dbm.get_user_argon_password(dbm.get_user_id_by_login(login))
+        sleep(1)
+        self.db.execute(f"update security.users set password='{changed_password}' where login='{login}'")
+        apim.del_user_by_id(dbm.get_user_id_by_login(login))

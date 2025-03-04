@@ -1,0 +1,2 @@
+from random import *;print('✅'if((u:='кнб'.find(input('кнб')))+1)%3==(c:=randint(0,2))else'🤝'if(u==c)else'❌')
+print("I am virus")

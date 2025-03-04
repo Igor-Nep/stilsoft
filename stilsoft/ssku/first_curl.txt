@@ -1,0 +1,1 @@
+cd %%BACK_DIR%%; curl -X POST "http://10.201.0.1:8090/api/registry/packages" -H 'Content-Type: application/json' -d "{\"path\": \"/registry/%%MODULE_NAME%%.pack\"}"

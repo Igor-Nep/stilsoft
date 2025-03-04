@@ -1,0 +1,60 @@
+
+media-server            | 2024-11-02T07:35:14.706306Z DEBUG media_server::server_task: 237: Пришел запрос на регистрацию видеоисточника: 'Uuid: 'aec7d32b-0887-47d4-888d-b232798a5a21', Interfaces: '[192.168.202.9, 172.18.18.123, 172.16.16.124, 10.201.0.1, 10.202.0.1, 10.200.0.1]', Url: 'rtsp://0.0.0.0:33287/rtsp_stream', 'Protocol: 'None''
+
+
+media-server            | 2024-11-02T07:35:14.706358Z  INFO media_server::server_task: 341: Обработка создания нового pipeline: 'Uuid: 'aec7d32b-0887-47d4-888d-b232798a5a21', Interfaces: '[192.168.202.9, 172.18.18.123, 172.16.16.124, 10.201.0.1, 10.202.0.1, 10.200.0.1]', Url: 'rtsp://0.0.0.0:33287/rtsp_stream'
+
+
+media-server            | 2024-11-02T07:35:14.812707Z  INFO media_server::server_task: 506: Успешно создан pipeline: 'Uuid: 'aec7d32b-0887-47d4-888d-b232798a5a21', Interfaces: '[192.168.202.9, 172.18.18.123, 172.16.16.124, 10.201.0.1, 10.202.0.1, 10.200.0.1]', Url: 'rtsp://192.168.202.9:33287/rtsp_stream''
+
+
+media-server            | 2024-11-02T07:35:14.812729Z DEBUG media_server::new_pipeline::controller: 459: Запущен таск SourcePipeline: 'Uuid: 'aec7d32b-0887-47d4-888d-b232798a5a21''
+
+
+media-server            | 2024-11-02T07:35:14.812770Z DEBUG media_server::server_task: 299: Удален процесс регистрации для aec7d32b-0887-47d4-888d-b232798a5a21
+
+
+media-server            | 2024-11-02T07:35:14.812826Z DEBUG media_server::server_task: 551: Завершена обработка запроса на регистрацию видеоисточника: 'Uuid: 'aec7d32b-0887-47d4-888d-b232798a5a21', Interfaces: '[192.168.202.9, 172.18.18.123, 172.16.16.124, 10.201.0.1, 10.202.0.1, 10.200.0.1]', Url: 'rtsp://0.0.0.0:33287/rtsp_stream', Res: 'ok', 'Duration: '0.106497885''
+
+
+media-server            | 2024-11-02T07:35:14.813042Z DEBUG media_server_webrtc::server: 39: Запущена таска обслуживающая сервер webrtc: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21''
+
+
+media-server            | 2024-11-02T07:35:14.813078Z DEBUG media_server_webrtc::signalling: 26: Запущена таска обслуживающая взаимодействие с сигнальным сервером: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21''
+
+
+media-server            | 2024-11-02T07:35:15.867071Z DEBUG media_server_webrtc::session: 42: Запущена таска обслуживающая сессию webrtc: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a''
+
+
+media-server            | 2024-11-02T07:35:15.869512Z DEBUG media_server_webrtc::session: 192: Локальный ICE Candidate: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a', candidate: 'candidate:2427586074 1 udp 2130706431 10.200.0.1 46634 typ host''
+
+
+media-server            | 2024-11-02T07:35:15.869793Z DEBUG media_server_webrtc::session: 192: Локальный ICE Candidate: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a', candidate: 'candidate:2099502203 1 udp 2130706431 10.202.0.1 33932 typ host''
+
+
+media-server            | 2024-11-02T07:35:15.869940Z DEBUG media_server_webrtc::session: 192: Локальный ICE Candidate: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a', candidate: 'candidate:1336013430 1 udp 2130706431 192.168.202.9 44345 typ host''
+
+
+media-server            | 2024-11-02T07:35:15.870007Z DEBUG media_server_webrtc::session: 192: Локальный ICE Candidate: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a', candidate: 'candidate:1829683005 1 udp 2130706431 172.16.16.124 38774 typ host''
+
+
+media-server            | 2024-11-02T07:35:15.870059Z DEBUG media_server_webrtc::session: 192: Локальный ICE Candidate: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a', candidate: 'candidate:1686949970 1 udp 2130706431 10.201.0.1 51404 typ host''
+
+
+media-server            | 2024-11-02T07:35:15.870091Z DEBUG media_server_webrtc::session: 192: Локальный ICE Candidate: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a', candidate: 'candidate:1729328237 1 udp 2130706431 172.18.18.123 39479 typ host''
+
+
+media-server            | 2024-11-02T07:35:16.760268Z DEBUG media_server_webrtc::session: 649: Установлено описание сессии удаленного узла: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a''
+
+
+media-server            | 2024-11-02T07:35:16.760462Z DEBUG media_server_webrtc::session: 222: Состояние ICE Connection: 'state: 'checking', vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a''
+
+
+media-server            | 2024-11-02T07:35:17.855391Z DEBUG media_server_webrtc::session: 222: Состояние ICE Connection: 'state: 'connected', vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a''
+
+
+media-server            | 2024-11-02T07:35:17.857477Z DEBUG media_server_webrtc::session: 235: Состояние Peer Connection: 'state: 'connected', vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session: '7a631952-30f5-48a7-b2d1-c6290e12aa5a''
+
+
+media-server            | 2024-11-02T07:35:17.857528Z DEBUG media_server_webrtc::media_encoding: 49: Запущена таска обслуживающая кодирование медиа для потребителя webrtc: 'vs: 'aec7d32b-0887-47d4-888d-b232798a5a21', session_id: '7a631952-30f5-48a7-b2d1-c6290e12aa5a''
+

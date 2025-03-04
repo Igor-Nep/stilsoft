@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "electron-chromedriver": "^31.3.1",
+    "selenium-webdriver": "^4.24.0"
+  }
+}

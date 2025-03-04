@@ -1,0 +1,1 @@
+{"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"%%NODE%%","title":"%%MODULE_NAME%%","zone":null,"subsystem":"integrator","type":"%%TYPE%%","settings":{"ip":"%%IP%%","login":"admin","password":"%%PASSWORD%%","port":6000}}

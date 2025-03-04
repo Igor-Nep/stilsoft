@@ -1,0 +1,5 @@
+[32mINFO    [0m root:test_murom_allure.py:39 Logged INFO сообщение:
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:1055 Starting new HTTPS connection (1): gate.synerget.ru:8179
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:549 https://gate.synerget.ru:8179 "POST /api/auth/login HTTP/1.1" 200 823
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:1055 Starting new HTTPS connection (1): gate.synerget.ru:8179
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:549 https://gate.synerget.ru:8179 "GET /api/data/system/module HTTP/1.1" 200 4520
