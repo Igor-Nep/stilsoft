@@ -447,7 +447,7 @@ class ApiSsku():
         self.refresh_token()
         warnings.filterwarnings('ignore')
         os.system('cls')
-        with open('C:\work\WHPython\stilsoft\ssku/module_list.json', 'r', encoding='utf-8') as file:   
+        with open('D:\work\WHPython\stilsoft\ssku/device_list.json', 'r', encoding='utf-8') as file:   
             module_list = json.load(file)
             module_count = len(module_list)
             name_index = 0
@@ -457,7 +457,7 @@ class ApiSsku():
                 module_type = v['type']
                 integrator_list=['scud','ksbo']
                 if module_type not in integrator_list:
-                     with open('C:\work\WHPython\stilsoft\ssku/video_module_mask.json', 'r', encoding='utf-8') as file:
+                     with open('D:\work\WHPython\stilsoft\ssku/video_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
                           pre_body= pre_body.replace("%%NODE%%", self.get_need_node('video'))
@@ -467,7 +467,7 @@ class ApiSsku():
                           pre_body= pre_body.replace("%%TYPE%%", module_type)
                           body = json.loads(pre_body)
                 elif module_type in integrator_list:
-                     with open('C:\work\WHPython\stilsoft\ssku/integrator_module_mask.json', 'r', encoding='utf-8') as file:
+                     with open('D:\work\WHPython\stilsoft\ssku/integrator_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
                           pre_body= pre_body.replace("%%NODE%%", self.get_need_node('integrator'))
