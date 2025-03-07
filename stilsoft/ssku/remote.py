@@ -3,6 +3,7 @@ class Remote:
         self.ip = ip
         self.name = name
         self.secret = secret
+
         self.back = {'192.168.202.238': '/opt/murom/origin/backend',
          '192.168.202.30': '/opt/murom/origin/backend',
          '192.168.202.18': '/opt/helios/origin/backend',
@@ -12,8 +13,25 @@ class Remote:
          '192.168.207.68': '/opt/server-app/origin/backend',
          '192.168.207.69': '/opt/video-server/origin/backend'
          }
-         
         
+        self.configurate = {
+        "192.168.202.238": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
+        "192.168.202.30": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
+        "192.168.202.82": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/dev/rigel/DevOps/Murom", "registry_dir":"", "need_video":False},
+        "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":True},
+        "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/_component-registry/registry/origin", "need_video":False},
+        "192.168.202.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":True},
+        "192.168.202.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False},
+        "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False}
+        }
+
+        self.video_partner = {"192.168.202.10":"192.168.202.9",
+                              "192.168.202.68":"192.168.202.69"
+                              }
+         
+    def config(self, ip, param):
+        return self.configurate[ip][param]
+
 
     def push_lib(self, lib_name):
         import paramiko 
@@ -24,30 +42,30 @@ class Remote:
         print(f'Connect to {self.ip}')
         client = ssh.open_sftp()
         lib_dir = f'D:/work/WHPython/stilsoft/lib/{lib_name}.so'
-        plugins_dir = f'{self.back[self.ip]}/node-manager/plugins'
+        plugins_dir = f'{self.configurate[self.ip]['back_dir']}/node-manager/plugins'
         client.put(lib_dir, f'/home/user/{lib_name}.so')
         sleep(2)
         print('stop node-manager >')
-        stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose stop node-manager')
+        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
         sleep(2)
         print(stdout.read().decode())
         print(stderr.read().decode())
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{lib_name}.so {plugins_dir}')
         sleep(1)
-        stdin.write(f'{self.secret}\n')
+        stdin.write(f'{self.configurate[self.ip]['password']}\n')
         print('restart node-manager >')
-        stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose restart node-manager')
+        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
         sleep(2)
         print(stdout.read().decode())
         print(stderr.read().decode())
 
 
-    def push_pack(self, module_name, name='user', secret='stilsoft'):
+    def push_pack(self, module_name):
         import paramiko
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(self.ip, port=22, username=name, password=secret)
+        ssh.connect(self.ip, port=22, username=self.name, password=self.secret)
         print(f'Connect to {self.ip}')
         client = ssh.open_sftp()
         pack_dir = f'D:/work/WHPython/stilsoft/pack/{module_name}.pack'
@@ -56,7 +74,7 @@ class Remote:
         sleep(2)
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{module_name}.pack {registry_dir}')
         sleep(1)
-        stdin.write(f'{secret}\n')
+        stdin.write(f'{self.secret}\n')
         stdin.flush()
         print(stderr.read().decode())
 
@@ -123,6 +141,13 @@ class Remote:
         not_finded_modules = []
         app_video = {"192.168.202.10": "192.168.202.9",
                      "192.168.207.68": "192.168.207.69"}
+        
+        video_pass = {"192.168.202.9": "stilsoft",
+                      "192.168.207.69": "stilsoft"}
+        
+        app_pass = {"192.168.202.10": "stilsoft",
+                    "192.168.202.68": "stilsoft1"}
+
         registry_dir = {'192.168.202.238': '/opt/murom/origin/backend/component-registry/registry/origin',
          '192.168.202.30': '/opt/murom/origin/backend/component-registry/registry/origin',
          '192.168.202.18': '/opt/helios/origin/backend/component-registry/registry/origin',
@@ -170,8 +195,8 @@ class Remote:
             service_keys_list = list(service_list.keys())     
             for k,v in service_list.items():
                 service_name = service_keys_list[name_index]
-                stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; cat docker-compose.yml')
-                outer = stdout.read().decode()
+                outer = self.cat(self.back[self.ip], 'docker-compose.yml')
+                #outer = stdout.read().decode()
                 for line in outer.split('\n'):
                     word_1 = line.find('image:')
                     word_2 = line.find(service_name)
@@ -185,13 +210,34 @@ class Remote:
                             print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
                    
                 name_index+=1
+            ssh.close()
+            try:
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(app_video[self.ip], port=22, username=name, password=video_pass[app_video[self.ip]])
+                with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+                    service_list = json.load(file)
+                    name_index = 0
+                    service_keys_list = list(service_list.keys())     
+                    for k,v in service_list.items():
+                        service_name = service_keys_list[name_index]
+                        outer = self.cat(self.back[self.ip], 'docker-compose.yml')
+                        for line in outer.split('\n'):
+                            word_1 = line.find('image:')
+                            word_2 = line.find(service_name)
+                            if word_1 != -1 and word_2 != -1:
+                                item = line.split(':')
+                                serv_serv = item[-1]
+                                finded_services.append(service_name)
+                                if v == serv_serv:
+                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
+                                else:
+                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
+                        name_index+=1            
+            except:
+                next                        
+
             for item in list(service_list.keys()):
                 if item not in finded_services:
                     not_finded_servers.append(item)
-            print(f'not finded services: {not_finded_servers}') 
-        
-
-
-
-
-                 
+            print(f'not finded services: {not_finded_servers}')

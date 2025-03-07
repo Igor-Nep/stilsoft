@@ -9,14 +9,16 @@ import json
 import time
 import allure
 
-token =''
+
 
 class ApiMurom:
+
+    glob_start_time = time.time()
+    token = ''
        
-    def __init__(self, url):
+    def __init__(self, url='https://gate.synerget.ru:8179'):
         self.url = url
         
-
 
     def start_(self): ##
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -44,12 +46,24 @@ class ApiMurom:
         self.start_()    
 
 
-    def refresh_token(self):
+    def refresh_token_(self):
         token_file = open('tok_file', 'w')
         str_token = str(self.get_token())
         token_file.write(str_token)
         token_file.close()
       
+
+    def refresh_token(self): 
+            if self.token == '':
+                self.token = self.get_token()
+
+            elif time.time()-self.glob_start_time>359:
+                self.token = self.get_token()
+                self.glob_start_time = time.time()
+            
+            else:
+                self.token = self.token
+
 
     def get_file_token(self):
         global token
@@ -171,6 +185,32 @@ class ApiMurom:
                 requests.post(self.url+'/api/data/events/history', headers=self.get_token(), json=body, verify=False)
 
 
+    def needed_notifications(self):
+                
+            warnings.filterwarnings('ignore')
+            self.refresh_token()
+            os.system('cls')
+            for i in range (0, self.get_module_count()):
+                print(f"{i} {self.get_modules()['data'][i]['title']}"+f" тип камеры: {self.get_modules()['data'][i]['type']}")
+            e_codes = [1397,1920,1921,1922,1923,1924,3923,1784,1930,1931,1932,1933,1338,3338]
+                
+            d = int(input(f'Введите номер устройства из списка: '))
+            device = (self.get_module(d)['id'])
+            for code in range(len(e_codes)):
+                e_code = e_codes[code]
+                time=self.get_time()    
+                body = {
+                        
+                    "eventCode": e_code,
+                    "source": device,
+                    "timestamp": time, 
+                    "user": self.get_user_id() 
+                        }
+                
+                resp = requests.post(self.url+'/api/data/events/history', headers=self.token, json=body, verify=False)
+                print(resp)
+
+
     def notifications(self): #вывод нотификаций
             warnings.filterwarnings('ignore')
             global token
@@ -218,7 +258,7 @@ class ApiMurom:
             e_code = int(input(f'Введите код нотификации для модуля <{self.get_module(d)['title']}>: '))
             time=self.get_time()    
             body = {
-                "data": "19:40 last restart docker-compose", #{'gate':'fedcba098765-4321-fedc-ba09-87654321', 'card_code':'01234567'}
+                "data": "", #{'gate':'fedcba098765-4321-fedc-ba09-87654321', 'card_code':'01234567'}
                 "eventCode": e_code,
                 "source": device,
                 "timestamp": time, #"2024-06-06T08:00:00.337136+00:00"

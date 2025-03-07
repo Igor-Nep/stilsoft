@@ -9,4 +9,5 @@ from health import Health
 #db = DbMurom('192.168.202.238')
 #print(db.get_user_argon_password(db.get_user_id_by_login('newdev')))
 
-hm = Health('https://gate.synerget.ru:8179').check_pcpu('192.168.202.238',8,3)
+#hm = Health('https://gate.synerget.ru:8179').check_pcpu('192.168.202.238',8,3)
+ApiMurom().needed_notifications()
