@@ -99,7 +99,7 @@ class ApiMurom:
         return bearer
 
 
-    def get_modules(self): #список модулей
+    def get_modules(self): 
         resp = requests.get(self.url+'/api/data/system/module', headers=self.get_token(), verify=False)
         return resp.json()
 
@@ -122,7 +122,7 @@ class ApiMurom:
         return resp.json()['data'][i]
     
 
-    def get_user_id(self): #получение id текущего пользователя
+    def get_user_id(self): 
         resp = requests.get(self.url +'/api/data/security/user', headers = self.get_token(), verify=False)
         return resp.json()['data'][0]['id']
 

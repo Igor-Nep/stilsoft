@@ -280,7 +280,7 @@ class ApiSsku():
             os.system('cls')
             for i in range (0, self.get_module_count()):
                 print(f"{i} {self.get_modules()['data'][i]['title']}"+f" тип камеры: {self.get_modules()['data'][i]['type']}")
-            e_codes = [1751,3751,3401,1401,1351,1930,1931,1932,1933,1916,3916,1917,1919,1918,3919]
+            e_codes = [3550,3551,3552,3553]
                 
             d = int(input(f'Введите номер устройства из списка: '))
             device = (self.get_module(d)['id'])
@@ -310,6 +310,7 @@ class ApiSsku():
             print(resp)
             #print(msgpack.unpackb(resp))
             print(resp.json()['data'])
+            print(resp.json())
             print("Ожидание нажатия клавиши...")
             msvcrt.getch()
           elif met.upper() == 'POST':

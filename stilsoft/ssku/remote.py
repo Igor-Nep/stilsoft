@@ -15,14 +15,14 @@ class Remote:
          }
         
         self.configurate = {
-        "192.168.202.238": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
-        "192.168.202.30": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
+        "192.168.202.238": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
+        "192.168.202.30": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
         "192.168.202.82": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/dev/rigel/DevOps/Murom", "registry_dir":"", "need_video":False},
-        "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":True},
-        "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/_component-registry/registry/origin", "need_video":False},
-        "192.168.202.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":True},
-        "192.168.202.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False},
-        "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False}
+        "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
+        "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry", "need_video":False, "compose_name":"docker-compose.yml"},
+        "192.168.202.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
+        "192.168.202.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml_old"},
+        "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False}
         }
 
         self.video_partner = {"192.168.202.10":"192.168.202.9",
@@ -68,11 +68,12 @@ class Remote:
         ssh.connect(self.ip, port=22, username=self.name, password=self.secret)
         print(f'Connect to {self.ip}')
         client = ssh.open_sftp()
+        reg_dir = f'{self.configurate[self.ip]['back_dir']}{self.configurate[self.ip]['registry_dir']}'
         pack_dir = f'D:/work/WHPython/stilsoft/pack/{module_name}.pack'
         registry_dir = f'{self.back[self.ip]}/component-registry/registry'
         client.put(pack_dir, f'/home/user/{module_name}.pack')
         sleep(2)
-        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{module_name}.pack {registry_dir}')
+        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{module_name}.pack {reg_dir}')
         sleep(1)
         stdin.write(f'{self.secret}\n')
         stdin.flush()
@@ -94,7 +95,7 @@ class Remote:
         print('\nfirst curl')
         print(stdout.read().decode())
         print(stderr.read().decode())
-        sleep(10)
+        sleep(11)
         print('\nsecond curl')
         with open('D:/work/WHPython/stilsoft/ssku/second_curl.txt', 'r', encoding='utf-8') as file:
             second_curl = file.read()
@@ -104,14 +105,18 @@ class Remote:
         stdin, stdout, stderr = ssh.exec_command(second_curl)
         print(stdout.read().decode())
         print(stderr.read().decode())
-        print('\ndown compose >')
-        stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose down')
-        sleep(10)
+        print('restart docker-compose >')
+        stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose restart')
         print(stdout.read().decode())
         print(stderr.read().decode())
-        print('\nup compose >')
-        ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose up')
-        sleep(15)
+        #print('\ndown compose >')
+        #stdin, stdout, stderr = ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose down')
+        #sleep(10)
+        #print(stdout.read().decode())
+        #print(stderr.read().decode())
+        #print('\nup compose >')
+        #ssh.exec_command(f'cd {self.back[self.ip]}; docker-compose up')
+        #sleep(15)
         print('\nupdated version:')
         stdin, stdout, stderr = ssh.exec_command(f'cd {registry_dir}/origin; cat package.json')
         outer = stdout.read().decode()
@@ -130,7 +135,7 @@ class Remote:
         stdin, stdout, stderr = ssh.exec_command(f'cd {directory}; cat {file}')
         return stdout.read().decode() 
 
-    def check_versions(self, name='user', secret='stilsoft'):
+    def check_versions(self, name='user', secret='stilsoft1'):
         import paramiko, json 
         from time import sleep
         ssh = paramiko.SSHClient()
@@ -139,26 +144,11 @@ class Remote:
         finded_services = []
         not_finded_servers = []
         not_finded_modules = []
-        app_video = {"192.168.202.10": "192.168.202.9",
-                     "192.168.207.68": "192.168.207.69"}
-        
-        video_pass = {"192.168.202.9": "stilsoft",
-                      "192.168.207.69": "stilsoft"}
-        
-        app_pass = {"192.168.202.10": "stilsoft",
-                    "192.168.202.68": "stilsoft1"}
 
-        registry_dir = {'192.168.202.238': '/opt/murom/origin/backend/component-registry/registry/origin',
-         '192.168.202.30': '/opt/murom/origin/backend/component-registry/registry/origin',
-         '192.168.202.18': '/opt/helios/origin/backend/component-registry/registry/origin',
-         '192.168.202.82': '/home/user/dev/rigel/DevOps/Murom/component-registry/registry/origin',
-         '192.168.202.10': '/home/user/rigel/server-app/origin/backend/component-registry/registry/origin',
-         '192.168.202.9': '/home/user/rigel/node-ssku/origin/backend/_component-registry/registry/origin',
-         '192.168.207.68': '/opt/server-app/origin/backend/component-registry/registry/origin'}
 
-        if self.ip in app_video.keys():
+        if self.ip in self.video_partner.keys():
             server_indicator = 'on app_server:    '
-        elif self.ip in app_video.values():
+        elif self.ip in self.video_partner.values():
             server_indicator = 'on video-server:  '
         else:
             server_indicator = ''
@@ -173,7 +163,7 @@ class Remote:
                 for k,v in module_list.items():
                     module_name = module_keys_list[name_index]
                     try:
-                        outer = self.cat(registry_dir[self.ip], 'package.json')
+                        outer = self.cat(f'{self.configurate[self.ip]['back_dir']}{self.configurate[self.ip]['registry_dir']}/origin', 'package.json')
                         mod_serv = json.loads(outer)['version'][module_name]
                     
                         if v == mod_serv:
@@ -210,18 +200,24 @@ class Remote:
                             print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
                    
                 name_index+=1
-            ssh.close()
+        #ssh.close()    
+        if self.ip in self.video_partner.keys():
             try:
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh.connect(app_video[self.ip], port=22, username=name, password=video_pass[app_video[self.ip]])
+                ip = self.video_partner[self.ip]
+                print(ip)
+                ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                print(' connected')
                 with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
                     service_list = json.load(file)
                     name_index = 0
                     service_keys_list = list(service_list.keys())     
                     for k,v in service_list.items():
                         service_name = service_keys_list[name_index]
-                        outer = self.cat(self.back[self.ip], 'docker-compose.yml')
+                        #outer = self.cat(self.configurate[ip]['back_dir'], self.configurate[ip]['compose_name'])
+                        stdin, stdout, stderr = ssh.exec_command(f'cd /home/user/rigel/node-ssku/origin/backend; cat docker-compose.yml')
+                        outer = stdout.read().decode()
                         for line in outer.split('\n'):
                             word_1 = line.find('image:')
                             word_2 = line.find(service_name)
@@ -230,13 +226,13 @@ class Remote:
                                 serv_serv = item[-1]
                                 finded_services.append(service_name)
                                 if v == serv_serv:
-                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
+                                    print(f'on video_server:  {service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
                                 else:
-                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
+                                    print(f'on video_server:  {service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
                         name_index+=1            
             except:
                 next                        
-
+            ssh.close()
             for item in list(service_list.keys()):
                 if item not in finded_services:
                     not_finded_servers.append(item)
