@@ -88,12 +88,17 @@ class DbSsku:
     def change_password(self, login, new_password):
         from time import sleep
         import sys
-        sys.path.append('C:\work\WHPython\stilsoft')
+        print(login+ ' login')
+        print(new_password+' new_password')
+        sys.path.append('D:\work\WHPython\stilsoft')
         from murom.api import ApiMurom
         apim = ApiMurom('https://gate.synerget.ru:8179')
+        print('apiMurom >')
         apim.add_user(login, login, new_password)
+        print('add user is ok')
         from murom.db import DbMurom
         dbm = DbMurom('192.168.202.238')
+        print('dbMurom')
         changed_password = dbm.get_user_argon_password(dbm.get_user_id_by_login(login))
         sleep(1)
         self.db.execute(f"update security.users set password='{changed_password}' where login='{login}'")

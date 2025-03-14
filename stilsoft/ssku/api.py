@@ -280,7 +280,7 @@ class ApiSsku():
             os.system('cls')
             for i in range (0, self.get_module_count()):
                 print(f"{i} {self.get_modules()['data'][i]['title']}"+f" тип камеры: {self.get_modules()['data'][i]['type']}")
-            e_codes = [3550,3551,3552,3553]
+            e_codes = [3550,3550]
                 
             d = int(input(f'Введите номер устройства из списка: '))
             device = (self.get_module(d)['id'])

@@ -20,8 +20,8 @@ class Remote:
         "192.168.202.82": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/dev/rigel/DevOps/Murom", "registry_dir":"", "need_video":False},
         "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
         "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry", "need_video":False, "compose_name":"docker-compose.yml"},
-        "192.168.202.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
-        "192.168.202.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml_old"},
+        "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
+        "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml_old"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False}
         }
 
@@ -29,8 +29,8 @@ class Remote:
                               "192.168.202.68":"192.168.202.69"
                               }
          
-    def config(self, ip, param):
-        return self.configurate[ip][param]
+    def config(self, param):
+        return self.configurate[self.ip][param]
 
 
     def push_lib(self, lib_name):
@@ -135,12 +135,12 @@ class Remote:
         stdin, stdout, stderr = ssh.exec_command(f'cd {directory}; cat {file}')
         return stdout.read().decode() 
 
-    def check_versions(self, name='user', secret='stilsoft1'):
+    def check_versions(self):
         import paramiko, json 
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(self.ip, port=22, username=name, password=secret)
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         finded_services = []
         not_finded_servers = []
         not_finded_modules = []
