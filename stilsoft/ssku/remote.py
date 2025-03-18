@@ -52,12 +52,25 @@ class Remote:
         print(stderr.read().decode())
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{lib_name}.so {plugins_dir}')
         sleep(1)
-        stdin.write(f'{self.configurate[self.ip]['password']}\n')
+        try:
+            stdin.write(f'{self.configurate[self.ip]['password']}\n')
+        except:
+            next    
         print('restart node-manager >')
         stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
         sleep(2)
         print(stdout.read().decode())
         print(stderr.read().decode())
+        try:
+            print('del lib >')
+            client.remove(f'/home/user/{lib_name}.so')
+        except:
+            print('can not del')
+            next
+        client.close()
+        ssh.close()
+        print('Done')    
+
 
 
     def push_pack(self, module_name):
@@ -66,6 +79,7 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.name, password=self.secret)
+        print('self_secr: ', self.secret)
         print(f'Connect to {self.ip}')
         client = ssh.open_sftp()
         reg_dir = f'{self.configurate[self.ip]['back_dir']}{self.configurate[self.ip]['registry_dir']}'
@@ -75,10 +89,12 @@ class Remote:
         sleep(2)
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{module_name}.pack {reg_dir}')
         sleep(1)
-        stdin.write(f'{self.secret}\n')
-        stdin.flush()
-        print(stderr.read().decode())
-
+        try:
+            stdin.write(f'{self.secret}\n')
+            stdin.flush()
+            print(stderr.read().decode())
+        except:
+            next    
         print('\ncurrent version:')
         stdin, stdout, stderr = ssh.exec_command(f'cd {registry_dir}/origin; cat package.json')
         outer = stdout.read().decode()
@@ -120,6 +136,12 @@ class Remote:
         print('\nupdated version:')
         stdin, stdout, stderr = ssh.exec_command(f'cd {registry_dir}/origin; cat package.json')
         outer = stdout.read().decode()
+        try:
+            print('del pack >')
+            client.remove(f'/home/user/{module_name}.pack')
+        except:
+            print('can not del')
+            next  
         for line in outer.split('\n'):
             if module_name in line:
                 print(line)
@@ -127,13 +149,26 @@ class Remote:
         ssh.close()
         print('Done')
 
-    def cat(self, directory, file, name='user', secret='stilsoft'):
+    def cat(self, directory, file):
         import paramiko, json
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(self.ip, port=22, username=name, password=secret)
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         stdin, stdout, stderr = ssh.exec_command(f'cd {directory}; cat {file}')
-        return stdout.read().decode() 
+        return stdout.read().decode()
+
+    def terminal(self, param):
+        import paramiko
+        from time import sleep
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print(self.config('password'))
+        print(f'Connect to {self.ip}')
+        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; {param}')
+        sleep(2)
+        print(stdout.read().decode())
+
 
     def check_versions(self):
         import paramiko, json 
@@ -141,6 +176,7 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print(f'connected {self.ip}')
         finded_services = []
         not_finded_servers = []
         not_finded_modules = []
@@ -155,7 +191,6 @@ class Remote:
 
         try:
             with open('D:\work\WHPython\stilsoft\ssku/module_list.json', 'r', encoding='utf-8') as file:
-                print(self.ip)
                 module_list = json.load(file)
                 name_index = 0
                 module_keys_list = list(module_list.keys())
@@ -163,6 +198,7 @@ class Remote:
                 for k,v in module_list.items():
                     module_name = module_keys_list[name_index]
                     try:
+
                         outer = self.cat(f'{self.configurate[self.ip]['back_dir']}{self.configurate[self.ip]['registry_dir']}/origin', 'package.json')
                         mod_serv = json.loads(outer)['version'][module_name]
                     

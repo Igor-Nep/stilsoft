@@ -10,6 +10,5 @@ import requests, warnings
 #archived_all_modules()
 #reset_archived_modules()
 #DbSsku('192.168.202.10').change_password('armdo1','armdo1')
-#Remote('192.168.202.30').push_lib('libsdp881')
-Remote('192.168.202.10').check_versions()
-
+#Remote('192.168.202.238').push_pack('sdp881')
+Remote('192.168.202.10').terminal('cat docker-compose.yml')

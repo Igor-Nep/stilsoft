@@ -456,26 +456,26 @@ class ApiSsku():
             for k,v in module_list.items():
                 module_name = keys_list[name_index]
                 module_type = v['type']
-                integrator_list=['scud','ksbo']
+                integrator_list = ['scud','ksbo']
                 if module_type not in integrator_list:
                      with open('D:\work\WHPython\stilsoft\ssku/video_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
-                          pre_body= pre_body.replace("%%NODE%%", self.get_need_node('video'))
-                          pre_body= pre_body.replace("%%MODULE_NAME%%", module_name)
-                          pre_body= pre_body.replace("%%IP%%", v['ip'])
-                          pre_body= pre_body.replace("%%PASSWORD%%", "admin")
-                          pre_body= pre_body.replace("%%TYPE%%", module_type)
+                          pre_body = pre_body.replace("%%NODE%%", self.get_need_node('video'))
+                          pre_body = pre_body.replace("%%MODULE_NAME%%", module_name)
+                          pre_body = pre_body.replace("%%IP%%", v['ip'])
+                          pre_body = pre_body.replace("%%PASSWORD%%", "admin")
+                          pre_body = pre_body.replace("%%TYPE%%", module_type)
                           body = json.loads(pre_body)
                 elif module_type in integrator_list:
                      with open('D:\work\WHPython\stilsoft\ssku/integrator_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
-                          pre_body= pre_body.replace("%%NODE%%", self.get_need_node('integrator'))
-                          pre_body= pre_body.replace("%%MODULE_NAME%%", module_name)
-                          pre_body= pre_body.replace("%%IP%%", v['ip'])
-                          pre_body= pre_body.replace("%%PASSWORD%%", "adm777")
-                          pre_body= pre_body.replace("%%TYPE%%", module_type)
+                          pre_body = pre_body.replace("%%NODE%%", self.get_need_node('integrator'))
+                          pre_body = pre_body.replace("%%MODULE_NAME%%", module_name)
+                          pre_body = pre_body.replace("%%IP%%", v['ip'])
+                          pre_body = pre_body.replace("%%PASSWORD%%", "adm777")
+                          pre_body = pre_body.replace("%%TYPE%%", module_type)
                           body = json.loads(pre_body)
                 else:
                      print( f'ERROR IN module_list IN LINE {name_index}')

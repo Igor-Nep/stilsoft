@@ -48,8 +48,20 @@ class Postman():
         return my_token
 
 
-    def get(self, url, ):
+    def make_json(self, pre_body):
+        with open(pre_body, 'r') as file:
+            body_ = json.load(file)
+            body = json.dumps(body_)
+            #body = body.replace
+
+
+
+    def get(self, url):
         resp = requests.get(self.url+f'{url}',headers=self.get_token(), verify=False)
         print(resp.json())
 
 
+
+   # def post(self, url, body):
+
+   #         pre_body =
