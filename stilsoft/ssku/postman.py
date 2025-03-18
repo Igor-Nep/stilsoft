@@ -60,6 +60,10 @@ class Postman():
         resp = requests.get(self.url+f'{url}',headers=self.get_token(), verify=False)
         print(resp.json())
 
+    def delete(self, url):
+        resp = requests.delete(self.url+f'{url}',headers=self.get_token(), verify=False)
+        print(resp.json())    
+
 
 
    # def post(self, url, body):

@@ -365,7 +365,7 @@ class Remote:
                                 print(f'{service_name} \033[32mMATCH\033[0m {v}')
                         name_index+=1
                     except:
-                        print(f'{service_name} NOT FOUND')
+                        print(f'{service_name} \033[33mnot_found\033[0m')
                         name_index+=1
                         next
                         
