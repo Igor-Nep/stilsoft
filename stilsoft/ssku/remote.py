@@ -21,12 +21,12 @@ class Remote:
         "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
         "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
-        "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml_old"},
+        "192.168.206.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False}
         }
 
         self.video_partner = {"192.168.202.10":"192.168.202.9",
-                              "192.168.202.68":"192.168.202.69"
+                              "192.168.207.68":"192.168.206.69"
                               }
          
     def config(self, param):
@@ -178,7 +178,7 @@ class Remote:
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         print(f'connected {self.ip}')
         finded_services = []
-        not_finded_servers = []
+        not_finded_services = []
         not_finded_modules = []
 
 
@@ -215,35 +215,50 @@ class Remote:
             print('component-registry not found')
             next
         print('_'*30)
-        with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
-            service_list = json.load(file)
-            name_index = 0
-            service_keys_list = list(service_list.keys())     
-            for k,v in service_list.items():
-                service_name = service_keys_list[name_index]
-                outer = self.cat(self.back[self.ip], 'docker-compose.yml')
-                #outer = stdout.read().decode()
-                for line in outer.split('\n'):
-                    word_1 = line.find('image:')
-                    word_2 = line.find(service_name)
-                    if word_1 != -1 and word_2 != -1:
-                        item = line.split(':')
-                        serv_serv = item[-1]
-                        finded_services.append(service_name)
-                        if v == serv_serv:
-                            print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
-                        else:
-                            print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
-                   
-                name_index+=1
+
+        try:
+            with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+                service_list = json.load(file)
+                name_index = 0
+                service_keys_list = list(service_list.keys())     
+                for k,v in service_list.items():
+                    service_name = service_keys_list[name_index]
+                    try:
+                        outer = self.cat(self.back[self.ip], 'docker-compose.yml')
+                        #outer = stdout.read().decode()
+                        for line in outer.split('\n'):
+                            word_1 = line.find('image:')
+                            word_2 = line.find(service_name)
+                            if word_1 != -1 and word_2 != -1:
+                                item = line.split(':')
+                                serv_serv = item[-1]
+                                finded_services.append(service_name)
+                                if v == serv_serv:
+                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
+                                else:
+                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
+                    except:
+                        not_finded_services.append(service_name)
+                        next
+                    name_index+=1
+            print(f'not finded services: {not_finded_services}')    
+        except:
+            print('_'*30)
+            next
+
         #ssh.close()    
         if self.ip in self.video_partner.keys():
             try:
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                #ssh = paramiko.SSHClient()
+                #ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ip = self.video_partner[self.ip]
                 print(ip)
-                ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                #ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                jump_ssh = ssh.get_transport().open_channel('direct-tcpip', (ip, 22), ('',0))
+                target_ssh = paramiko.SSHClient()
+                target_ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                target_ssh.connect(ip, port = 22, username = self.configurate[ip]['name'], password=self.configurate[ip]['password'], sock=jump_ssh)
+
                 print(' connected')
                 with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
                     service_list = json.load(file)
@@ -252,7 +267,8 @@ class Remote:
                     for k,v in service_list.items():
                         service_name = service_keys_list[name_index]
                         #outer = self.cat(self.configurate[ip]['back_dir'], self.configurate[ip]['compose_name'])
-                        stdin, stdout, stderr = ssh.exec_command(f'cd /home/user/rigel/node-ssku/origin/backend; cat docker-compose.yml')
+                        #print(outer)
+                        stdin, stdout, stderr = target_ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; cat {self.configurate[ip]['compose_name']}')
                         outer = stdout.read().decode()
                         for line in outer.split('\n'):
                             word_1 = line.find('image:')
@@ -271,5 +287,88 @@ class Remote:
             ssh.close()
             for item in list(service_list.keys()):
                 if item not in finded_services:
-                    not_finded_servers.append(item)
-            print(f'not finded services: {not_finded_servers}')
+                    not_finded_services.append(item)
+            print(f'not finded services: {not_finded_services}')
+
+    def check_versions_by_logs(self):
+        import paramiko, json 
+        from time import sleep
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print(f'connected {self.ip}')
+        
+        not_finded_services = []
+        try:
+            with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+                service_list = json.load(file)
+                name_index = 0
+                service_keys_list = list(service_list.keys())     
+                for k,v in service_list.items():
+                    service_name = service_keys_list[name_index]
+                    try:
+                        #outer = self.cat(self.back[self.ip], 'docker-compose.yml')
+                        #outer = stdout.read().decode()
+                        print(service_keys_list[name_index])
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose logs --tail 10000 {service_keys_list[name_index]} | grep started | grep {v}')
+                        outer = stdout.read().decode()
+
+                        for line in outer.split('\n'):
+                            #word_1 = line.find('image:')
+                            #word_2 = line.find(service_name)
+                            #if word_1 != -1 and word_2 != -1:
+                                #item = line.split(':')
+                                #serv_serv = item[-1]
+                                #finded_services.append(service_name)
+                                if v in line:
+                                    print(line)
+                                    print(f'{service_name}'+' '*(24-len(service_name))+f'\033[32mMATCH\033[0m ({v})')
+                                else:
+                                    print('\033[33mnot_found\033[0m')
+                    except:
+                        not_finded_services.append(service_name)
+                        next
+                    name_index+=1
+            print(f'not finded services: {not_finded_services}')    
+        except:
+            print('_'*30)
+            next
+
+    def check_versions_by_manifest(self):
+        import paramiko, json, fnmatch
+        from time import sleep
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        client = ssh.open_sftp()
+        print(f'connected {self.ip}')
+        not_finded_services = []
+        try:
+            with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+                service_list = json.load(file)
+                name_index = 0
+                service_keys_list = list(service_list.keys())
+                for k,v in service_list.items():
+                    service_name = service_keys_list[name_index]
+                    try:
+                        found_manifest = None
+                        for file in client.listdir(self.configurate[self.ip]['back_dir']):
+                            if fnmatch.fnmatch(file, 'manifest' + '*'):
+                                found_manifest = file
+                                break
+
+
+                        with client.open(f'{self.configurate[self.ip]['back_dir']}/{found_manifest}', 'r') as file:
+                            pre_file = file.read().decode('utf-8')
+                            json_file = json.loads(pre_file)
+                            if json_file['services'][service_name][0] == v:
+                                print(f'{service_name} \033[32mMATCH\033[0m {v}')
+                        name_index+=1
+                    except:
+                        print(f'{service_name} NOT FOUND')
+                        name_index+=1
+                        next
+                        
+        except:
+            next
+                 
