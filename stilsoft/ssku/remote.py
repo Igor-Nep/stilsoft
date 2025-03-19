@@ -50,6 +50,7 @@ class Remote:
         sleep(2)
         print(stdout.read().decode())
         print(stderr.read().decode())
+        print('update lib')
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{lib_name}.so {plugins_dir}')
         sleep(1)
         try:
@@ -62,7 +63,7 @@ class Remote:
         print(stdout.read().decode())
         print(stderr.read().decode())
         try:
-            print('del lib >')
+            print('del tmp_lib >')
             client.remove(f'/home/user/{lib_name}.so')
         except:
             print('can not del')
