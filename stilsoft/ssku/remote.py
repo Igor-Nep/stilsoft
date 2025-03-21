@@ -171,18 +171,23 @@ class Remote:
         print(stdout.read().decode())
 
 
-    def check_versions(self):
+    def check_versions(self, project):
         import paramiko, json 
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print('> init check versions by docker-compose')
         print(f'connected {self.ip}')
         finded_services = []
         not_finded_services = []
         not_finded_modules = []
-
-
+        if project == 'ssku':
+            print('project - ssku')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+        else:
+            print('project - murom')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
         if self.ip in self.video_partner.keys():
             server_indicator = 'on app_server:    '
         elif self.ip in self.video_partner.values():
@@ -191,7 +196,7 @@ class Remote:
             server_indicator = ''
 
         try:
-            with open('D:\work\WHPython\stilsoft\ssku/module_list.json', 'r', encoding='utf-8') as file:
+            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
                 module_list = json.load(file)
                 name_index = 0
                 module_keys_list = list(module_list.keys())
@@ -218,7 +223,7 @@ class Remote:
         print('_'*30)
 
         try:
-            with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
                 name_index = 0
                 service_keys_list = list(service_list.keys())     
@@ -261,7 +266,7 @@ class Remote:
                 target_ssh.connect(ip, port = 22, username = self.configurate[ip]['name'], password=self.configurate[ip]['password'], sock=jump_ssh)
 
                 print(' connected')
-                with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+                with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                     service_list = json.load(file)
                     name_index = 0
                     service_keys_list = list(service_list.keys())     
@@ -291,17 +296,25 @@ class Remote:
                     not_finded_services.append(item)
             print(f'not finded services: {not_finded_services}')
 
-    def check_versions_by_logs(self):
+    def check_versions_by_logs(self, project):
         import paramiko, json 
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print('> init check versions by logs')
         print(f'connected {self.ip}')
         
         not_finded_services = []
+        if project == 'ssku':
+            print('project - ssku')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+        else:
+            print('project - murom')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+
         try:
-            with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
                 name_index = 0
                 service_keys_list = list(service_list.keys())     
@@ -335,17 +348,24 @@ class Remote:
             print('_'*30)
             next
 
-    def check_versions_by_manifest(self):
+    def check_versions_by_manifest(self, project):
         import paramiko, json, fnmatch
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         client = ssh.open_sftp()
+        print('> init check versions by manifest')
         print(f'connected {self.ip}')
         not_finded_services = []
+        if project == 'ssku':
+            print('project - ssku')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+        else:
+            print('project - murom')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
         try:
-            with open('D:\work\WHPython\stilsoft\ssku/service_list.json', 'r', encoding='utf-8') as file:
+            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
                 name_index = 0
                 service_keys_list = list(service_list.keys())
@@ -372,4 +392,61 @@ class Remote:
                         
         except:
             next
-                 
+
+
+    def change_versions(self, project):
+        import paramiko, json, fnmatch
+        from time import sleep
+        #ssh = paramiko.SSHClient()
+        #ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        #ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        #client = ssh.open_sftp()
+        print('> init change versions by manifest')
+        print(f'connected {self.ip}')
+        if project == 'ssku':
+            print('project - ssku')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+        else:
+            print('project - murom')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+        if self.ip in self.video_partner.keys():
+            server_indicator = 'on app_server:    '
+        elif self.ip in self.video_partner.values():
+            server_indicator = 'on video-server:  '
+        else:
+            server_indicator = '' 
+        try:
+            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
+                service_list = json.load(file)
+                name_index = 0
+                service_keys_list = list(service_list.keys())
+
+                for k,v in service_list.items():
+                    service_name = service_keys_list[name_index]
+                    try:
+                        with open('D:\work\docker-compose.yml','r',encoding='utf-8') as docker:
+                            old_docker = docker.read()
+                            print('old_docker: '+old_docker)
+                            service_name = service_keys_list[name_index]
+
+                            for line in old_docker.split('\n'):
+                                word_1 = line.find('image:')
+                                word_2 = line.find(service_name)
+                                if word_1 != -1 and word_2 != -1:
+                                    item = line.split(':')
+                                    docker_service_version = item[-1]
+                                    print('docker version '+docker_service_version)
+                                    print('list version '+v)
+                                    new_docker = old_docker.replace(docker_service_version, v)
+                                    try:
+                                        with open('D:\work\docker-compose.yml','w',encoding='utf-8') as docker_change:
+                                            docker_change.write(new_docker)
+                                            print('new_docker: '+new_docker)
+                                    except:
+                                        print('can not write docker-compose.yml')
+                    except:
+                        print('fail')
+                        next       
+                   
+        except:
+            next         

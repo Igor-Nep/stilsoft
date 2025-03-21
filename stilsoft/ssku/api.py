@@ -280,7 +280,7 @@ class ApiSsku():
             os.system('cls')
             for i in range (0, self.get_module_count()):
                 print(f"{i} {self.get_modules()['data'][i]['title']}"+f" тип камеры: {self.get_modules()['data'][i]['type']}")
-            e_codes = [3550,3550]
+            e_codes = [1502, 1503, 1504, 1505]
                 
             d = int(input(f'Введите номер устройства из списка: '))
             device = (self.get_module(d)['id'])
@@ -503,6 +503,45 @@ class ApiSsku():
             body_ = body = json.loads(body)
             req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
             print(f'Камера {cam_pref}{i} {i}/{cams}> [{req.status_code}]')
+
+
+
+    def add_suml_by_json(self):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        with open('D:/work/WHPython/stilsoft/ssku/api/json/config.json', 'r', encoding='utf-8') as file:
+            config = json.load(file)
+            ip = config['ip']
+            login = config['login']
+            password = config['password']
+             
+        
+        
+        cams = input('Количество камер: ')
+                       
+        for i in range(0, int(cams)):
+            os.system('cls')
+            if i <10:
+                cam_pref = 1000
+            elif 10<i<99: 
+                cam_pref = 100 
+            elif 100<i<999:
+                 cam_pref = 10    
+            module_name = f'Камера {cam_pref}{i}'
+            with open('D:/work/WHPython/stilsoft/ssku/api/json/body.json', 'r', encoding='utf-8') as file:
+                pre_body_ = json.load(file)
+                pre_body = json.dumps(pre_body_)
+                pre_body = pre_body.replace("%%NODE%%", self.get_need_node('video'))
+                pre_body = pre_body.replace("%%TITLE%%", module_name)
+                pre_body = pre_body.replace("%%IP%%", v['ip'])
+                pre_body = pre_body.replace("%%PASSWORD%%", "admin")
+                pre_body = pre_body.replace("%%TYPE%%", 'sdp858i')
+                body = json.loads(pre_body)
+
+            
+            req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body, verify=False)
+            print(f'Камера {cam_pref}{i} {i}/{cams}> [{req.status_code}]')       
     
 class ByInputSsku(ApiSsku):
         

@@ -417,4 +417,17 @@ class ApiSsku:
             body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node()}","title":"new_cam_suml_{i}","zone":null,"settings":'+'{'+f'"ip":"192.168.201.126","login":"admin","password":"admin","path":"/onvif/device_service","port":1000{i},"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
             body_ = body = json.loads(body)
             requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
+
+
+    def add_suml_by_json(self):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+
+        cams = input('Количество камер: ')
+                       
+        for i in range(0, int(cams)):
+            body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node()}","title":"new_cam_suml_{i}","zone":null,"settings":'+'{'+f'"ip":"192.168.201.126","login":"admin","password":"admin","path":"/onvif/device_service","port":1000{i},"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
+            body_ = body = json.loads(body)
+            requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)            
         

@@ -52,7 +52,9 @@ class Postman():
         with open(pre_body, 'r') as file:
             body_ = json.load(file)
             body = json.dumps(body_)
+            body = json.loads(body)
             #body = body.replace
+            return body
 
 
 
@@ -65,6 +67,10 @@ class Postman():
         print(resp.json())    
 
 
+    def post(self, url):
+        body = self.make_json('D:\work\WHPython\stilsoft\ssku\postman/body.json')
+        resp = requests.post(self.url+f'{url}',headers=self.get_token(), json=body, verify=False)
+        print(resp.json())
 
    # def post(self, url, body):
 
