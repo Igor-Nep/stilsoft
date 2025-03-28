@@ -1,11 +1,14 @@
 from statistics import median
 import paramiko
 from time import sleep
+from datetime import datetime
 import os
 #https://conf.stilsoft.ru/pages/viewpage.action?pageId=254051945
+log_pref ='perf_221'
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
-
-def make_logs(host='192.168.202.9', write_time = 30):
+def make_logs(host='192.168.202.221', write_time = 10):
+    
     top_log = 1
     docker_log = 1
     print('make_logs() START')
@@ -19,7 +22,7 @@ def make_logs(host='192.168.202.9', write_time = 30):
     sleep(write_time)
     ssh.exec_command("\x03")
     sftp_client = ssh.open_sftp()
-    sftp_client.get('/home/user/Desktop/docker.txt', 'C:\work\logs\docker.txt')
+    sftp_client.get('/home/user/Desktop/docker.txt', f'D:/work/logs/{log_pref}_docker.txt')
     print('DONE \nmake top logs: ',end='')
     sleep(0.5)
     #if top_log == 1:    
@@ -27,13 +30,13 @@ def make_logs(host='192.168.202.9', write_time = 30):
     sleep(write_time)
     ssh.exec_command("\x03")
     sftp_client = ssh.open_sftp()
-    sftp_client.get('/home/user/Desktop/top.txt', 'C:/work/logs/top.txt')
+    sftp_client.get('/home/user/Desktop/top.txt', f'D:/work/logs/{log_pref}_top.txt')
     print('DONE')
-    
+    sftp_client.remove('/home/user/Desktop/top.txt')
     print('make_logs() FINISHED')
     
 
-def check_log_docker(cores = 32):
+def check_log_docker(cores = 48):
     all_cont = 1
     archive = 1
     media = 1
@@ -43,7 +46,7 @@ def check_log_docker(cores = 32):
     autoheal = 1
     detector = 1
     cadvisor = 1 
-    with open('C:/work/logs/docker.txt') as file:
+    with open(f'D:/work/logs/{log_pref}_docker.txt') as file:
         print('file is open')
         print('check_log_docker()')
         print('START')
@@ -81,7 +84,7 @@ def check_log_docker(cores = 32):
                 try:
                     list_archive_cpu.append(float(item[45:55].strip().replace('%',''))/cores)
                 except:
-                    #print('collect arcive_cpu: FAILED')
+                    print('collect arcive_cpu: FAILED')
                     next    
                  
                 try:
@@ -336,7 +339,7 @@ def check_log_docker(cores = 32):
     return (docker_data)
 
 
-def check_log_top(cores = 32):
+def check_log_top(cores = 48):
     archive = 0
     media = 1
     node = 0
@@ -355,7 +358,7 @@ def check_log_top(cores = 32):
 
     print('\ncheck_log_top()')
     print('START')
-    with open('C:/work/logs/top.txt') as file:
+    with open(f'D:/work/logs/{log_pref}_top.txt') as file:
         print('collect data: ', end='           ')
         for item in file:
             
@@ -425,7 +428,8 @@ def check_log_top(cores = 32):
         top_data['m_med_mem'] = media_median_mem
 
     
-    with open('C:/work/logs/LOG_VIDEO_TOP.txt', 'a') as _file:
+    with open('D:/work/logs/LOG_VIDEO_TOP.txt', 'a') as _file:
+            _file.write(f'*{timestamp}*\n')
             if archive == 1:
                 print('write <archive-manager>: ',end='')
                 _file.write(f'\n<archive-manager>   пиковое значение CPU: {archive_max_cpu}')
@@ -528,7 +532,8 @@ def common_log():
         top_m_avg_c = len(str(top_log['m_avg_cpu']))
         top_m_med_c = len(str(top_log['m_med_cpu']))
 
-    with open('C:/work/logs/COMMON_LOG.txt', 'a') as file:
+    with open(f'D:/work/logs/{log_pref}_COMMON_LOG.txt', 'a') as file:
+        file.write(f'*{timestamp}*\n')
         file.write(f'{'='*56}\n')
         file.write(f'{' '*21}CPU (%){' '*15}MEM\n')
         file.write(f'{' '*18}docker |  top{' '*7}docker |  top\n')
@@ -551,8 +556,8 @@ def common_log():
             file.write(f'МЕДИАННОЕ{' '*(15-doc_n_med_c)}{doc_log['n_med_cpu']} | {top_log['n_med_cpu']}{' '*(15-top_n_med_c-doc_n_med_m)}{doc_log['n_med_mem']} {doc_log['n_m_l']} | {top_log['n_med_mem']} M\n')
             file.write(f'{'-'*56}\n')
     print('common_log() FINISHED')
-    #os.remove("C:/work/logs/top.txt")
-    #os.remove("C:/work/logs/docker.txt")        
+    #os.remove("D:/work/logs/top.txt")
+    #os.remove("D:/work/logs/docker.txt")        
 
 
 def only_docker_log():
@@ -618,7 +623,8 @@ def only_docker_log():
 
         
 
-    with open('C:/work/logs/ONLY_DOCKER_LOG.txt', 'a') as file:
+    with open(f'D:/work/logs/{log_pref}_ONLY_DOCKER_LOG.txt', 'a') as file:
+        file.write(f'*{timestamp}*\n')
         file.write(f'{'='*56}\n')
         file.write(f'{' '*21}CPU (%){' '*15}MEM\n')
                
@@ -671,7 +677,7 @@ def only_docker_log():
         file.write(f'{'-'*56}\n')
 
     print('only_docker_logs() FINISHED')    
-    #os.remove("C:/work/logs/docker.txt") 
+    #os.remove("D:/work/logs/docker.txt") 
 
 
 make_logs()

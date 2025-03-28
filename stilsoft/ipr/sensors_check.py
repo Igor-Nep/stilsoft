@@ -3,13 +3,13 @@ import os
 from time import sleep
 
 
-def check_sensors(host='192.168.207.68', period=6, warn=60, alert=85):
+def check_sensors(host='192.168.202.221', period=6, warn=30, alert=40):
         while True:
         
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(host, port=22, username='user', password='stilsoft1')
-            print (f'Подключено к {host}')
+            ssh.connect(host, port=22, username='user', password='stilsoft')
+            #print (f'Подключено к {host}')
             try:
                 ssh.exec_command(f"sensors > /home/user/Desktop/sensors")
                 sleep(0.5)
@@ -21,6 +21,7 @@ def check_sensors(host='192.168.207.68', period=6, warn=60, alert=85):
                      if 'Package id' in line:
                         temper = (line[16:20])
                         if float(temper) < float(warn):
+                             os.system('cls')
                              print(f'Temerature is {temper}\n')
                         
                         elif float(alert) > float(temper) >= float(warn):

@@ -3,7 +3,7 @@ import os
 from time import sleep
 
 
-def check_pcpu(host='192.168.202.9', period=3):
+def check_pcpu(host='192.168.202.221', period=3):
     cores = 32
     change_list=[]
     with open('c:/work/change_list.txt') as file:

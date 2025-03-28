@@ -49,6 +49,12 @@ class DbSsku:
                 file.write(str(rows[i]['id'])+'\n')
 
 
+    def print_not_archived_modules(self):
+        rows = self.get_not_archived_modules()
+        for i in range(len(rows)):
+                print((str(rows[i]['id'])+'\n')                )
+
+
     def archive_and_del_all_modules(self, file='kill_modules_ssku'):
         self.write_not_archived_modules(file)
         self.db.execute(f"update system.module set archived=true WHERE archived=false")

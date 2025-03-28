@@ -125,6 +125,12 @@ class ApiSsku():
         resp = requests.get(self.url+'/api/data/system/module', headers=self.token, verify=False)
         return resp.json()['data'][i]
     
+
+    def get_module_id(self, i):
+        self.refresh_token()
+        resp = requests.get(self.url+'/api/data/system/module', headers=self.token, verify=False)
+        return resp.json()['data'][i]['id']
+
     
     def get_module_by_name(self, tit): 
         resp = requests.get(self.url+'/api/data/system/module', headers=self.get_token(), verify=False)
@@ -493,17 +499,31 @@ class ApiSsku():
         cams = input('Количество камер: ')
                        
         for i in range(0, int(cams)):
-            os.system('cls')
+            
             if i <10:
                  cam_pref = 1000
             else:
                  cam_pref = 100     
             #body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node()}","title":"new_cam_suml_{i}","zone":null,"settings":'+'{'+f'"ip":"192.168.201.126","login":"admin","password":"admin","path":"/onvif/device_service","port":1000{i},"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
-            body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node()}","title":"Камера {cam_pref}{i}","zone":null,"settings":'+'{'+f'"ip":"10.207.0.4","login":"admin","password":"admin","path":"","port":{cam_pref}{i},"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
+            body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node()}","title":"Камера {cam_pref}{i}","zone":null,"settings":'+'{'+f'"ip":"10.207.0.4","login":"admin","password":"admin","path":"","port":{cam_pref}{i},"useMediamtx":true,"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
             body_ = body = json.loads(body)
             req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
-            print(f'Камера {cam_pref}{i} {i}/{cams}> [{req.status_code}]')
+            os.system('cls')
+            print(f'Камера {cam_pref}{i} {i+1}/{cams}> [{req.status_code}]')
 
+
+    def mode_archive(self,mode):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        module_list = []
+        for i in range(self.get_module_count()):
+             module_list.append(self.get_module_id(i))
+        for id in module_list:
+            body={"settings":{"archive": {"mode": mode}}}
+            req = requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
+            os.system('cls')
+            print(f'{module_list.index(id)} / {len(module_list)}')
 
 
     def add_suml_by_json(self):
@@ -534,7 +554,7 @@ class ApiSsku():
                 pre_body = json.dumps(pre_body_)
                 pre_body = pre_body.replace("%%NODE%%", self.get_need_node('video'))
                 pre_body = pre_body.replace("%%TITLE%%", module_name)
-                pre_body = pre_body.replace("%%IP%%", v['ip'])
+                pre_body = pre_body.replace("%%IP%%", 'ip')
                 pre_body = pre_body.replace("%%PASSWORD%%", "admin")
                 pre_body = pre_body.replace("%%TYPE%%", 'sdp858i')
                 body = json.loads(pre_body)
