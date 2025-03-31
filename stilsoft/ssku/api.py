@@ -131,6 +131,13 @@ class ApiSsku():
         resp = requests.get(self.url+'/api/data/system/module', headers=self.token, verify=False)
         return resp.json()['data'][i]['id']
 
+
+    def get_module_id_by_type(self, i, type='sdp858i'):
+        self.refresh_token()
+        resp = requests.get(self.url+'/api/data/system/module', headers=self.token, verify=False)
+        if resp.json()['data'][i]['type'] == type:
+            return resp.json()['data'][i]['id']
+
     
     def get_module_by_name(self, tit): 
         resp = requests.get(self.url+'/api/data/system/module', headers=self.get_token(), verify=False)
@@ -521,9 +528,45 @@ class ApiSsku():
              module_list.append(self.get_module_id(i))
         for id in module_list:
             body={"settings":{"archive": {"mode": mode}}}
+            requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
+            os.system('cls')
+            print(f'{module_list.index(id)+1} / {len(module_list)}')
+
+
+    def mode_settings(self,key,value):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        module_list = []
+        for i in range(self.get_module_count()):
+             module_list.append(self.get_module_id(i))
+        
+        body={"settings":{key: value}}
+        for id in module_list:
+            requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
+            os.system('cls')
+            print(f'{module_list.index(id)+1} / {len(module_list)}')
+
+
+
+    def mode_mediamtx(self,mode):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        module_list = []
+        for i in range(self.get_module_count()):
+             module_list.append(self.get_module_id(i))
+        if mode == 'true':
+             body={"settings":{"useMediamtx": True}}
+        else:
+             body={"settings":{"useMediamtx": False}}     
+
+        for id in module_list:
+            #body={"settings":{"useMediamtx": True}}
             req = requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
             os.system('cls')
-            print(f'{module_list.index(id)} / {len(module_list)}')
+            print(f'{module_list.index(id)+1} / {len(module_list)}')
+
 
 
     def add_suml_by_json(self):

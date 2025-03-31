@@ -68,7 +68,12 @@ class Postman():
 
 
     def post(self, url):
+        from api import ApiSsku
+        id = ApiSsku().get_user_id()
         body = self.make_json('D:\work\WHPython\stilsoft\ssku\postman/body.json')
+        body_ = json.dumps(body)
+        body_ = body_.replace("%%ID%%", id)
+        body = json.loads(body_)
         resp = requests.post(self.url+f'{url}',headers=self.get_token(), json=body, verify=False)
         print(resp.json())
 
