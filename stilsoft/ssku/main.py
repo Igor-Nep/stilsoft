@@ -4,6 +4,8 @@ from postman import Postman
 from remote import Remote
 import requests, warnings
 
+
+Postman().get('/api/data/system/zone')
 #Postman().post('/api/data/events/history/list')
 #ApiSsku().add_suml()
 #ApiSsku().mode_archive('write')
@@ -21,4 +23,4 @@ import requests, warnings
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.202.161').change_versions('ssku')
 #ApiSsku().needed_notifications()
-Remote('192.168.202.10').docker_chech()
+#Remote('192.168.202.10').docker_chech()

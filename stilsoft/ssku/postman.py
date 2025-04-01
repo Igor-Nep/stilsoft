@@ -59,8 +59,37 @@ class Postman():
 
 
     def get(self, url):
+        zone_id = []
         resp = requests.get(self.url+f'{url}',headers=self.get_token(), verify=False)
-        print(resp.json())
+        for i in range(len(resp.json()['data'])):
+            if resp.json()['data'][i]['nestedZones'] != []:
+                zone_id.append(resp.json()['data'][i]['id'])
+                print(resp.json()['data'][i]['nestedZones'][0]['id'])
+                print(len(resp.json()['data'][i]['nestedZones']))
+        for i in zone_id:
+            #print(f'self.url+{url}/{i}')
+            resp = requests.get(self.url+f'{url}/{i}',headers=self.get_token(), verify=False)
+          
+            if 'хопа' in resp.json()['data']:
+                print(i)
+
+
+    def get_sub_zones(self, url):
+        zone_id = []
+        resp = requests.get(self.url+f'{url}',headers=self.get_token(), verify=False)
+        for i in range(len(resp.json()['data'])):
+            if resp.json()['data'][i]['nestedZones'] != []:
+                zone_id.append(resp.json()['data'][i]['id'])
+                print(resp.json()['data'][i]['nestedZones'][0]['id'])
+                print(len(resp.json()['data'][i]['nestedZones']))
+        for i in zone_id:
+            #print(f'self.url+{url}/{i}')
+            resp = requests.get(self.url+f'{url}/{i}',headers=self.get_token(), verify=False)
+          
+            if 'хопа' in resp.json()['data']:
+                print(i)
+
+
 
     def delete(self, url):
         resp = requests.delete(self.url+f'{url}',headers=self.get_token(), verify=False)
