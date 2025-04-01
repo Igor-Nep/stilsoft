@@ -450,3 +450,47 @@ class Remote:
                    
         except:
             next         
+
+
+    def docker_chech(self):
+        import paramiko, json
+        #https://core.telegram.org/bots/api#making-requests
+        #Checker_state_stil_bot
+        #8106710833:AAHD-nZHCeFopceKkFPjJ6u04i77TblyFmA
+
+        from datetime import datetime
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print('> init check versions by logs')
+        print(f'connected {self.ip}')
+        drop_count = 0
+        d_modules_list=[]
+
+        while True:
+            if drop_count >=20:
+                break
+            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
+            status = stdout.read().decode()
+
+
+            for line in status.split('\n'):
+                if 'Exit' in line:
+                    exit_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    module_name = line.split()[0]
+                    if module_name not in d_modules_list:
+                        d_modules_list.append(module_name)
+                        off_status = f'Модуль {module_name} остановлен в {exit_time}\n'
+                        print(off_status)
+                        drop_count += 1
+                        with open('D:/work/WHPython/stilsoft/ssku/remote/docker_status.txt', 'a') as file:
+                            file.write(off_status)
+                elif 'Up' in line:
+                    module_name = line.split()[0]
+                    if module_name in d_modules_list:
+                        start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        d_modules_list.remove(module_name)
+                        on_status = f'Модуль {module_name} запущен в {start_time}\n'
+                        print(on_status)
+                        with open('D:/work/WHPython/stilsoft/ssku/remote/docker_status.txt', 'a') as file:
+                            file.write(on_status)        

@@ -73,8 +73,8 @@ class DbSsku:
             for row in massive:
                 if row.split() != []:
                     self.db.execute(f"update system.module set archived=false where id='{row}'")
-        if os.path.exists('C:\work\WHPython\stilsoft\ssku/kill_modules_ssku'):
-            os.remove('C:\work\WHPython\stilsoft\ssku/kill_modules_ssku')
+        if os.path.exists('D:\work\WHPython\stilsoft\ssku/kill_modules_ssku'):
+            os.remove('D:\work\WHPython\stilsoft\ssku/kill_modules_ssku')
 
     def get_user_id_by_login(self, login):
         rows = self.db.execute(f"select * from security.users where login='{login}'").fetchall()
@@ -109,3 +109,10 @@ class DbSsku:
         sleep(1)
         self.db.execute(f"update security.users set password='{changed_password}' where login='{login}'")
         apim.del_user_by_id(dbm.get_user_id_by_login(login))
+
+
+    def get_rows_in_massive(self,select):
+        sorted_list=[]
+        rows = self.db.execute(select).fetchall()
+        row_list = [row[0] for row in rows]
+        print(set(row_list))
