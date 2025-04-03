@@ -200,6 +200,30 @@ class ApiSsku():
         self.refresh_token()
         resp = requests.get(self.url +'/api/data/security/user', headers = self.token, verify=False)
         return resp.json()['data'][0]['id']
+    
+
+    def get_sub_zones(self, url):
+        warnings.filterwarnings('ignore')
+        self.refresh_token()
+        zone_id = []
+        sub_zone_id = []
+        resp = requests.get(self.url+f'{url}',headers=self.token, verify=False)
+        for i in range(len(resp.json()['data'])):
+            if resp.json()['data'][i]['nestedZones'] != []:
+                zone_id.append(resp.json()['data'][i]['id'])
+                print('_'*20)
+                print(f'Объект: {resp.json()['data'][i]['title']}')
+                
+                print(f'Количество вложенных объектов: {len(resp.json()['data'][i]['nestedZones'])}')
+                for n in range(len(resp.json()['data'][i]['nestedZones'])):
+                    sub_zone_id.append(resp.json()['data'][i]['nestedZones'][n]['id'])
+                    print(f'{n} - {resp.json()['data'][i]['nestedZones'][n]['title']}')
+                    
+        #for i in sub_zone_id:
+            #print(f'self.url+{url}/{i}')
+            #resp = requests.get(self.url+f'{url}/{i}',headers=self.token, verify=False)
+            #print(resp.json()['data']['title'])
+                  
 
 
     def get_time(self): #формирует текущее значение времени для timestamp
