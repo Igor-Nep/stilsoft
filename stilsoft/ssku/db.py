@@ -42,9 +42,10 @@ class DbSsku:
         return len(count)
 
 
-    def write_not_archived_modules(self, file='kill_modules_ssku'):
+    def write_not_archived_modules(self, file):
+        from datetime import datetime
         rows = self.get_not_archived_modules()
-        with open(f'C:\work\WHPython\stilsoft\ssku\{file}', 'w') as file:
+        with open(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{file}', 'w') as file:
             for i in range(len(rows)):
                 file.write(str(rows[i]['id'])+'\n')
 
@@ -60,21 +61,38 @@ class DbSsku:
         self.db.execute(f"update system.module set archived=true WHERE archived=false")
 
 
+    def archive_and_del_needed_modules(self, from_n, to_n, file_name):
+        import sys
+        from datetime import datetime
+        sys.path.append('D:\work\WHPython\stilsoft')
+        from ssku.api import ApiSsku
+        for i in range(from_n, to_n):
+            name = f'Камера {str(i)}'
+            reserved = ApiSsku(self.ip).get_module_by_name(name)
+            with open(f'D:/work/WHPython/stilsoft/ssku/reserved/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{file_name}', 'a') as file:
+                file.write(str(reserved)+'\n')
+            self.db.execute(f"update system.module set archived=true WHERE archived=false and name='{name}'") 
+
+
+
     def archive_all_modules(self, file='archived_modules'):
         '''возможно передать название файла как параметр'''
         self.write_not_archived_modules(file)
         return file
         
 
-    def reset_archived_modules(self):
+    def reset_archived_modules(self,file):
         import os
-        with open('C:\work\WHPython\stilsoft\ssku/kill_modules_ssku', 'r', encoding='utf-8') as file:
+        with open(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\{file}', 'r', encoding='utf-8') as file:
             massive = file.read().split('\n')
             for row in massive:
                 if row.split() != []:
                     self.db.execute(f"update system.module set archived=false where id='{row}'")
-        if os.path.exists('D:\work\WHPython\stilsoft\ssku/kill_modules_ssku'):
-            os.remove('D:\work\WHPython\stilsoft\ssku/kill_modules_ssku')
+        delete = input('Удалить список восстановления y/n: ')
+        if delete == 'y':         
+            if os.path.exists(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\{file}'):
+                os.remove(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\{file}')
+
 
     def get_user_id_by_login(self, login):
         rows = self.db.execute(f"select * from security.users where login='{login}'").fetchall()

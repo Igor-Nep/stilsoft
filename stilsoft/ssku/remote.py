@@ -40,7 +40,7 @@ class Remote:
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(self.ip, port=22, username=self.name, password=self.secret)
+        ssh.connect(self.ip, port=22, username=self.configurate[self.ip]['name'], password=self.configurate[self.ip]['password'])
         print(f'Connect to {self.ip}')
         client = ssh.open_sftp()
         lib_dir = f'D:/work/WHPython/stilsoft/lib/{lib_name}.so'
@@ -81,7 +81,7 @@ class Remote:
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(self.ip, port=22, username=self.name, password=self.secret)
+        ssh.connect(self.ip, port=22, username=self.configurate[self.ip]['name'], password=self.configurate[self.ip]['password'])
         print('self_secr: ', self.secret)
         print(f'Connect to {self.ip}')
         client = ssh.open_sftp()

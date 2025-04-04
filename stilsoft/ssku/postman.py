@@ -117,3 +117,10 @@ class Postman():
    # def post(self, url, body):
 
    #         pre_body =
+
+    def put_anal(self):
+        from api import ApiSsku
+        body_ = {"data":{"detectionEnabled":False,"minConfidence":0.3}}
+        resp = requests.put(self.url+f'/api/data/system/objectlink/{ApiSsku().get_module_by_name('Камера 10000')}',headers=self.get_token(), json=body_, verify=False)
+        print(resp.json())
+        
