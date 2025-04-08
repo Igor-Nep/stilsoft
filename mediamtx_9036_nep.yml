@@ -1,0 +1,1368 @@
+logLevel: info
+rtspAddress: :8554
+
+paths:
+  '1':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/1
+    runOnInitRestart: yes
+
+  '2':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/2
+    runOnInitRestart: yes
+
+  '3':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/3
+    runOnInitRestart: yes
+
+  '4':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/4
+    runOnInitRestart: yes
+
+  '5':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/5
+    runOnInitRestart: yes
+
+  '6':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/6
+    runOnInitRestart: yes
+
+  '7':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/7
+    runOnInitRestart: yes
+
+  '8':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/8
+    runOnInitRestart: yes
+
+  '9':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/9
+    runOnInitRestart: yes
+
+  '10':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/10
+    runOnInitRestart: yes
+
+  '11':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/11
+    runOnInitRestart: yes
+
+  '12':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/12
+    runOnInitRestart: yes
+
+  '13':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/13
+    runOnInitRestart: yes
+
+  '14':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/14
+    runOnInitRestart: yes
+
+  '15':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/15
+    runOnInitRestart: yes
+
+  '16':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/16
+    runOnInitRestart: yes
+
+  '17':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/17
+    runOnInitRestart: yes
+
+  '18':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/18
+    runOnInitRestart: yes
+
+  '19':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/19
+    runOnInitRestart: yes
+
+  '20':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/20
+    runOnInitRestart: yes
+
+  '21':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/21
+    runOnInitRestart: yes
+
+  '22':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/22
+    runOnInitRestart: yes
+
+  '23':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/23
+    runOnInitRestart: yes
+
+  '24':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/24
+    runOnInitRestart: yes
+
+  '25':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/25
+    runOnInitRestart: yes
+
+  '26':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/26
+    runOnInitRestart: yes
+
+  '27':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/27
+    runOnInitRestart: yes
+
+  '28':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/28
+    runOnInitRestart: yes
+
+  '29':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/29
+    runOnInitRestart: yes
+
+  '30':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/30
+    runOnInitRestart: yes
+
+  '31':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/31
+    runOnInitRestart: yes
+
+  '32':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/32
+    runOnInitRestart: yes
+
+  '33':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/33
+    runOnInitRestart: yes
+
+  '34':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/34
+    runOnInitRestart: yes
+
+  '35':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/35
+    runOnInitRestart: yes
+
+  '36':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/36
+    runOnInitRestart: yes
+
+  '37':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/37
+    runOnInitRestart: yes
+
+  '38':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/38
+    runOnInitRestart: yes
+
+  '39':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/39
+    runOnInitRestart: yes
+
+  '40':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/40
+    runOnInitRestart: yes
+
+  '41':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/41
+    runOnInitRestart: yes
+
+  '42':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/42
+    runOnInitRestart: yes
+
+  '43':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/43
+    runOnInitRestart: yes
+
+  '44':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/44
+    runOnInitRestart: yes
+
+  '45':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/45
+    runOnInitRestart: yes
+
+  '46':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/46
+    runOnInitRestart: yes
+
+  '47':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/47
+    runOnInitRestart: yes
+
+  '48':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/48
+    runOnInitRestart: yes
+
+  '49':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/49
+    runOnInitRestart: yes
+
+  '50':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/50
+    runOnInitRestart: yes
+
+  '51':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/51
+    runOnInitRestart: yes
+
+  '52':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/52
+    runOnInitRestart: yes
+
+  '53':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/53
+    runOnInitRestart: yes
+
+  '54':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/54
+    runOnInitRestart: yes
+
+  '55':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/55
+    runOnInitRestart: yes
+
+  '56':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/56
+    runOnInitRestart: yes
+
+  '57':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/57
+    runOnInitRestart: yes
+
+  '58':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/58
+    runOnInitRestart: yes
+
+  '59':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/59
+    runOnInitRestart: yes
+
+  '60':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/60
+    runOnInitRestart: yes
+
+  '61':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/61
+    runOnInitRestart: yes
+
+  '62':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/62
+    runOnInitRestart: yes
+
+  '63':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/63
+    runOnInitRestart: yes
+
+  '64':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/64
+    runOnInitRestart: yes
+
+  '65':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/65
+    runOnInitRestart: yes
+
+  '66':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/66
+    runOnInitRestart: yes
+
+  '67':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/67
+    runOnInitRestart: yes
+
+  '68':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/68
+    runOnInitRestart: yes
+
+  '69':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/69
+    runOnInitRestart: yes
+
+  '70':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/70
+    runOnInitRestart: yes
+
+  '71':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/71
+    runOnInitRestart: yes
+
+  '72':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/72
+    runOnInitRestart: yes
+
+  '73':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/73
+    runOnInitRestart: yes
+
+  '74':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/74
+    runOnInitRestart: yes
+
+  '75':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/75
+    runOnInitRestart: yes
+
+  '76':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/76
+    runOnInitRestart: yes
+
+  '77':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/77
+    runOnInitRestart: yes
+
+  '78':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/78
+    runOnInitRestart: yes
+
+  '79':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/79
+    runOnInitRestart: yes
+
+  '80':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/80
+    runOnInitRestart: yes
+
+  '81':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/81
+    runOnInitRestart: yes
+
+  '82':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/82
+    runOnInitRestart: yes
+
+  '83':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/83
+    runOnInitRestart: yes
+
+  '84':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/84
+    runOnInitRestart: yes
+
+  '85':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/85
+    runOnInitRestart: yes
+
+  '86':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/86
+    runOnInitRestart: yes
+
+  '87':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/87
+    runOnInitRestart: yes
+
+  '88':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/88
+    runOnInitRestart: yes
+
+  '89':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/22.avi
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/89
+    runOnInitRestart: yes
+
+  '1_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/1_sub
+    runOnInitRestart: yes
+
+  '2_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/2_sub
+    runOnInitRestart: yes
+
+  '3_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/3_sub
+    runOnInitRestart: yes
+
+  '4_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/4_sub
+    runOnInitRestart: yes
+
+  '5_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/5_sub
+    runOnInitRestart: yes
+
+  '6_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/6_sub
+    runOnInitRestart: yes
+
+  '7_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/7_sub
+    runOnInitRestart: yes
+
+  '8_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/8_sub
+    runOnInitRestart: yes
+
+  '9_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/9_sub
+    runOnInitRestart: yes
+
+  '10_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/10_sub
+    runOnInitRestart: yes
+
+  '11_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/11_sub
+    runOnInitRestart: yes
+
+  '12_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/12_sub
+    runOnInitRestart: yes
+
+  '13_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/13_sub
+    runOnInitRestart: yes
+
+  '14_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/14_sub
+    runOnInitRestart: yes
+
+  '15_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/15_sub
+    runOnInitRestart: yes
+
+  '16_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/16_sub
+    runOnInitRestart: yes
+
+  '17_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/17_sub
+    runOnInitRestart: yes
+
+  '18_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/18_sub
+    runOnInitRestart: yes
+
+  '19_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/19_sub
+    runOnInitRestart: yes
+
+  '20_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/20_sub
+    runOnInitRestart: yes
+
+  '21_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/21_sub
+    runOnInitRestart: yes
+
+  '22_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/22_sub
+    runOnInitRestart: yes
+
+  '23_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/23_sub
+    runOnInitRestart: yes
+
+  '24_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/24_sub
+    runOnInitRestart: yes
+
+  '25_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/25_sub
+    runOnInitRestart: yes
+
+  '26_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/26_sub
+    runOnInitRestart: yes
+
+  '27_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/27_sub
+    runOnInitRestart: yes
+
+  '28_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/28_sub
+    runOnInitRestart: yes
+
+  '29_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/29_sub
+    runOnInitRestart: yes
+
+  '30_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/30_sub
+    runOnInitRestart: yes
+
+  '31_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/31_sub
+    runOnInitRestart: yes
+
+  '32_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/32_sub
+    runOnInitRestart: yes
+
+  '33_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/33_sub
+    runOnInitRestart: yes
+
+  '34_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/34_sub
+    runOnInitRestart: yes
+
+  '35_sub':
+    runOnInit: >-
+      ffmpeg -stream_loop -1 -re -fflags +genpts
+      -i /home/user/2korng/sub/nep_sub.mp4
+      -c copy
+      -map 0:v
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP_PORT/35_sub
+    runOnInitRestart: yes
+

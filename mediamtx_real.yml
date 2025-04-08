@@ -1,0 +1,1784 @@
+logLevel: info
+rtspAddress: :8554
+
+paths:
+  '1':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/1
+    runOnInitRestart: yes
+    
+  '1_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/1_sub
+    runOnInitRestart: yes
+
+  '2':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/2
+    runOnInitRestart: yes
+
+  '2_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/2_sub
+    runOnInitRestart: yes
+
+  '3':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/3
+    runOnInitRestart: yes
+
+  '3_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/3_sub
+    runOnInitRestart: yes
+
+  '4':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/4
+    runOnInitRestart: yes
+
+  '4_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/4_sub
+    runOnInitRestart: yes
+
+  '5':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/5
+    runOnInitRestart: yes
+
+  '5_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/5_sub
+    runOnInitRestart: yes
+
+  '6':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/6
+    runOnInitRestart: yes
+
+  '6_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/6_sub
+    runOnInitRestart: yes
+
+  '7':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/7
+    runOnInitRestart: yes
+
+  '7_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/7_sub
+    runOnInitRestart: yes
+
+  '8':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/8
+    runOnInitRestart: yes
+
+  '8_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/8_sub
+    runOnInitRestart: yes
+
+  '9':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/9
+    runOnInitRestart: yes
+
+  '9_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/9_sub
+    runOnInitRestart: yes
+
+  '10':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/10
+    runOnInitRestart: yes
+
+  '10_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/10_sub
+    runOnInitRestart: yes
+
+  '11':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/11
+    runOnInitRestart: yes
+
+  '11_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/11_sub
+    runOnInitRestart: yes
+
+  '12':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/12
+    runOnInitRestart: yes
+
+  '12_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/12_sub
+    runOnInitRestart: yes
+
+  '13':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/13
+    runOnInitRestart: yes
+
+  '13_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/13_sub
+    runOnInitRestart: yes
+
+  '14':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/14
+    runOnInitRestart: yes
+
+  '14_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/14_sub
+    runOnInitRestart: yes
+
+  '15':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/15
+    runOnInitRestart: yes
+
+  '15_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/15_sub
+    runOnInitRestart: yes
+
+  '16':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/16
+    runOnInitRestart: yes
+
+  '16_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/16_sub
+    runOnInitRestart: yes
+
+  '17':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/17
+    runOnInitRestart: yes
+
+  '17_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/17_sub
+    runOnInitRestart: yes
+
+  '18':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/18
+    runOnInitRestart: yes
+
+  '18_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/18_sub
+    runOnInitRestart: yes
+
+  '19':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/19
+    runOnInitRestart: yes
+
+  '19_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/19_sub
+    runOnInitRestart: yes
+
+  '20':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/20
+    runOnInitRestart: yes
+
+  '20_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/20_sub
+    runOnInitRestart: yes
+
+  '21':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/21
+    runOnInitRestart: yes
+
+  '21_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/21_sub
+    runOnInitRestart: yes
+
+  '22':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/22
+    runOnInitRestart: yes
+
+  '22_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/22_sub
+    runOnInitRestart: yes
+
+  '23':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/23
+    runOnInitRestart: yes
+
+  '23_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/23_sub
+    runOnInitRestart: yes
+
+  '24':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/24
+    runOnInitRestart: yes
+
+  '24_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/24_sub
+    runOnInitRestart: yes
+
+  '25':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/25
+    runOnInitRestart: yes
+
+  '25_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/25_sub
+    runOnInitRestart: yes
+
+  '26':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/26
+    runOnInitRestart: yes
+
+  '26_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/26_sub
+    runOnInitRestart: yes
+
+  '27':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/27
+    runOnInitRestart: yes
+
+  '27_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/27_sub
+    runOnInitRestart: yes
+
+  '28':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/28
+    runOnInitRestart: yes
+
+  '28_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/28_sub
+    runOnInitRestart: yes
+
+  '29':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/29
+    runOnInitRestart: yes
+
+  '29_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/29_sub
+    runOnInitRestart: yes
+
+  '30':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/30
+    runOnInitRestart: yes
+
+  '30_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/30_sub
+    runOnInitRestart: yes
+
+  '31':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/31
+    runOnInitRestart: yes
+
+  '31_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/31_sub
+    runOnInitRestart: yes
+
+  '32':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/32
+    runOnInitRestart: yes
+
+  '32_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/32_sub
+    runOnInitRestart: yes
+
+  '33':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/33
+    runOnInitRestart: yes
+
+  '33_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/33_sub
+    runOnInitRestart: yes
+
+  '34':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/34
+    runOnInitRestart: yes
+
+  '34_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/34_sub
+    runOnInitRestart: yes
+
+  '35':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/35
+    runOnInitRestart: yes
+
+  '35_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/35_sub
+    runOnInitRestart: yes
+
+  '36':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/36
+    runOnInitRestart: yes
+
+  '36_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/36_sub
+    runOnInitRestart: yes
+
+  '37':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/37
+    runOnInitRestart: yes
+
+  '37_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/37_sub
+    runOnInitRestart: yes
+
+  '38':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/38
+    runOnInitRestart: yes
+
+  '38_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/38_sub
+    runOnInitRestart: yes
+
+  '39':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/39
+    runOnInitRestart: yes
+
+  '39_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/39_sub
+    runOnInitRestart: yes
+
+  '40':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/40
+    runOnInitRestart: yes
+
+  '40_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/40_sub
+    runOnInitRestart: yes
+
+  '41':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/41
+    runOnInitRestart: yes
+
+  '41_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/41_sub
+    runOnInitRestart: yes
+
+  '42':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/42
+    runOnInitRestart: yes
+
+  '42_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/42_sub
+    runOnInitRestart: yes
+
+  '43':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/43
+    runOnInitRestart: yes
+
+  '43_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/43_sub
+    runOnInitRestart: yes
+
+  '44':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/44
+    runOnInitRestart: yes
+
+  '44_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/44_sub
+    runOnInitRestart: yes
+
+  '45':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/45
+    runOnInitRestart: yes
+
+  '45_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/45_sub
+    runOnInitRestart: yes
+
+  '46':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/46
+    runOnInitRestart: yes
+
+  '46_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/46_sub
+    runOnInitRestart: yes
+
+  '47':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/47
+    runOnInitRestart: yes
+
+  '47_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/47_sub
+    runOnInitRestart: yes
+
+  '48':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/48
+    runOnInitRestart: yes
+
+  '48_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/48_sub
+    runOnInitRestart: yes
+
+  '49':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/49
+    runOnInitRestart: yes
+
+  '49_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/49_sub
+    runOnInitRestart: yes
+
+  '50':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/50
+    runOnInitRestart: yes
+
+  '50_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/50_sub
+    runOnInitRestart: yes
+
+  '51':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/51
+    runOnInitRestart: yes
+
+  '51_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/51_sub
+    runOnInitRestart: yes
+
+  '52':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/52
+    runOnInitRestart: yes
+
+  '52_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/52_sub
+    runOnInitRestart: yes
+
+  '53':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/53
+    runOnInitRestart: yes
+
+  '53_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/53_sub
+    runOnInitRestart: yes
+
+  '54':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/54
+    runOnInitRestart: yes
+
+  '54_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/54_sub
+    runOnInitRestart: yes
+
+  '55':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/55
+    runOnInitRestart: yes
+
+  '55_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/55_sub
+    runOnInitRestart: yes
+
+  '56':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/56
+    runOnInitRestart: yes
+
+  '56_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/56_sub
+    runOnInitRestart: yes
+
+  '57':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/57
+    runOnInitRestart: yes
+
+  '57_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/57_sub
+    runOnInitRestart: yes
+
+  '58':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/58
+    runOnInitRestart: yes
+
+  '58_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/58_sub
+    runOnInitRestart: yes
+
+  '59':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/59
+    runOnInitRestart: yes
+
+  '59_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/59_sub
+    runOnInitRestart: yes
+
+  '60':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/60
+    runOnInitRestart: yes
+
+  '60_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/60_sub
+    runOnInitRestart: yes
+
+  '61':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/61
+    runOnInitRestart: yes
+
+  '61_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/61_sub
+    runOnInitRestart: yes
+
+  '62':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/62
+    runOnInitRestart: yes
+
+  '62_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/62_sub
+    runOnInitRestart: yes
+
+  '63':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/63
+    runOnInitRestart: yes
+
+  '63_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/63_sub
+    runOnInitRestart: yes
+
+  '64':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/64
+    runOnInitRestart: yes
+
+  '64_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/64_sub
+    runOnInitRestart: yes
+
+  '65':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/65
+    runOnInitRestart: yes
+
+  '65_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/65_sub
+    runOnInitRestart: yes
+
+  '66':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/66
+    runOnInitRestart: yes
+
+  '66_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/66_sub
+    runOnInitRestart: yes
+
+  '67':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/67
+    runOnInitRestart: yes
+
+  '67_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/67_sub
+    runOnInitRestart: yes
+
+  '68':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/68
+    runOnInitRestart: yes
+
+  '68_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/68_sub
+    runOnInitRestart: yes
+
+  '69':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/69
+    runOnInitRestart: yes
+
+  '69_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/69_sub
+    runOnInitRestart: yes
+
+  '70':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/70
+    runOnInitRestart: yes
+
+  '70_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/70_sub
+    runOnInitRestart: yes
+
+  '71':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/71
+    runOnInitRestart: yes
+
+  '71_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/71_sub
+    runOnInitRestart: yes
+
+  '72':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/72
+    runOnInitRestart: yes
+
+  '72_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/72_sub
+    runOnInitRestart: yes
+
+  '73':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/73
+    runOnInitRestart: yes
+
+  '73_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/73_sub
+    runOnInitRestart: yes
+
+  '74':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/74
+    runOnInitRestart: yes
+
+  '74_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/74_sub
+    runOnInitRestart: yes
+
+  '75':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/75
+    runOnInitRestart: yes
+
+  '75_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/75_sub
+    runOnInitRestart: yes
+
+  '76':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/76
+    runOnInitRestart: yes
+
+  '76_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/76_sub
+    runOnInitRestart: yes
+
+  '77':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/77
+    runOnInitRestart: yes
+
+  '77_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/77_sub
+    runOnInitRestart: yes
+
+  '78':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/78
+    runOnInitRestart: yes
+
+  '78_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/78_sub
+    runOnInitRestart: yes
+
+  '79':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/79
+    runOnInitRestart: yes
+
+  '79_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/79_sub
+    runOnInitRestart: yes
+
+  '80':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/80
+    runOnInitRestart: yes
+
+  '80_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/80_sub
+    runOnInitRestart: yes
+
+  '81':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/81
+    runOnInitRestart: yes
+
+  '81_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/81_sub
+    runOnInitRestart: yes
+
+  '82':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/82
+    runOnInitRestart: yes
+
+  '82_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/82_sub
+    runOnInitRestart: yes
+
+  '83':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/83
+    runOnInitRestart: yes
+
+  '83_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/83_sub
+    runOnInitRestart: yes
+
+  '84':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/84
+    runOnInitRestart: yes
+
+  '84_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/84_sub
+    runOnInitRestart: yes
+
+  '85':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/85
+    runOnInitRestart: yes
+
+  '85_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/85_sub
+    runOnInitRestart: yes
+
+  '86':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/86
+    runOnInitRestart: yes
+
+  '86_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/86_sub
+    runOnInitRestart: yes
+
+  '87':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/87
+    runOnInitRestart: yes
+
+  '87_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/87_sub
+    runOnInitRestart: yes
+
+  '88':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/88
+    runOnInitRestart: yes
+
+  '88_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/88_sub
+    runOnInitRestart: yes
+
+  '89':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/89
+    runOnInitRestart: yes
+
+  '89_sub':
+    runOnInit: >-
+      ffmpeg -re -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -f rtsp
+      -rtsp_transport tcp
+      rtsp://localhost:$RTSP-PORT/89_sub
+    runOnInitRestart: yes
+

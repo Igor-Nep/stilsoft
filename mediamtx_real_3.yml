@@ -1,0 +1,995 @@
+logLevel: info
+rtspAddress: :8554
+protocols: [tcp]
+
+paths:
+  'cam0':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10000/stream
+    runOnInitRestart: yes
+
+  'cam1':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10001/stream
+    runOnInitRestart: yes
+
+  'cam2':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10002/stream
+    runOnInitRestart: yes
+
+  'cam3':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10003/stream
+    runOnInitRestart: yes
+
+  'cam4':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10004/stream
+    runOnInitRestart: yes
+
+  'cam5':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10005/stream
+    runOnInitRestart: yes
+
+  'cam6':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10006/stream
+    runOnInitRestart: yes
+
+  'cam7':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10007/stream
+    runOnInitRestart: yes
+
+  'cam8':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10008/stream
+    runOnInitRestart: yes
+
+  'cam9':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10009/stream
+    runOnInitRestart: yes
+
+  'cam10':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10010/stream
+    runOnInitRestart: yes
+
+  'cam11':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10011/stream
+    runOnInitRestart: yes
+
+  'cam12':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10012/stream
+    runOnInitRestart: yes
+
+  'cam13':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10013/stream
+    runOnInitRestart: yes
+
+  'cam14':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10014/stream
+    runOnInitRestart: yes
+
+  'cam15':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10015/stream
+    runOnInitRestart: yes
+
+  'cam16':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10016/stream
+    runOnInitRestart: yes
+
+  'cam17':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10017/stream
+    runOnInitRestart: yes
+
+  'cam18':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10018/stream
+    runOnInitRestart: yes
+
+  'cam19':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10019/stream
+    runOnInitRestart: yes
+
+  'cam20':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10020/stream
+    runOnInitRestart: yes
+
+  'cam21':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10021/stream
+    runOnInitRestart: yes
+
+  'cam22':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10022/stream
+    runOnInitRestart: yes
+
+  'cam23':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10023/stream
+    runOnInitRestart: yes
+
+  'cam24':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10024/stream
+    runOnInitRestart: yes
+
+  'cam25':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10025/stream
+    runOnInitRestart: yes
+
+  'cam26':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10026/stream
+    runOnInitRestart: yes
+
+  'cam27':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10027/stream
+    runOnInitRestart: yes
+
+  'cam28':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10028/stream
+    runOnInitRestart: yes
+
+  'cam29':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10029/stream
+    runOnInitRestart: yes
+
+  'cam30':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10030/stream
+    runOnInitRestart: yes
+
+  'cam31':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10031/stream
+    runOnInitRestart: yes
+
+  'cam32':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10032/stream
+    runOnInitRestart: yes
+
+  'cam33':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10033/stream
+    runOnInitRestart: yes
+
+  'cam34':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10034/stream
+    runOnInitRestart: yes
+
+  'cam35':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10035/stream
+    runOnInitRestart: yes
+
+  'cam36':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10036/stream
+    runOnInitRestart: yes
+
+  'cam37':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10037/stream
+    runOnInitRestart: yes
+
+  'cam38':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10038/stream
+    runOnInitRestart: yes
+
+  'cam39':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10039/stream
+    runOnInitRestart: yes
+
+  'cam40':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10040/stream
+    runOnInitRestart: yes
+
+  'cam41':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10041/stream
+    runOnInitRestart: yes
+
+  'cam42':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10042/stream
+    runOnInitRestart: yes
+
+  'cam43':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10043/stream
+    runOnInitRestart: yes
+
+  'cam44':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10044/stream
+    runOnInitRestart: yes
+
+  'cam45':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10045/stream
+    runOnInitRestart: yes
+
+  'cam46':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10046/stream
+    runOnInitRestart: yes
+
+  'cam47':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10047/stream
+    runOnInitRestart: yes
+
+  'cam48':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10048/stream
+    runOnInitRestart: yes
+
+  'cam49':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10049/stream
+    runOnInitRestart: yes
+
+  'cam50':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10050/stream
+    runOnInitRestart: yes
+
+  'cam51':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10051/stream
+    runOnInitRestart: yes
+
+  'cam52':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10052/stream
+    runOnInitRestart: yes
+
+  'cam53':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10053/stream
+    runOnInitRestart: yes
+
+  'cam54':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10054/stream
+    runOnInitRestart: yes
+
+  'cam55':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10055/stream
+    runOnInitRestart: yes
+
+  'cam56':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10056/stream
+    runOnInitRestart: yes
+
+  'cam57':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10057/stream
+    runOnInitRestart: yes
+
+  'cam58':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10058/stream
+    runOnInitRestart: yes
+
+  'cam59':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10059/stream
+    runOnInitRestart: yes
+
+  'cam60':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10060/stream
+    runOnInitRestart: yes
+
+  'cam61':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10061/stream
+    runOnInitRestart: yes
+
+  'cam62':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10062/stream
+    runOnInitRestart: yes
+
+  'cam63':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10063/stream
+    runOnInitRestart: yes
+
+  'cam64':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10064/stream
+    runOnInitRestart: yes
+
+  'cam65':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10065/stream
+    runOnInitRestart: yes
+
+  'cam66':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10066/stream
+    runOnInitRestart: yes
+
+  'cam67':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10067/stream
+    runOnInitRestart: yes
+
+  'cam68':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10068/stream
+    runOnInitRestart: yes
+
+  'cam69':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10069/stream
+    runOnInitRestart: yes
+
+  'cam70':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10070/stream
+    runOnInitRestart: yes
+
+  'cam71':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10071/stream
+    runOnInitRestart: yes
+
+  'cam72':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10072/stream
+    runOnInitRestart: yes
+
+  'cam73':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10073/stream
+    runOnInitRestart: yes
+
+  'cam74':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10074/stream
+    runOnInitRestart: yes
+
+  'cam75':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10075/stream
+    runOnInitRestart: yes
+
+  'cam76':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10076/stream
+    runOnInitRestart: yes
+
+  'cam77':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10077/stream
+    runOnInitRestart: yes
+
+  'cam78':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10078/stream
+    runOnInitRestart: yes
+
+  'cam79':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10079/stream
+    runOnInitRestart: yes
+
+  'cam80':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10080/stream
+    runOnInitRestart: yes
+
+  'cam81':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10081/stream
+    runOnInitRestart: yes
+
+  'cam82':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10082/stream
+    runOnInitRestart: yes
+
+  'cam83':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10083/stream
+    runOnInitRestart: yes
+
+  'cam84':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10084/stream
+    runOnInitRestart: yes
+
+  'cam85':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10085/stream
+    runOnInitRestart: yes
+
+  'cam86':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10086/stream
+    runOnInitRestart: yes
+
+  'cam87':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10087/stream
+    runOnInitRestart: yes
+
+  'cam88':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10088/stream
+    runOnInitRestart: yes
+
+  'cam89':
+    runOnInit: >-
+      ffmpeg -rtsp_transport tcp
+      -i rtsp://admin:admin@172.16.16.141:554/stream
+      -c copy
+      -map 0:0
+      -f rtsp
+      -rtsp_transport tcp
+      -stimeout 5000000      -timeout 5000000      -analyzeduration 10000000      -probesize 10000000      rtsp://localhost:10089/stream
+    runOnInitRestart: yes
+
