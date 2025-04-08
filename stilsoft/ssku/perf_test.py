@@ -4,9 +4,9 @@ from time import sleep
 from datetime import datetime
 
 
-timestamp = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
-def docker_logs(host='192.168.202.221', write_time=60, cores=48):
+def docker_logs(host='192.168.202.221', write_time=120, cores=48):
     log_pref = host.strip().split('.')[-1]
     print('make_logs() \033[5;33m[START]\033[0m')
     ssh = paramiko.SSHClient()
@@ -57,7 +57,7 @@ def docker_logs(host='192.168.202.221', write_time=60, cores=48):
                         print(f'collect {service} mem: \033[31m[FAILED]\033[0m')
                         next
             
-            with open(f'D:/work/logs/{log_pref}_DOCKER_LOG.txt', 'a') as file:
+            with open(f'D:/work/logs/{timestamp}_{log_pref}_DOCKER_LOG.txt', 'a') as file:
                     
                 file.write(f'{'='*36}\n')
                 if need_timer:

@@ -27,7 +27,8 @@ class ApiSsku():
             for _ in range(0, len_host):
                 s = host_file.readline()
                 if self.ip not in s:
-                    print('\033[31m[WRONG SERVER IN HOSTS]\033[0m')
+                    print('\033[5;31m[WRONG SERVER IN HOSTS]\033[0m')
+                    sleep(3)
                     exit()
 
     
@@ -565,16 +566,19 @@ class ApiSsku():
                     cam_pref = 1000
                 elif  9<i<100:
                     cam_pref = 100
-                elif  100<i<1000:
+                elif  99<i<1000:
                     cam_pref = 10
-                elif  1000<i<10000:
+                elif  999<i<10000:
                     cam_pref = 1
                 body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"Камера {cam_pref}{i}","zone":null,"settings":'+'{'+f'"ip":"{ip}","login":"admin","password":"admin","path":"","port":{cam_pref}{i},"useMediamtx":true,"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
                 body_ = body = json.loads(body)
                 req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
                 n+=1
                 os.system('cls')
-                print(f'Камера {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')    
+                print(f'Камера {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
+
+
+        #{"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"7747a3a8-a29e-42d1-9455-1cefb50e07ef","title":"proxy_1","zone":null,"settings":{"ip":"192.168.202.61","port":"8554","rtsp":{"login":"","password":"","path":"/proxy_1","sourceTransport":"udp"},"archive":{"mode":"write","maxArchiveSize":"1 GB","archiveLocation":"/archive"}},"subsystem":"video","type":"rtspstream"}            
                   
         else:
             cams = input('Количество камер: ')
@@ -583,11 +587,11 @@ class ApiSsku():
             
                 if i <10:
                     cam_pref = 1000
-                elif  10<i<100:
+                elif  9<i<100:
                     cam_pref = 100
-                elif  100<i<1000:
+                elif  99<i<1000:
                     cam_pref = 10
-                elif  1000<i<10000:
+                elif  999<i<10000:
                     cam_pref = 1                                       
                 #body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"new_cam_suml_{i}","zone":null,"settings":'+'{'+f'"ip":"192.168.201.126","login":"admin","password":"admin","path":"/onvif/device_service","port":1000{i},"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
                 body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"Камера {cam_pref}{i}","zone":null,"settings":'+'{'+f'"ip":"{ip}","login":"admin","password":"admin","path":"","port":{cam_pref}{i},"useMediamtx":true,"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"'+'}'+',"subsystem":"video","type":"sdp858i"'+'}'
@@ -597,7 +601,7 @@ class ApiSsku():
                 print(f'Камера {cam_pref}{i} {i+1}/{cams}> [{req}]')
 
 
-    def mode_archive(self,mode):
+    def mode_archive(self,mode,value):
         self.refresh_token()
         warnings.filterwarnings('ignore')
         os.system('cls')
@@ -605,7 +609,7 @@ class ApiSsku():
         for i in range(self.get_module_count()):
              module_list.append(self.get_module_id(i))
         for id in module_list:
-            body={"settings":{"archive": {"mode": mode}}}
+            body={"settings":{"archive": {mode: value, "mode": "write"}}}
             requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
             os.system('cls')
             print(f'{module_list.index(id)+1} / {len(module_list)}')
