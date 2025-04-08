@@ -26,3 +26,7 @@ with open('D:/work/WHPython/mediamtx_i_nep.yml', 'w') as file:
         file.write(f'      rtsp://localhost:$RTSP_PORT/{i}_sub\n')
         file.write('    runOnInitRestart: yes\n')
         file.write('\n')
+    file.write('protocols: [tcp]\n')
+    file.write('readTimeout: "60s"\n')
+    file.write('writeTimeout: "60s"\n')
+    file.write('readBufferCount: 1024\n')
