@@ -6,13 +6,13 @@ from datetime import datetime
 
 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
-def docker_logs(host='192.168.202.221', write_time=120, cores=48):
+def docker_logs(host='192.168.202.221', write_time=720, cores=48):
     log_pref = host.strip().split('.')[-1]
-    print('make_logs() \033[5;33m[START]\033[0m')
+    print('docker_logs() \033[5;33m[START]\033[0m')
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(host, port=22, username='user', password='stilsoft')
-    print(f'Подключено к {host}\nmake docker stats logs: ',end='')
+    print(f'Подключено к {host}\nproducing docker stats logs: ',end='')
     sleep(0.5)
     ssh.exec_command(f'docker stats > /home/user/Desktop/docker.txt')
     sleep(write_time)
@@ -38,7 +38,9 @@ def docker_logs(host='192.168.202.221', write_time=120, cores=48):
                 if service in item:
                     try:
                         cpu = item.strip().split()[2]
-                        cpu_list.append(float(cpu.replace('%',''))/cores)
+                        float_cpu = (float(cpu.replace('%',''))/cores)
+                        if isinstance(float_cpu, float):
+                            cpu_list.append(float_cpu)
                     except:
                         print(f'collect {service} cpu: \033[31m[FAILED]\033[0m')
                         next    
@@ -48,11 +50,13 @@ def docker_logs(host='192.168.202.221', write_time=120, cores=48):
                         char_del = 'TtGgMmKkBib'
                         for i in char_del:
                             mem = mem.replace(i,'')
-                        mem_list.append(float(mem))
-                        mem_liter = item.strip().split()[3]
-                        num_del = '1234567890.,'
-                        for i in num_del:
-                            mem_liter = mem_liter.replace(i, '')
+                        float_mem = (float(mem))
+                        if isinstance(float_mem, float): 
+                            mem_list.append(float_mem)
+                            mem_liter = item.strip().split()[3]
+                            num_del = '1234567890.,'
+                            for i in num_del:
+                                mem_liter = mem_liter.replace(i, '')
                     except:
                         print(f'collect {service} mem: \033[31m[FAILED]\033[0m')
                         next
@@ -100,3 +104,4 @@ def nethogs_logs(host='192.168.202.221', write_time=60, cores=48):
     #   if 'TOTAL':
 
 docker_logs()
+

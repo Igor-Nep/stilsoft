@@ -550,6 +550,7 @@ class ApiSsku():
          for i in range(self.get_module_count()):
             item = resp.json()['data'][i]['id']
             requests.put(self.url+f'/api/data/system/module/{item}', headers=self.token, json=body, verify=False)
+
                  
          
 
@@ -604,7 +605,7 @@ class ApiSsku():
     def mode_archive(self,mode,value):
         self.refresh_token()
         warnings.filterwarnings('ignore')
-        os.system('cls')
+        
         module_list = []
         for i in range(self.get_module_count()):
              module_list.append(self.get_module_id(i))
@@ -612,7 +613,7 @@ class ApiSsku():
             body={"settings":{"archive": {mode: value, "mode": "write"}}}
             requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
             os.system('cls')
-            print(f'{module_list.index(id)+1} / {len(module_list)}')
+            print(f'{mode} {value}: {module_list.index(id)+1} / {len(module_list)}')
 
 
     def mode_settings(self,key,value):
