@@ -3,5 +3,17 @@
         "Lesson8"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+
+    "python.terminal.activateEnvironment": true,
+    "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "args": ["-NoExit", "-Command", "& '${workspaceFolder}\\venv\\Scripts\\Activate.ps1'"]
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell"
 }

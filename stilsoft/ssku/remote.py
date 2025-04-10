@@ -840,19 +840,14 @@ class Remote:
             for item in file:
                 try:
                     finded = item.strip().split()[2]
-                    percent = float(item.strip().split()[5].replace('%',''))
-                    print(percent)
+                    percent = float(item.strip().split()[3].replace('%',''))
                     if isinstance(percent, float):
                         percent_list.append(percent)
                     param_1_prechar = item.strip().split()[13]
-                    print(param_1_prechar)
                     param_2_prechar = item.strip().split()[17]
-                    print(param_1_prechar)
 
                     param_1 = item.strip().split()[11]
-                    print('param1 ', param_1)
                     param_1_value = float(item.strip().split()[12])
-                    print(param_1_value)
                     if isinstance(param_1_value, float):
                         if str(param_1_prechar) == 'Mbps':
                             param_1_value = param_1_value * 1000
@@ -864,12 +859,12 @@ class Remote:
                     if isinstance(param_2_value, float):
                         if str(param_2_prechar) == 'Mbps':
                             param_2_value = param_2_value * 1000
-                        param_2_list.append(param_2_value)    
+                        param_2_list.append(param_2_value)   
 
                 
                 except:
                     print(f'collect {param}: \033[31m[FAILED]\033[0m')
-                    next 
+                    continue
 
 
             max_param_1 = round(max(param_1_list),2)
@@ -880,6 +875,7 @@ class Remote:
                 param_1_max_char = 'Kbps'  
 
             max_param_2 = round(max(param_2_list),2)
+            print('max_param_2', max_param_2)
             if max_param_2 > 9999:
                 max_param_2 = max_param_2 / 1000
                 param_2_max_char = 'Mbps'

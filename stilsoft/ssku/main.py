@@ -10,7 +10,7 @@ import requests, warnings
 #Remote('192.168.202.221').docker_restart('archive-manager')
 
 #Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
-#Remote('192.168.202.221').atop_logs(write_time=10, param='md126')
+Remote('192.168.202.221').atop_logs(write_time=10, param='bond0')
 #Remote('192.168.202.221').atop_logs(write_time=60, param='eth1')
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 #ApiSsku('192.168.202.221').change_ip('10.207.0.4')
@@ -25,7 +25,7 @@ import requests, warnings
 #reset_archived_modules()
 #DbSsku('192.168.202.10').change_password('armdo1','armdo1')
 #Remote('192.168.207.68').push_pack('sdp858i')
-Remote('192.168.202.9').push_lib('libsdp858i')
+#Remote('192.168.202.9').push_lib('libsdp858i')
 #Remote('192.168.202.10').check_versions_by_manifest('ssku')
 #Remote('192.168.202.10').check_versions_by_logs('ssku')
 #Remote('192.168.202.161').change_versions('ssku')
