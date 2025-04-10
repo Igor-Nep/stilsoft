@@ -30,10 +30,16 @@ class Remote:
         self.video_partner = {"192.168.202.10":"192.168.202.9",
                               "192.168.207.68":"192.168.206.69"
                               }
-         
+        
+        self.GREEN = '\033[32m'
+        self.RED = '\033[31m'
+        self.YELLOW = '\033[33m'
+        self.GREY = '\033[90m'
+        self.NON = '\033[0m'
+
+
     def config(self, param):
         return self.configurate[self.ip][param]
-
 
     def push_lib(self, lib_name):
         import paramiko 
@@ -512,19 +518,21 @@ class Remote:
         status = stdout.read().decode()    
         #print(status) 
         print(stdout.read())
-        print('\033[90mdocker_restart() \033[32m[DONE]\033[0m') 
+        print(f'{self.GREY}docker_restart {self.GREEN}[DONE]{self.NON}') 
 
 
-    def docker_logs(self, write_time=60, cores=48):
+    def docker_logs(self, write_time=60, cores=48, prefix='FS_WRITE_CONCURRENCY'):
+        from color import color
         from statistics import median
         import paramiko, os
         from time import sleep
         from datetime import datetime
         log_pref = str(self.ip).strip().split('.')[-1]
-        print('\033[90mdocker_logs() \033[5;\033[33m[START]\033[0m')
+        print(f'{color.grey("docker_logs ")} {color.yellow("[START]")}')
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        postfix = input(f'{prefix}=')
         print(f'Подключено к {self.ip}\nwrite docker stats logs > ',end='')
         sleep(0.5)
         ssh.exec_command(f'docker stats > /home/user/Desktop/docker.txt')
@@ -556,7 +564,7 @@ class Remote:
                             if isinstance(float_cpu, float):
                                 cpu_list.append(float_cpu)
                         except:
-                            print(f'collect {service} cpu: \033[31m[FAILED]\033[0m')
+                            print(f'collect {service} cpu: {self.RED}[FAILED]{self.NON}')
                             next    
                  
                         try:
@@ -572,70 +580,71 @@ class Remote:
                                 for i in num_del:
                                     mem_liter = mem_liter.replace(i, '')
                         except:
-                            print(f'collect {service} mem: \033[31m[FAILED]\033[0m')
+                            print(f'collect {service} mem: {color.red("[FAILED]")}')
                             next
             
                 with open(f'D:/work/logs/{timestamp}_{log_pref}_DOCKER_LOG.txt', 'a') as file:
                     
                     file.write(f'{'='*37}\n')
+
                     if need_timer:
                         file.write(f'*{timestamp} {self.ip}*\n')
+                        file.write(f'{prefix}={postfix}')
                     file.write(f'{service}\n')    
                     file.write(f'{' '*12}CPU (%){' '*8}MEM\n')
                     try:
                         file.write(f'ПИКОВОЕ      {round(max(cpu_list),2)}    |    {round(max(mem_list),2)} {mem_liter}\n')
                     except:
-                        print(service, 'max ERR')
                         file.write('ПИКОВОЕ - ОШИБКА\n')
                         next    
                     try:                     
                         file.write(f'МЕДИАННОЕ    {round(median(cpu_list),2)}    |    {round(median(mem_list),2)} {mem_liter}\n')
                     except:
-                        print(service, 'median ERR')
                         file.write('МЕДИАННОЕ - ОШИБКА\n')                    
                     try:
                         file.write(f'МИНИМАЛЬНОЕ   {round(min(cpu_list), 2)}    |    {round(min(mem_list), 2)} {mem_liter}\n')
                     except:    
-                        print(service, 'min ERR')
                         file.write('МИНИМАЛЬНОЕ - ОШИБКА\n')
                         next
 
                     print(f'\n{'='*37}\n')
                     if need_timer:
                         print(f'*{timestamp} {self.ip}*\n')
-                    print(f'{service}\n')    
+                        print(f'{prefix}={postfix}')
+                    print(f'{service}\n')
+                     
                     print(f'{' '*12}CPU (%){' '*8}MEM\n')
                     try:
                         print(f'ПИКОВОЕ      {round(max(cpu_list),2)}    |    {round(max(mem_list),2)} {mem_liter}\n')
                     except:                        
-                        print('ПИКОВОЕ - ОШИБКА\n')
+                        print(f'ПИКОВОЕ - {color.red('ОШИБКА')}\n')
                         next    
                     try:                     
                         print(f'МЕДИАННОЕ    {round(median(cpu_list),2)}    |    {round(median(mem_list),2)} {mem_liter}\n')
                     except:                   
-                        print('МЕДИАННОЕ - ОШИБКА\n')                    
+                        print(f'МЕДИАННОЕ - {color.red('ОШИБКА')}\n')                   
                     try:
                         print(f'МИНИМАЛЬНОЕ   {round(min(cpu_list), 2)}    |    {round(min(mem_list), 2)} {mem_liter}\n')
                     except:       
-                        print('МИНИМАЛЬНОЕ - ОШИБКА\n')
+                        print(f'МИНИМАЛЬНОЕ - {color.red('ОШИБКА')}\n')
                         next                           
                     need_timer = False      
         os.remove(f'D:/work/logs/{log_pref}_docker.txt')
-        print('\033[90mdocker_logs() \033[32m[DONE]\033[0m') 
+        print(f'{color.grey('docker_logs')} {color.green('[DONE]')}') 
 
 
 
-    def atop_logs(self, write_time=15, param='eth0'):
+    def atop_net_logs(self, write_time=15, param='eth0'):
         from statistics import median
         import paramiko, os
         from time import sleep
-        from datetime import datetime        
+        from datetime import datetime 
         log_pref = str(self.ip).strip().split('.')[-1]
-        print('\033[90matop_logs() \033[5;33m[START]\033[0m')
+        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[5;33m[START]\033[0m')
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print(f'подключено к {self.ip}\nwrite atop logs > ',end='')
+        print(f'write atop logs  > ',end='')
         sleep(0.5)
         stdin, stdout, stderr = ssh.exec_command('which atop')
         installed = stdout.read().decode().strip()
@@ -784,4 +793,175 @@ class Remote:
                     next                       
                 need_timer = False      
         os.remove(f'D:/work/logs/{log_pref}_atop.txt')
-        print('\033[90matop_logs() \033[32m[DONE]\033[0m')
+        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[32m[DONE]\033[0m')
+
+
+    def atop_logs(self, write_time=15, param='md126'):
+        from statistics import median
+        import paramiko, os
+        from time import sleep
+        from datetime import datetime 
+        log_pref = str(self.ip).strip().split('.')[-1]
+        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[5;33m[START]\033[0m')
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print(f'write atop logs  > ',end='')
+        sleep(0.5)
+        stdin, stdout, stderr = ssh.exec_command('which atop')
+        installed = stdout.read().decode().strip()
+        if not installed:
+            print(f'\033[31m[atop НЕ УСТАНОВЛЕН]\033[0m на {self.ip}')
+            sleep(1)
+            exit()
+
+        ssh.exec_command(f'atop -w /home/user/atop.txt 1 {write_time}')
+        sleep(write_time+1)
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
+        sleep(1)
+        print('[done]')
+        sftp_client = ssh.open_sftp()
+        sftp_client.get('/home/user/log.txt', f'D:/work/logs/{log_pref}_atop.txt')  
+        sleep(1)
+        print('clear temp files > ', end='')
+        sftp_client.remove('/home/user/atop.txt')
+        sftp_client.remove('/home/user/log.txt') 
+        sftp_client.close()
+        ssh.close()
+        print('[done]')
+
+        need_timer = True
+        with open(f'D:/work/logs/{log_pref}_atop.txt','r') as file:
+            percent_list = []
+            param_1_list = []
+            param_2_list = []
+
+            for item in file:
+                try:
+                    finded = item.strip().split()[2]
+                    percent = float(item.strip().split()[5].replace('%',''))
+                    print(percent)
+                    if isinstance(percent, float):
+                        percent_list.append(percent)
+                    param_1_prechar = item.strip().split()[13]
+                    print(param_1_prechar)
+                    param_2_prechar = item.strip().split()[17]
+                    print(param_1_prechar)
+
+                    param_1 = item.strip().split()[11]
+                    print('param1 ', param_1)
+                    param_1_value = float(item.strip().split()[12])
+                    print(param_1_value)
+                    if isinstance(param_1_value, float):
+                        if str(param_1_prechar) == 'Mbps':
+                            param_1_value = param_1_value * 1000
+                        param_1_list.append(param_1_value)
+
+
+                    param_2 = item.strip().split()[15]
+                    param_2_value = float(item.strip().split()[16])
+                    if isinstance(param_2_value, float):
+                        if str(param_2_prechar) == 'Mbps':
+                            param_2_value = param_2_value * 1000
+                        param_2_list.append(param_2_value)    
+
+                
+                except:
+                    print(f'collect {param}: \033[31m[FAILED]\033[0m')
+                    next 
+
+
+            max_param_1 = round(max(param_1_list),2)
+            if max_param_1 > 9999:
+                max_param_1 = max_param_1 / 1000
+                param_1_max_char = 'Mbps'
+            else:  
+                param_1_max_char = 'Kbps'  
+
+            max_param_2 = round(max(param_2_list),2)
+            if max_param_2 > 9999:
+                max_param_2 = max_param_2 / 1000
+                param_2_max_char = 'Mbps'
+            else:  
+                param_2_max_char = 'Kbps'                     
+
+
+            median_param_1 = round(median(param_1_list),2)
+            if median_param_1 > 9999:
+                median_param_1 = median_param_1 / 1000
+                param_1_med_char = 'Mbps'
+            else:  
+                param_1_med_char = 'Kbps'                 
+            
+            median_param_2 = round(median(param_2_list),2)
+            if median_param_2 > 9999:
+                median_param_2 = median_param_2 / 1000
+                param_2_med_char = 'Mbps'
+            else:  
+                param_2_med_char = 'Kbps'                
+
+
+            min_param_1 = round(min(param_1_list),2)
+            if min_param_1 > 9999:
+                min_param_1 = min_param_1 / 1000
+                param_1_min_char = 'Mbps'
+            else:  
+                param_1_min_char = 'Kbps'                
+            
+            min_param_2 = round(min(param_2_list),2)
+            if min_param_2 > 9999:
+                min_param_2 = min_param_2 / 1000
+                param_2_min_char = 'Mbps'
+            else:  
+                param_2_min_char = 'Kbps'
+                
+
+            with open(f'D:/work/logs/{timestamp}_{log_pref}_ATOP_LOG.txt', 'a') as file:
+                    
+                file.write(f'{'='*36}\n')
+                if need_timer:
+                    file.write(f'*{timestamp} {self.ip}*\n')
+                file.write(f'{finded}\n')    
+                
+                try:
+                    file.write(f'ПИКОВОЕ      {round(max(percent_list),2)}% | {param_1}: {max_param_1} {param_1_max_char}   | {param_2}: {max_param_2} {param_2_max_char} \n')
+                except:
+                    file.write('ПИКОВОЕ - ОШИБКА\n')
+                    next    
+                try:                                                                    
+                    file.write(f'МЕДИАННОЕ    {round(median(percent_list),2)}% | {param_1}: {median_param_1} {param_1_med_char}   | {param_2}: {median_param_2} {param_2_med_char} \n')
+                except:
+                    file.write('МЕДИАННОЕ - ОШИБКА\n')                    
+                try:                                           
+                    file.write(f'МИНИМАЛЬНОЕ   {round(min(percent_list),2)}% | {param_1}: {min_param_1} {param_1_min_char}   | {param_2}: {min_param_2} {param_2_min_char} \n')
+                except:    
+                    file.write('МИНИМАЛЬНОЕ - ОШИБКА\n')
+                    next
+                print(f'\n{'='*36}\n')
+                if need_timer:
+                    print(f'*{timestamp} {self.ip}*\n')
+                print(f'{finded}\n')    
+                
+                try:                                              
+                    print(f'ПИКОВОЕ      {round(max(percent_list),2)}% | {param_1}: {max_param_1} {param_1_max_char}   | {param_2}: {max_param_2} {param_2_max_char} \n')
+                except:
+                    print('ПИКОВОЕ - ОШИБКА\n')
+                    next    
+                try:                                        
+                    print(f'МЕДИАННОЕ    {round(median(percent_list),2)}% | {param_1}: {median_param_1} {param_1_med_char}   | {param_2}: { median_param_2} {param_2_med_char} \n')
+                except:
+                    print('МЕДИАННОЕ - ОШИБКА\n')
+                    next
+                try:                   
+                    print(f'МИНИМАЛЬНОЕ   {round(min(percent_list),2)}% | {param_1}: {min_param_1} {param_1_min_char}   | {param_2}: {min_param_2} {param_2_min_char} \n')
+                except:    
+                    print('МИНИМАЛЬНОЕ - ОШИБКА\n')
+                    next                       
+                need_timer = False      
+        os.remove(f'D:/work/logs/{log_pref}_atop.txt')
+        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[32m[DONE]\033[0m')
+
+
+
+
