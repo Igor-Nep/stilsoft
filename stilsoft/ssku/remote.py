@@ -798,16 +798,21 @@ class Remote:
 
     def atop_logs(self, write_time=15, param='md126'):
         from statistics import median
-        import paramiko, os
+        import paramiko, os, sys
         from time import sleep
         from datetime import datetime 
         from color import color
+        def cls():
+            sys.stdout.write('\r' + ' ' * 100 + '\r')
+            sys.stdout.flush()
         log_pref = str(self.ip).strip().split('.')[-1]
-        print(f'{color.grey('atop_logs')} [{self.ip}] [{param}] [{write_time} sec] {color.yellow('[START]')}')
+        cls()
+        sys.stdout.write(f'{color.grey('atop_logs')} [{self.ip}] [{param}] [{write_time} sec] {color.yellow('[START]')}\r')
+        sys.stdout.flush()
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print(f'write atop logs  > ',end='')
+        #print(f'write atop logs  > ',end='')
         sleep(0.5)
         stdin, stdout, stderr = ssh.exec_command('which atop')
         installed = stdout.read().decode().strip()
@@ -817,30 +822,47 @@ class Remote:
             exit()
 
         ssh.exec_command(f'atop -w /home/user/atop.txt 1 {write_time}')
-        sleep(write_time+1)
+        
+        for timer in range(write_time, -1, -1):
+            cls()
+            sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{timer} sec] {color.yellow('[RUNNING]')}\r")
+            sys.stdout.flush()
+            sleep(1)
+        sleep(1)
+        #sleep(write_time+1)
+        cls()
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.yellow('[COPY LOGS]')}\r")
+        sys.stdout.flush()
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
         sleep(1)
-        print('[done]')
+        cls()
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.green('[COPY LOGS]')}\r")
+        sys.stdout.flush()
         sftp_client = ssh.open_sftp()
         sftp_client.get('/home/user/log.txt', f'D:/work/logs/{log_pref}_atop.txt')  
         sleep(1)
-        print('clear temp files > ', end='')
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.yellow('[CLEAR TMP]')}\r")
+        sys.stdout.flush()
         sftp_client.remove('/home/user/atop.txt')
         sftp_client.remove('/home/user/log.txt') 
         sftp_client.close()
         ssh.close()
-        print('[done]')
+        cls()
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.green('[CLEAR TMP]')}\r")
+        sys.stdout.flush()
 
         need_timer = True
         with open(f'D:/work/logs/{log_pref}_atop.txt','r') as file:
             percent_list = []
             param_1_list = []
             param_2_list = []
-
+            need_find = True
             for item in file:
                 try:
-                    finded = item.strip().split()[2]
+                    if need_find:
+                        finded = item.strip().split()[2]
+                        need_find = False
                     percent = float(item.strip().split()[3].replace('%',''))
                     if isinstance(percent, float):
                         percent_list.append(percent)
@@ -864,7 +886,9 @@ class Remote:
 
                 
                 except:
-                    print(f'collect {param}: \033[31m[FAILED]\033[0m')
+                    cls()
+                    sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.red(f'[COLLECT {param}: FAILED]')}\r")
+                    sys.stdout.flush()
                     continue
 
 
@@ -934,6 +958,10 @@ class Remote:
                 except:    
                     file.write('МИНИМАЛЬНОЕ - ОШИБКА\n')
                     next
+                cls()
+                sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.green('[DONE]')}\r")
+                sys.stdout.flush()
+                    
                 print(f'\n{'='*36}\n')
                 if need_timer:
                     print(f'*{timestamp} {self.ip}*\n')
@@ -956,7 +984,7 @@ class Remote:
                     next                       
                 need_timer = False      
         os.remove(f'D:/work/logs/{log_pref}_atop.txt')
-        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[32m[DONE]\033[0m')
+
 
 
 

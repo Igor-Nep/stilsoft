@@ -11,8 +11,8 @@ import requests, warnings
 
 #Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
 Remote('192.168.202.221').atop_logs(write_time=10, param='bond0')
-Remote('192.168.202.221').atop_logs(write_time=10, param='eth0')
-Remote('192.168.202.221').atop_logs(write_time=10, param='eth1')
+#Remote('192.168.202.221').atop_logs(write_time=10, param='eth0')
+#Remote('192.168.202.221').atop_logs(write_time=10, param='eth1')
 
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 #ApiSsku('192.168.202.221').change_ip('10.207.0.4')
