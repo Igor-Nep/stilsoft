@@ -801,8 +801,9 @@ class Remote:
         import paramiko, os
         from time import sleep
         from datetime import datetime 
+        from color import color
         log_pref = str(self.ip).strip().split('.')[-1]
-        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[5;33m[START]\033[0m')
+        print(f'{color.grey('atop_logs')} [{self.ip}] [{param}] [{write_time} sec] {color.yellow('[START]')}')
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
@@ -875,7 +876,6 @@ class Remote:
                 param_1_max_char = 'Kbps'  
 
             max_param_2 = round(max(param_2_list),2)
-            print('max_param_2', max_param_2)
             if max_param_2 > 9999:
                 max_param_2 = max_param_2 / 1000
                 param_2_max_char = 'Mbps'

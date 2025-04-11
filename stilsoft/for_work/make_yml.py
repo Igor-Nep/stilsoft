@@ -1,9 +1,9 @@
-with open('D:/work/WHPython/mediamtx_i_nep.yml', 'w') as file:
+with open('D:/work/WHPython/mediamtx_96_nep.yml', 'w') as file:
     file.write('logLevel: info\n')
     file.write('rtspAddress: :8554\n')
     file.write('\n')
     file.write('paths:\n')
-    for i in range(1,90):
+    for i in range(1,96):
         file.write(f"  '{i}':\n")
         file.write('    runOnInit: >-\n')
         file.write('      ffmpeg -stream_loop -1 -re -fflags +genpts\n')
