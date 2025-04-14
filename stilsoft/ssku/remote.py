@@ -807,7 +807,7 @@ class Remote:
             sys.stdout.flush()
         log_pref = str(self.ip).strip().split('.')[-1]
         cls()
-        sys.stdout.write(f'{color.grey('atop_logs')} [{self.ip}] [{param}] [{write_time} sec] {color.yellow('[START]')}\r')
+        sys.stdout.write(f'{color.grey(' atop_logs')} [{self.ip}] [{param}] [{write_time} sec] {color.yellow('[START]')}\r')
         sys.stdout.flush()
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -825,31 +825,31 @@ class Remote:
         
         for timer in range(write_time, -1, -1):
             cls()
-            sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{timer} sec] {color.yellow('[RUNNING]')}\r")
+            sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{timer} sec] {color.yellow('[RECORDING LOGS]')}\r")
             sys.stdout.flush()
             sleep(1)
         sleep(1)
         #sleep(write_time+1)
         cls()
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.yellow('[COPY LOGS]')}\r")
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.yellow('[PROSESSING LOGS]')}\r")
         sys.stdout.flush()
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
         sleep(1)
         cls()
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.green('[COPY LOGS]')}\r")
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[PROCESSING LOGS]')}\r")
         sys.stdout.flush()
         sftp_client = ssh.open_sftp()
         sftp_client.get('/home/user/log.txt', f'D:/work/logs/{log_pref}_atop.txt')  
         sleep(1)
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.yellow('[CLEAR TMP]')}\r")
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.yellow('[CLEAR TMP]')}\r")
         sys.stdout.flush()
         sftp_client.remove('/home/user/atop.txt')
         sftp_client.remove('/home/user/log.txt') 
         sftp_client.close()
         ssh.close()
         cls()
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.green('[CLEAR TMP]')}\r")
+        sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[CLEAR TMP]')}\r")
         sys.stdout.flush()
 
         need_timer = True
@@ -887,7 +887,7 @@ class Remote:
                 
                 except:
                     cls()
-                    sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.red(f'[COLLECT {param}: FAILED]')}\r")
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red(f'[COLLECT {param}: FAILED]')}\r")
                     sys.stdout.flush()
                     continue
 
@@ -948,23 +948,32 @@ class Remote:
                     file.write(f'ПИКОВОЕ      {round(max(percent_list),2)}% | {param_1}: {max_param_1} {param_1_max_char}   | {param_2}: {max_param_2} {param_2_max_char} \n')
                 except:
                     file.write('ПИКОВОЕ - ОШИБКА\n')
+                    cls()
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red('[ERROR IN MAX]')}\n")
+                    sys.stdout.flush()
                     next    
                 try:                                                                    
                     file.write(f'МЕДИАННОЕ    {round(median(percent_list),2)}% | {param_1}: {median_param_1} {param_1_med_char}   | {param_2}: {median_param_2} {param_2_med_char} \n')
                 except:
-                    file.write('МЕДИАННОЕ - ОШИБКА\n')                    
+                    file.write('МЕДИАННОЕ - ОШИБКА\n')
+                    cls()
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red('[ERROR IN MEDIAN]')}\n")
+                    sys.stdout.flush()                    
                 try:                                           
                     file.write(f'МИНИМАЛЬНОЕ   {round(min(percent_list),2)}% | {param_1}: {min_param_1} {param_1_min_char}   | {param_2}: {min_param_2} {param_2_min_char} \n')
                 except:    
                     file.write('МИНИМАЛЬНОЕ - ОШИБКА\n')
+                    cls()
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red('[ERROR IN MIN]')}\n")
+                    sys.stdout.flush() 
                     next
                 cls()
-                sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [0 sec] {color.green('[DONE]')}\r")
+                sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[DONE]')}\n")
                 sys.stdout.flush()
                     
-                print(f'\n{'='*36}\n')
+                
                 if need_timer:
-                    print(f'*{timestamp} {self.ip}*\n')
+                    print(f'\n{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n')
                 print(f'{finded}\n')    
                 
                 try:                                              
@@ -977,12 +986,14 @@ class Remote:
                 except:
                     print('МЕДИАННОЕ - ОШИБКА\n')
                     next
-                try:                   
-                    print(f'МИНИМАЛЬНОЕ   {round(min(percent_list),2)}% | {param_1}: {min_param_1} {param_1_min_char}   | {param_2}: {min_param_2} {param_2_min_char} \n')
+                try:
+                    decorline = f'МИНИМАЛЬНОЕ   {round(min(percent_list),2)}% | {param_1}: {min_param_1} {param_1_min_char}   | {param_2}: {min_param_2} {param_2_min_char} \n'                   
+                    print(decorline)
                 except:    
                     print('МИНИМАЛЬНОЕ - ОШИБКА\n')
                     next                       
-                need_timer = False      
+                need_timer = False
+                print(color.grey(f'\n{'='*int(len(decorline))}\n'))
         os.remove(f'D:/work/logs/{log_pref}_atop.txt')
 
 

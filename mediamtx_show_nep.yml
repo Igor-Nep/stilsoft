@@ -5,7 +5,7 @@ paths:
   '1':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/35.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -16,7 +16,7 @@ paths:
   '1_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/35_sub.mp4
       -c copy
       -map 0:v
       -f rtsp
@@ -27,7 +27,7 @@ paths:
   '2':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/for_view_01.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -38,7 +38,7 @@ paths:
   '2_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/for_view_01.mp4
       -c copy
       -map 0:v
       -f rtsp
@@ -49,7 +49,7 @@ paths:
   '3':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/for_view_02.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -60,7 +60,7 @@ paths:
   '3_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/for_view_02.mp4
       -c copy
       -map 0:v
       -f rtsp
@@ -71,7 +71,7 @@ paths:
   '4':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/for_view_03.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -82,7 +82,7 @@ paths:
   '4_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/for_view_03.mp4
       -c copy
       -map 0:v
       -f rtsp
@@ -93,7 +93,7 @@ paths:
   '5':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/for_view_04.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -104,7 +104,7 @@ paths:
   '5_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/for_view_04.mp4
       -c copy
       -map 0:v
       -f rtsp
@@ -115,7 +115,7 @@ paths:
   '6':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/for_view_05.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -126,7 +126,7 @@ paths:
   '6_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/for_view_05.mp4
       -c copy
       -map 0:v
       -f rtsp
@@ -137,7 +137,7 @@ paths:
   '7':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/22.avi
+      -i /home/user/2korng/for_view_06.avi
       -c copy
       -map 0:v
       -f rtsp
@@ -148,7 +148,7 @@ paths:
   '7_sub':
     runOnInit: >-
       ffmpeg -stream_loop -1 -re -fflags +genpts
-      -i /home/user/2korng/sub/nep_sub.mp4
+      -i /home/user/2korng/sub/for_view_06.mp4
       -c copy
       -map 0:v
       -f rtsp
