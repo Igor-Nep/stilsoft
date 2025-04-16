@@ -22,13 +22,13 @@ class Remote:
         "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
         "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
-        "192.168.206.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
+        "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
         "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False}
         }
 
         self.video_partner = {"192.168.202.10":"192.168.202.9",
-                              "192.168.207.68":"192.168.206.69"
+                              "192.168.207.68":"192.168.207.69"
                               }
         
         self.GREEN = '\033[32m'
@@ -195,7 +195,7 @@ class Remote:
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
         else:
             print('project - murom')
-            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
         if self.ip in self.video_partner.keys():
             server_indicator = 'on app_server:    '
         elif self.ip in self.video_partner.values():
@@ -304,7 +304,159 @@ class Remote:
                     not_finded_services.append(item)
             print(f'not finded services: {not_finded_services}')
 
+    def check_versions_by_file(self, project):
+        from color import color
+        import paramiko, json 
+        from time import sleep
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print('> init check versions by docker-compose')
+        print(f'connected {self.ip}')
+        finded_services = []
+        log_pref = str(self.ip).strip().split('.')[-1]
+        if project == 'ssku':
+            print('project - ssku')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+        else:
+            print('project - murom')
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
+        if self.ip in self.video_partner.keys():
+            server_indicator = 'on app_server:    '
+        elif self.ip in self.video_partner.values():
+            server_indicator = 'on video-server:  '
+        else:
+            server_indicator = ''
+
+        try:
+            print('open sftp \r')
+            sftp_client = ssh.open_sftp()
+            print(color.green('[DONE]'))
+        except:
+            print(color.red('can not open sftp'))
+            next
+        try:
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
+            sftp_client.close()  
+        except:
+            print(color.red('can not get docker file'))
+            next
+
+        try:
+            print('chech modules versions \r')
+            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
+                module_list = json.load(file)
+                name_index = 0
+                module_keys_list = list(module_list.keys())
+                
+
+                for k,v in module_list.items():
+                    module_name = module_keys_list[name_index]
+                    try:
+                       outer = self.cat(f'{self.config('back_dir')}{self.config('registry_dir')}/origin', 'package.json')
+                    except:
+                       print(color.red('can not open package.json'))
+                       next
+                    try:  
+                       mod_serv = json.loads(outer)['version'][module_name]
+                       if v == mod_serv:
+                           print(f'{server_indicator}{module_name}'+' '*(24-len(module_name))+f'{color.grey(v)} {color.green(f'{mod_serv}')}')
+                       else:
+                           print(f'{server_indicator}{module_name}'+' '*(24-len(module_name))+f'{color.grey(v)} {color.red(mod_serv)}')
+                    except:
+                        print(color.red(f'can not get module {server_indicator} version'))
+                        next        
+                    name_index+=1
+            print(f'{color.green('[DONE]')}')
+        except:
+            pass
+
+        try:
+            print('chech services versions \r')
+            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
+                service_list = json.load(file)
+                name_index = 0
+                service_keys_list = list(service_list.keys())     
+                for k,v in service_list.items():
+                    service_name = service_keys_list[name_index]
+                    try:
+                        with open(f'D:/work/logs/{log_pref}_docker.txt', 'r') as file:
+                            outer = file.read()
+                        for line in outer.split('\n'):
+                                #print(line)
+                                #print('finding image of service ')
+                                if 'image:' in line and service_name in line:
+                                    item = line.split(':')
+                                    docker_service_version = item[-1]
+                                    if v == docker_service_version:
+                                        print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
+                                    else:
+                                        print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                else:
+                                    pass
+
+                    except:
+                        print('can not open docker file')
+                        next
+                    name_index+=1
+            if self.ip not in self.video_partner.keys():
+                print(color.green('[DONE]'))          
+                #print(f'not finded services: {not_finded_services}')    
+        except:
+            print('error with open sevice_list'+'_'*30)
+            next
+        ssh.close()
+        if self.ip in self.video_partner.keys():
+            server_indicator = 'on video-server:  '
+            try:    
+                ip = self.video_partner[self.ip]
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                sftp_client = ssh.open_sftp()
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
+                sftp_client.close()
+                
+            
+            except:
+                print('can not connect to video server')
+                next
+            try:
+                with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
+                    service_list = json.load(file)
+                    name_index = 0
+                    service_keys_list = list(service_list.keys())     
+                    for k,v in service_list.items():
+                        service_name = service_keys_list[name_index]
+                        try:
+                            with open(f'D:/work/logs/{log_pref}_docker.txt', 'r') as file:
+                                outer = file.read()
+                            for line in outer.split('\n'):
+                                    #print(line)
+                                    #print('finding image of service ')
+                                    if 'image:' in line and service_name in line:
+                                        item = line.split(':')
+                                        docker_service_version = item[-1]
+                                        finded_services.append(service_name)
+                                        if v == docker_service_version:
+                                            print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
+                                        else:
+                                            print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                    else:
+                                        pass
+
+                        except:
+                            #print('can not open docker file')
+                            next
+                        name_index+=1
+            except:
+                print('can not open service_list')
+
+            print(color.green('[DONE]'))                      
+
+
     def check_versions_by_logs(self, project):
+        from color import color
         import paramiko, json 
         from time import sleep
         ssh = paramiko.SSHClient()
@@ -320,7 +472,8 @@ class Remote:
         else:
             print('project - murom')
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
-
+        ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose restart')
+        sleep(10)
         try:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
@@ -332,6 +485,7 @@ class Remote:
                         #outer = self.cat(self.back[self.ip], 'docker-compose.yml')
                         #outer = stdout.read().decode()
                         print(service_keys_list[name_index])
+                        #stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose logs --tail 10000 | grep sdp858i | grep started | grep {v}')
                         stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose logs --tail 10000 {service_keys_list[name_index]} | grep started | grep {v}')
                         outer = stdout.read().decode()
 
@@ -521,23 +675,37 @@ class Remote:
         print(f'{self.GREY}docker_restart {self.GREEN}[DONE]{self.NON}') 
 
 
-    def docker_logs(self, write_time=60, cores=48, prefix='FS_WRITE_CONCURRENCY'):
+    def docker_logs(self, write_time=60, cores=48):
         from color import color
         from statistics import median
-        import paramiko, os
+        import paramiko, os, sys
         from time import sleep
         from datetime import datetime
+        def cls():
+            sys.stdout.write('\r' + ' ' * 100 + '\r')
+            sys.stdout.flush()        
         log_pref = str(self.ip).strip().split('.')[-1]
-        print(f'{color.grey("docker_logs ")} {color.yellow("[START]")}')
+        #postfix = input(f'POSTFIX{prefix}= ')        
+        cls()
+        sys.stdout.write(f'{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{write_time} sec] {color.yellow('[START]')}\r')
+        sys.stdout.flush()
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        postfix = input(f'{prefix}=')
-        print(f'Подключено к {self.ip}\nwrite docker stats logs > ',end='')
+        #print(f'Подключено к {self.ip}\nwrite docker stats logs > ',end='')
         sleep(0.5)
         ssh.exec_command(f'docker stats > /home/user/Desktop/docker.txt')
-        sleep(write_time)
+        for timer in range(write_time, -1, -1):
+            cls()
+            sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{timer} sec] {color.yellow('[RECORDING LOGS]')}\r")
+            sys.stdout.flush()
+            sleep(1)
+        sleep(1)        
+        #sleep(write_time)
         ssh.exec_command("\x03")
+        cls()
+        sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] {color.yellow('[PROSESSING LOGS]')}\r")
+        sys.stdout.flush()        
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         sftp_client = ssh.open_sftp()
         sftp_client.get('/home/user/Desktop/docker.txt', f'D:/work/logs/{log_pref}_docker.txt')
@@ -582,14 +750,16 @@ class Remote:
                         except:
                             print(f'collect {service} mem: {color.red("[FAILED]")}')
                             next
-            
+                cls()
+                sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] {color.yellow('[PROSESSING LOGS]')}\r")
+                sys.stdout.flush()
                 with open(f'D:/work/logs/{timestamp}_{log_pref}_DOCKER_LOG.txt', 'a') as file:
                     
                     file.write(f'{'='*37}\n')
 
                     if need_timer:
-                        file.write(f'*{timestamp} {self.ip}*\n')
-                        file.write(f'{prefix}={postfix}')
+                        file.write(f'{timestamp} {self.ip}\n')
+                        #file.write(f'{prefix}={postfix}')
                     file.write(f'{service}\n')    
                     file.write(f'{' '*12}CPU (%){' '*8}MEM\n')
                     try:
@@ -606,11 +776,17 @@ class Remote:
                     except:    
                         file.write('МИНИМАЛЬНОЕ - ОШИБКА\n')
                         next
-
-                    print(f'\n{'='*37}\n')
+                        
                     if need_timer:
-                        print(f'*{timestamp} {self.ip}*\n')
-                        print(f'{prefix}={postfix}')
+                        cls()
+                        sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] {color.green('[DONE]')}\n")
+                        sys.stdout.flush()
+                        print('\n')
+                        print(f'{timestamp} {self.ip}\n')
+                        #print(f'{prefix}={postfix}')
+                    else:
+                        cls()
+                        sys.stdout.flush()    
                     print(f'{service}\n')
                      
                     print(f'{' '*12}CPU (%){' '*8}MEM\n')
@@ -628,9 +804,10 @@ class Remote:
                     except:       
                         print(f'МИНИМАЛЬНОЕ - {color.red('ОШИБКА')}\n')
                         next                           
-                    need_timer = False      
+                    need_timer = False
+                    print(f'\n{'='*37}\n')   
         os.remove(f'D:/work/logs/{log_pref}_docker.txt')
-        print(f'{color.grey('docker_logs')} {color.green('[DONE]')}') 
+
 
 
 
@@ -817,7 +994,9 @@ class Remote:
         stdin, stdout, stderr = ssh.exec_command('which atop')
         installed = stdout.read().decode().strip()
         if not installed:
-            print(f'\033[31m[atop НЕ УСТАНОВЛЕН]\033[0m на {self.ip}')
+            cls()
+            sys.stdout.write(f'{color.grey('atop')} {color.red('[НЕ УСТАНОВЛЕН]')} на {self.ip}')
+            sys.stdout.flush()
             sleep(1)
             exit()
 

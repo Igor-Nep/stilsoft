@@ -82,13 +82,13 @@ def check_log_docker(cores = 48):
             
             if 'archive-manager' in item:
                 try:
-                    list_archive_cpu.append(float(item[45:55].strip().replace('%',''))/cores)
+                    list_archive_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                 except:
                     print('collect arcive_cpu: FAILED')
                     next    
                  
                 try:
-                    list_archive_mem.append(float(item[56:64].strip().replace('G','').replace('M','')))
+                    list_archive_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                     archive_mem_liter = item[62:64]
                     change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                     for i in change_list:
@@ -99,13 +99,13 @@ def check_log_docker(cores = 48):
 
             elif 'node-manager' in item:
                 try:
-                    list_node_cpu.append(float(item[45:55].strip().replace('%',''))/cores)
+                    list_node_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                 except:
                     print('collect node_cpu: FAILED')
                     next    
                  
                 try:
-                    list_node_mem.append(float(item[56:64].strip().replace('G','').replace('M','')))
+                    list_node_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                     node_mem_liter = item[62:64]
                     change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                     for i in change_list:
@@ -117,12 +117,12 @@ def check_log_docker(cores = 48):
                              
             elif 'media-server' in item:
                 try:
-                    list_media_cpu.append(float(item[43:55].strip().replace('%',''))/cores)
+                    list_media_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                 except:
                     #print('collect media_cpu: FAILED')
                     next    
                 try:
-                    list_media_mem.append(float(item[58:64].strip().replace('G','').replace('M','')))
+                    list_media_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                     media_mem_liter = item[62:64]
                     change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                     for i in change_list:
@@ -134,12 +134,12 @@ def check_log_docker(cores = 48):
 
             elif 'webrtc' in item:
                 try:
-                    list_webrtc_cpu.append(float(item[43:55].strip().replace('%',''))/cores)
+                    list_webrtc_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                 except:
                     #print('collect webrtc_cpu: FAILED')
                     next    
                 try:
-                    list_webrtc_mem.append(float(item[58:64].strip().replace('G','').replace('M','').replace('i','')))
+                    list_webrtc_mem.append(float(item[48:64].strip().replace('G','').replace('M','').replace('i','')))
                     webrtc_mem_liter = item[62:64]
                     change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                     for i in change_list:
@@ -150,12 +150,12 @@ def check_log_docker(cores = 48):
 
             elif 'signalling-server' in item:
                     try:
-                        list_signal_cpu.append(float(item[43:55].strip().replace('%',''))/cores)
+                        list_signal_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                     except:
                         #print('collect signal_cpu: FAILED')
                         next    
                     try:
-                        list_signal_mem.append(float(item[58:64].strip().replace('G','').replace('M','')))
+                        list_signal_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                         signal_mem_liter = item[62:64]
                         change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                         for i in change_list:
@@ -166,12 +166,12 @@ def check_log_docker(cores = 48):
 
             elif 'detector-api' in item: 
                     try:
-                        list_detector_cpu.append(float(item[43:55].strip().replace('%',''))/cores)
+                        list_detector_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                     except:
                         #print('collect detector_cpu: FAILED')
                         next    
                     try:
-                        list_detector_mem.append(float(item[58:64].strip().replace('G','').replace('M','')))
+                        list_detector_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                         detector_mem_liter = item[62:64]
                         change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                         for i in change_list:
@@ -182,12 +182,12 @@ def check_log_docker(cores = 48):
                 
             elif 'autoheal-service' in item: 
                     try:
-                        list_autoheal_cpu.append(float(item[43:55].strip().replace('%',''))/cores)
+                        list_autoheal_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                     except:
                         #print('collect autoheal_cpu: FAILED')
                         next    
                     try:
-                        list_autoheal_mem.append(float(item[58:64].strip().replace('G','').replace('M','')))
+                        list_autoheal_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                         autoheal_mem_liter = item[62:64]
                         change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                         for i in change_list:
@@ -198,12 +198,12 @@ def check_log_docker(cores = 48):
 
             elif 'cadvisor' in item:
                     try:
-                        list_cadvisor_cpu.append(float(item[43:55].strip().replace('%',''))/cores)
+                        list_cadvisor_cpu.append(float(item[38:45].strip().replace('%',''))/cores)
                     except:
                         #print('collect cadvisor_cpu: FAILED')
                         next    
                     try:
-                        list_cadvisor_mem.append(float(item[58:64].strip().replace('G','').replace('M','')))
+                        list_cadvisor_mem.append(float(item[48:64].strip().replace('G','').replace('M','')))
                         cadvisor_mem_liter = item[62:64]
                         change_list = ['1','2','3','4','5','6','7','8','9','0','i','B','.',',']
                         for i in change_list:
@@ -681,6 +681,6 @@ def only_docker_log():
 
 
 make_logs()
-common_log()
+#common_log()
 only_docker_log()
 print()
