@@ -45,9 +45,11 @@ class DbSsku:
     def write_not_archived_modules(self, file):
         from datetime import datetime
         rows = self.get_not_archived_modules()
-        with open(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{file}', 'w') as file:
+        with open(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\{file}', 'w') as file:
             for i in range(len(rows)):
                 file.write(str(rows[i]['id'])+'\n')
+        with open(f'D:\work\WHPython\stilsoft\ssku\deleted_modules\list_data_files.txt', 'a') as file:
+            file.write(f'{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")} - {file}\n')
 
 
     def print_not_archived_modules(self):

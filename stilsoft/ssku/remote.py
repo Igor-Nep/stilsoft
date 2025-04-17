@@ -40,7 +40,29 @@ class Remote:
 
     def config(self, param):
         return self.configurate[self.ip][param]
+    
+    def cls(self):
+        import sys
+        sys.stdout.write('\r' + ' ' * 100 + '\r')
+        sys.stdout.flush()        
+        log_pref = str(self.ip).strip().split('.')[-1]
 
+    def terminal(self,paint,text):
+        import sys
+        from color import color
+        self.cls()
+        if paint == 'yellow':
+            sys.stdout.write(color.yellow(f'{text}'))
+        elif paint == 'green':
+            sys.stdout.write(color.green(f'{text}'))
+        elif paint == 'red':
+            sys.stdout.write(color.red(f'{text}'))
+        elif paint == 'grey':
+            sys.stdout.write(color.grey(f'{text}'))
+        elif paint == 'non':
+            sys.stdout.write(color.non(f'{text}'))
+        sys.stdout.flush() 
+    
     def push_lib(self, lib_name):
         import paramiko 
         from time import sleep
@@ -166,7 +188,7 @@ class Remote:
         stdin, stdout, stderr = ssh.exec_command(f'cd {directory}; cat {file}')
         return stdout.read().decode()
 
-    def terminal(self, param):
+    def terminal_command(self, param):
         import paramiko
         from time import sleep
         ssh = paramiko.SSHClient()
@@ -306,7 +328,7 @@ class Remote:
 
     def check_versions_by_file(self, project):
         from color import color
-        import paramiko, json 
+        import paramiko, json, sys
         from time import sleep
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -329,9 +351,7 @@ class Remote:
             server_indicator = ''
 
         try:
-            print('open sftp \r')
             sftp_client = ssh.open_sftp()
-            print(color.green('[DONE]'))
         except:
             print(color.red('can not open sftp'))
             next
@@ -343,7 +363,7 @@ class Remote:
             next
 
         try:
-            print('chech modules versions \r')
+            print(color.yellow('check modules versions \r'))
             with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
                 module_list = json.load(file)
                 name_index = 0
@@ -367,12 +387,12 @@ class Remote:
                         print(color.red(f'can not get module {server_indicator} version'))
                         next        
                     name_index+=1
-            print(f'{color.green('[DONE]')}')
+            self.terminal('green','[DONE] \n')
         except:
             pass
 
         try:
-            print('chech services versions \r')
+            print(color.yellow('check services versions \r'))
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
                 name_index = 0
@@ -557,26 +577,41 @@ class Remote:
 
 
     def change_versions(self, project):
-        import paramiko, json, fnmatch
+        from color import color
+        import paramiko, json, sys
         from time import sleep
-        #ssh = paramiko.SSHClient()
-        #ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        #ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        #client = ssh.open_sftp()
-        print('> init change versions by manifest')
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        print('> init check versions by docker-compose')
         print(f'connected {self.ip}')
+        finded_services = []
+        log_pref = str(self.ip).strip().split('.')[-1]
         if project == 'ssku':
             print('project - ssku')
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
         else:
             print('project - murom')
-            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
+            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
         if self.ip in self.video_partner.keys():
             server_indicator = 'on app_server:    '
         elif self.ip in self.video_partner.values():
             server_indicator = 'on video-server:  '
         else:
-            server_indicator = '' 
+            server_indicator = ''
+
+        try:
+            sftp_client = ssh.open_sftp()
+        except:
+            print(color.red('can not open sftp'))
+            next
+        try:
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
+            sftp_client.close()  
+        except:
+            print(color.red('can not get docker file'))
+            next 
+##        
         try:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)

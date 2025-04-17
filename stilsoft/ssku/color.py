@@ -14,3 +14,6 @@ class color:
 
     def grey(text):
         return f'\033[90m{text}\033[0m'
+    
+    def non(text):
+        return f'\033[0m{text}\033[0m'
