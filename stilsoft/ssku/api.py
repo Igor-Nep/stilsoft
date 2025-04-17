@@ -337,7 +337,7 @@ class ApiSsku():
             os.system('cls')
             for i in range (0, self.get_module_count()):
                 print(f"{i} {self.get_modules()['data'][i]['title']}"+f" тип камеры: {self.get_modules()['data'][i]['type']}")
-            e_codes = [1310,1311,3310,1356,1357,3357,1358,3358,1359,3359,1350,3350,1750,3750,1751,3751,3401,1401,1351,1325,3325,3352,3353,1352,1934,4934,1930,1931,1932,1933,1916,3916,1917,1918,1919,3919,1312,1313,1760,1314,3314,1740,1761,3760,3761,1130,3129,1137,3137,1302,3302,1305,1901,1902,1903,1904,1905,1906,1138,1824,1825,3825,1826,3826,3390,1390,1391,3392,1392,1393,1920,1921,1922,1923,1924,1925,3925,1926,1960,1961,1962,1963,1964,3429,3965,1429,1965,1966,1967,1968,1969,1970,1971,1972,1973,1980,3980,1981,1982,1983,1984,1985,1990,1991,1992,1993,1141,1142,1134,1131,1122,3124,1124,1125,1126,1127,1128,3141,3142,3134,3130,3131,3122,1770,1780,1129,1143,1144]
+            e_codes = [0000,1851]
                 
             d = int(input(f'Введите номер устройства из списка: '))
             device = (self.get_module(d)['id'])
@@ -614,6 +614,15 @@ class ApiSsku():
             requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
             os.system('cls')
             print(f'{mode} {value}: {module_list.index(id)+1} / {len(module_list)}')
+
+    def mode_archive_by_name(self,mode,value,name):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        id = self.get_module_by_name(name)
+        body={"settings":{"archive": {mode: value, "mode": "write"}}}
+        resp = requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
+        os.system('cls')
+        print(f'{resp}')
 
 
     def mode_settings(self,key,value):
