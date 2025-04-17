@@ -1,0 +1,7 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","99","Получение списка модулей","stilsoft","Mon Oct 07 14:07:19 MSK 2024","broken","Mon Oct 07 14:07:19 MSK 2024","MuromTest","test_murom_allure","",""
+"","1695","Невозможность авторизации при невалидных данных","stilsoft","Mon Oct 07 14:07:19 MSK 2024","passed","Mon Oct 07 14:07:21 MSK 2024","MuromTest","test_murom_allure","",""
+"","80","Авторизация оператора с валидными данными","stilsoft","Mon Oct 07 14:07:21 MSK 2024","broken","Mon Oct 07 14:07:21 MSK 2024","MuromTest","test_murom_allure","",""
+"","69","Тест стейта поворотного устройства","stilsoft","Mon Oct 07 14:07:19 MSK 2024","broken","Mon Oct 07 14:07:19 MSK 2024","MuromTest","test_murom_allure","",""
+"","78","Невозможность авторизации администратора при невалидном пароле","stilsoft","Mon Oct 07 14:07:21 MSK 2024","passed","Mon Oct 07 14:07:21 MSK 2024","MuromTest","test_murom_allure","",""
+"","66","Авторизация администратора с валидными данными","stilsoft","Mon Oct 07 14:07:19 MSK 2024","failed","Mon Oct 07 14:07:19 MSK 2024","MuromTest","test_murom_allure","",""

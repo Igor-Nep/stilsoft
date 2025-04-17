@@ -1,0 +1,1 @@
+cd %%BACK_DIR%%; curl -s -X PUT http://10.201.0.1:8090/api/registry/packages/origin -H 'Content-Type: application/json' -d "{\"name\": \"%%MODULE_NAME%%\"}"

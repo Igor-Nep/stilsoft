@@ -9,7 +9,7 @@ import requests, warnings
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
 #Remote('192.168.202.221').docker_restart('archive-manager')
 
-#Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
+Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
 Remote('192.168.202.221').atop_logs(write_time=10, param='bond0')
 #Remote('192.168.202.221').atop_logs(write_time=10, param='eth0')
 #Remote('192.168.202.221').atop_logs(write_time=10, param='eth1')

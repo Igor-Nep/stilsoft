@@ -1,0 +1,7 @@
+{
+    "data": "",
+    "eventCode": "%%EVENT_CODE%%",
+    "source": "%%SOURCE%%",
+    "timestamp": "%%TIMESTAMP%%",
+    "user": "%%USER%%"
+  }

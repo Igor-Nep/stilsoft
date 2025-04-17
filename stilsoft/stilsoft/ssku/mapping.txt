@@ -1,0 +1,6 @@
+warnings.filterwarnings('ignore')
+url='https://gate.synerget.ru:8179'
+body = {'eventCode': 3550, 'isImportant': True}
+
+resp = requests.post(url+'/api/events/mapping', headers=ApiSsku().get_token(), json = body, verify=False)
+print(resp.json())

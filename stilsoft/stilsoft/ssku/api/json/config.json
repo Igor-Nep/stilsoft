@@ -1,0 +1,15 @@
+{
+    "ip": "10.207.0.4",
+    "path": "",
+    "port": 10002,
+    "login": "admin",
+    "onvif": {
+      "login": "admin",
+      "password": "admin"
+    },
+    "password": "admin",
+    "useMediamtx": false,
+    "maxArchiveSize": "1 GB",
+    "archiveLocation": "/archive",
+    "sourceTransport": "udp"
+  }

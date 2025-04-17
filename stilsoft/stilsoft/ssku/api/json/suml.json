@@ -1,0 +1,1 @@
+{"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"%%NODE%%","title":"%%TITLE%%","zone":null,"settings":{"ip":"%%IP%%","login":"admin","password":"admin","path":"","port":9999,"maxArchiveSize":"1 GB","archiveLocation":"/archive","sourceTransport":"udp"},"subsystem":"video","type":"%%TYPE%%"}
