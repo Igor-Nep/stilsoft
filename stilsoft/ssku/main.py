@@ -4,7 +4,7 @@ from postman import Postman
 from remote import Remote
 import requests, warnings
 
-'''Камеры на vs90'''
+'''камеры на vs90'''
 #DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_221_04_17_1')
 #ApiSsku('192.168.202.221').add_suml('192.168.202.201',0,89)
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
@@ -17,10 +17,9 @@ import requests, warnings
 #Remote('192.168.202.221').atop_logs(write_time=20, param='eth0')
 #Remote('192.168.202.221').atop_logs(write_time=20, param='eth1')
 
-'''Сверка версий'''
+'''сверка версий'''
 #Remote('192.168.207.68').check_versions_by_file('ssku')
-
-Remote('192.168.202.10').change_versions('ssku')
+Remote('192.168.207.68').change_versions('ssku')
 
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 #ApiSsku('192.168.202.221').change_ip('10.207.0.4')
