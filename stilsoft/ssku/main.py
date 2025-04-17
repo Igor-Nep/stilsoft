@@ -18,8 +18,12 @@ import requests, warnings
 #Remote('192.168.202.221').atop_logs(write_time=20, param='eth1')
 
 '''сверка версий'''
-#Remote('192.168.207.68').check_versions_by_file('ssku')
-Remote('192.168.207.68').change_versions('ssku')
+Remote('192.168.202.10').check_versions_by_file('ssku')
+Remote('192.168.202.10').change_versions('ssku')
+
+'''обновление модулей'''
+#Remote('192.168.207.68').push_pack('sdp858i')
+#Remote('192.168.207.69').push_lib('libsdp858i')
 
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 #ApiSsku('192.168.202.221').change_ip('10.207.0.4')
@@ -33,8 +37,7 @@ Remote('192.168.207.68').change_versions('ssku')
 #archived_all_modules()
 #reset_archived_modules()
 #DbSsku('192.168.202.10').change_password('armdo1','armdo1')
-#Remote('192.168.207.68').push_pack('sdp858i')
-#Remote('192.168.207.69').push_lib('libsdp858i')
+
 #Remote('192.168.202.10').check_versions_by_manifest('ssku')
 #Remote('192.168.207.68').check_versions_by_logs('ssku')
 

@@ -381,9 +381,9 @@ class Remote:
                     try:  
                        mod_serv = json.loads(outer)['version'][module_name]
                        if v == mod_serv:
-                           print(f'{server_indicator}{module_name}'+' '*(24-len(module_name))+f'{color.grey(v)} {color.green(f'{mod_serv}')}')
+                           print(f'{server_indicator}{module_name}'+' '*(32-len(module_name))+f'{color.grey(v)} {color.green(f'{mod_serv}')}')
                        else:
-                           print(f'{server_indicator}{module_name}'+' '*(24-len(module_name))+f'{color.grey(v)} {color.red(mod_serv)}')
+                           print(f'{server_indicator}{module_name}'+' '*(32-len(module_name))+f'{color.grey(v)} {color.red(mod_serv)}')
                     except:
                         print(color.red(f'can not get module {server_indicator} version'))
                         next        
@@ -406,13 +406,13 @@ class Remote:
                         for line in outer.split('\n'):
                                 #print(line)
                                 #print('finding image of service ')
-                                if 'image:' in line and f'{service_name}:' in line:
+                                if 'image:' in line and f'{service_name}:' in line and '#' not in line:
                                     item = line.split(':')
                                     docker_service_version = item[-1]
                                     if v == docker_service_version:
-                                        print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
+                                        print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
                                     else:
-                                        print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                        print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
                                 else:
                                     pass
 
@@ -455,14 +455,14 @@ class Remote:
                             for line in outer.split('\n'):
                                     #print(line)
                                     #print('finding image of service ')
-                                    if 'image:' in line and f'{service_name}:' in line:
+                                    if 'image:' in line and f'{service_name}:' in line and '#' not in line:
                                         item = line.split(':')
                                         docker_service_version = item[-1]
                                         finded_services.append(service_name)
                                         if v == docker_service_version:
-                                            print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
+                                            print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
                                         else:
-                                            print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                            print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
 
                                     
 
@@ -581,6 +581,7 @@ class Remote:
         from color import color
         import paramiko, json, sys
         from time import sleep
+        from datetime import datetime
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
@@ -606,6 +607,9 @@ class Remote:
 
         try:
             sftp_client = ssh.open_sftp()
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{timestamp}_backup_{log_pref}_docker-compose.yml')
+            sleep(1)
             sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker-compose.yml')
             sleep(1)
             with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
@@ -623,7 +627,10 @@ class Remote:
                         print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}')
                         docker_lines[i] = line.replace(current_version, new_version)
                         changes = True
-                    break
+                        if service_name == 'api-gateway':
+                            continue
+                        else:
+                            break
 
         if changes:
             try:
