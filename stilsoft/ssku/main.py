@@ -4,16 +4,23 @@ from postman import Postman
 from remote import Remote
 import requests, warnings
 
+'''Камеры на vs90'''
 #DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_221_04_17_1')
 #ApiSsku('192.168.202.221').add_suml('192.168.202.201',0,89)
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
 #ApiSsku('192.168.202.10').mode_archive_by_name(mode="splitInterval",value="1m",name="213-шка")
 #Remote('192.168.202.221').docker_restart('archive-manager')
 
-#Remote('192.168.202.221').docker_logs(write_time=10,cores=48)
-#Remote('192.168.202.221').atop_logs(write_time=10, param='bond0')
-#Remote('192.168.207.68').atop_logs(write_time=30, param='eth0')
-#Remote('192.168.207.68').atop_logs(write_time=30, param='eth1')
+'''нагрузка atop и docker stats'''
+#Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
+#Remote('192.168.202.221').atop_logs(write_time=20, param='bond0')
+#Remote('192.168.202.221').atop_logs(write_time=20, param='eth0')
+#Remote('192.168.202.221').atop_logs(write_time=20, param='eth1')
+
+'''Сверка версий'''
+#Remote('192.168.207.68').check_versions_by_file('ssku')
+
+Remote('192.168.202.10').change_versions('ssku')
 
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 #ApiSsku('192.168.202.221').change_ip('10.207.0.4')
@@ -31,9 +38,8 @@ import requests, warnings
 #Remote('192.168.207.69').push_lib('libsdp858i')
 #Remote('192.168.202.10').check_versions_by_manifest('ssku')
 #Remote('192.168.207.68').check_versions_by_logs('ssku')
-#Remote('192.168.202.161').change_versions('ssku')
+
 #Remote('192.168.207.68').check_versions('ssku')
-Remote('192.168.207.68').check_versions_by_file('ssku')
 #ApiSsku('192.168.202.10').needed_notifications()
 #Remote('192.168.202.221').docker_chech()
 #Postman().get('/api/data/system/module')

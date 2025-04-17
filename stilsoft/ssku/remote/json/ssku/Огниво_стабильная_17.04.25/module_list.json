@@ -1,0 +1,10 @@
+{
+    "scud": "1.2.16", 
+    "ksbo": "1.0.23",   
+    "sdp850": "1.2.1",
+    "sdp858i": "1.2.9",
+    "onvifcamera": "1.1.13",
+    "rtspstream": "0.17.0",
+    "uv_dms":"0.1.0",
+    "objectdetector":"1.4.3"
+}

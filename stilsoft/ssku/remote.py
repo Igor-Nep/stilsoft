@@ -336,6 +336,7 @@ class Remote:
         print('> init check versions by docker-compose')
         print(f'connected {self.ip}')
         finded_services = []
+        not_finded_services = []
         log_pref = str(self.ip).strip().split('.')[-1]
         if project == 'ssku':
             print('project - ssku')
@@ -361,7 +362,7 @@ class Remote:
         except:
             print(color.red('can not get docker file'))
             next
-
+        print(self.ip)
         try:
             print(color.yellow('check modules versions \r'))
             with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
@@ -405,7 +406,7 @@ class Remote:
                         for line in outer.split('\n'):
                                 #print(line)
                                 #print('finding image of service ')
-                                if 'image:' in line and service_name in line:
+                                if 'image:' in line and f'{service_name}:' in line:
                                     item = line.split(':')
                                     docker_service_version = item[-1]
                                     if v == docker_service_version:
@@ -454,7 +455,7 @@ class Remote:
                             for line in outer.split('\n'):
                                     #print(line)
                                     #print('finding image of service ')
-                                    if 'image:' in line and service_name in line:
+                                    if 'image:' in line and f'{service_name}:' in line:
                                         item = line.split(':')
                                         docker_service_version = item[-1]
                                         finded_services.append(service_name)
@@ -462,8 +463,8 @@ class Remote:
                                             print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
                                         else:
                                             print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
-                                    else:
-                                        pass
+
+                                    
 
                         except:
                             #print('can not open docker file')
@@ -583,16 +584,12 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print('> init check versions by docker-compose')
+        print('> init changeversions > ')
         print(f'connected {self.ip}')
-        finded_services = []
+        
         log_pref = str(self.ip).strip().split('.')[-1]
-        if project == 'ssku':
-            print('project - ssku')
-            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
-        else:
-            print('project - murom')
-            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
+        json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
+
         if self.ip in self.video_partner.keys():
             server_indicator = 'on app_server:    '
         elif self.ip in self.video_partner.values():
@@ -601,52 +598,43 @@ class Remote:
             server_indicator = ''
 
         try:
-            sftp_client = ssh.open_sftp()
-        except:
-            print(color.red('can not open sftp'))
-            next
-        try:
-            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
-            sftp_client.close()  
-        except:
-            print(color.red('can not get docker file'))
-            next 
-##        
-        try:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
-                name_index = 0
-                service_keys_list = list(service_list.keys())
+        except Exception as err:
+            print(f'open service_list.json error: {color.grey(err)}')
+            return
 
-                for k,v in service_list.items():
-                    service_name = service_keys_list[name_index]
-                    try:
-                        with open('D:\work\docker-compose.yml','r',encoding='utf-8') as docker:
-                            old_docker = docker.read()
-                            print('old_docker: '+old_docker)
-                            service_name = service_keys_list[name_index]
+        try:
+            sftp_client = ssh.open_sftp()
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker-compose.yml')
+            sleep(1)
+            with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+                docker_lines = file.readlines()
+        except Exception as err:
+            print(f'open docker-compose.yml error: {color.grey(err)}')
+            return
 
-                            for line in old_docker.split('\n'):
-                                word_1 = line.find('image:')
-                                word_2 = line.find(service_name)
-                                if word_1 != -1 and word_2 != -1:
-                                    item = line.split(':')
-                                    docker_service_version = item[-1]
-                                    print('docker version '+docker_service_version)
-                                    print('list version '+v)
-                                    new_docker = old_docker.replace(docker_service_version, v)
-                                    try:
-                                        with open('D:\work\docker-compose.yml','w',encoding='utf-8') as docker_change:
-                                            docker_change.write(new_docker)
-                                            print('new_docker: '+new_docker)
-                                    except:
-                                        print('can not write docker-compose.yml')
-                    except:
-                        print('fail')
-                        next       
-                   
-        except:
-            next         
+        changes = False
+        for service_name, new_version in service_list.items():
+            for i, line in enumerate(docker_lines):
+                if f'{service_name}:' in line and 'image:' in line:
+                    current_version = line.split(':')[-1].strip()
+                    if current_version != new_version:
+                        print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}')
+                        docker_lines[i] = line.replace(current_version, new_version)
+                        changes = True
+                    break
+
+        if changes:
+            try:
+                with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
+                    file.writelines(docker_lines)
+                print(color.green('[DONE]'))
+            except Exception as err:
+                print(f'writing docker-compose.yml error: {color.red(err)}')
+        else:
+            print(color.yellow('docker-compose is up to date'))  
+      
 
 
     def docker_chech(self):
