@@ -17,7 +17,7 @@
     "prometheus-discovery": "0.2.7",
     "rabbitmq": "rabbitmq-3.11.0-management",
     "postgres-images": "postgres-16",
-    "gate-client":"5.0.73",
+    "gate-client": "5.0.73",
     "mediamtx-webrtc-debug-client": "1.0.0",
     "hls-web-debug": "1.0.0",
     "mediamtx-server": "1.11.3",

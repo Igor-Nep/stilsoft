@@ -579,16 +579,16 @@ class Remote:
 
     def change_versions(self, project):
         from color import color
-        import paramiko, json, sys
+        import paramiko, json, os
         from time import sleep
         from datetime import datetime
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print('> init changeversions > ')
+        print('change versions > ')
         print(f'connected {self.ip}')
         
-        log_pref = str(self.ip).strip().split('.')[-1]
+        log_pref = str(self.ip).strip().split('.')[-2]+'.'+str(self.ip).strip().split('.')[-1]
         json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
 
         if self.ip in self.video_partner.keys():
@@ -602,20 +602,20 @@ class Remote:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
         except Exception as err:
-            print(f'open service_list.json error: {color.grey(err)}')
+            print(f'open service_list.json error: {color.red(err)}')
             return
 
         try:
             sftp_client = ssh.open_sftp()
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{timestamp}_backup_{log_pref}_docker-compose.yml')
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
             sleep(1)
-            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker-compose.yml')
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
             sleep(1)
-            with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
                 docker_lines = file.readlines()
         except Exception as err:
-            print(f'open docker-compose.yml error: {color.grey(err)}')
+            print(f'open docker-compose.yml error: {color.red(err)}')
             return
 
         changes = False
@@ -634,14 +634,48 @@ class Remote:
 
         if changes:
             try:
-                with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
                 print(color.green('[DONE]'))
             except Exception as err:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
         else:
-            print(color.yellow('docker-compose is up to date'))  
-      
+            print(color.yellow('docker-compose is up to date')) 
+        if changes:
+            answer = input(f'обновить docker-compose.yml на {self.ip}? (y/n): ')
+            if answer == 'y':
+                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                sleep(1)
+                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.config('back_dir')}')
+                sleep(1)
+                try:
+                    stdin.write(self.config('password')+'\n')
+                    stdin.flush()
+                    print(stderr.read().decode())
+                except:
+                    next
+                sleep(1) 
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')       
+                print(stdout.read().decode())
+                print(stderr.read().decode())
+                ssh.exec_command(f'rm /home/user/test_docker-compose.yml')
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                except Exception as err:
+                    print(f'delete local temp file error {err}')
+                    pass
+
+            else:
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                except Exception as err:
+                    print(f'delete local temp files error {err}')
+                    pass
+
+
+
+
 
 
     def docker_chech(self):
