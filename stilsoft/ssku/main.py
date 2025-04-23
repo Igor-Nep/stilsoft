@@ -23,7 +23,7 @@ import requests, warnings
 
 '''сверка версий'''
 Remote('192.168.202.10').check_versions_by_file('ssku')
-Remote('192.168.202.10').change_versions('ssku')
+#Remote('192.168.202.221').change_versions('ssku')
 
 
 '''обновление модулей'''
