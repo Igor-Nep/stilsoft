@@ -2,10 +2,20 @@ import paramiko
 import os
 from time import sleep
 
+#sudo apt-get install lm-sensors
+#sudo sensors-detect
+#sensors
 
-def check_sensors(host='192.168.202.221', period=6, warn=30, alert=40):
-        while True:
+def check_sensors(host='192.168.202.221', period=6, warn=40, alert=60):
         
+        from color import color
+        import sys
+
+        def cls():
+            sys.stdout.write('\r' + ' ' * 100 + '\r')
+            sys.stdout.flush()
+
+        while True:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(host, port=22, username='user', password='stilsoft')
@@ -21,24 +31,38 @@ def check_sensors(host='192.168.202.221', period=6, warn=30, alert=40):
                      if 'Package id' in line:
                         temper = (line[16:20])
                         if float(temper) < float(warn):
-                             os.system('cls')
-                             print(f'Temerature is {temper}\n')
+                             cls()
+                             sys.stdout.write(f' temperature is {temper}\r')
+                             sys.stdout.flush()
+
+                             #os.system('cls')
+                             #print(f'Temerature is {temper}\n')
                         
                         elif float(alert) > float(temper) >= float(warn):
-                            os.system('cls')
-                            print(f'\033[33mWARNING!\033[0m temperature is {temper}')
-                            sleep(0.2)
-                            os.system('cls')
-                            print(f'\033[30mWARNING!\033[0m temperature is {temper}')
-                            sleep(0.2)
-                            os.system('cls')
-                            print(f'\033[33mWARNING!\033[0m temperature is {temper}')
-                            os.system('cls')
-                            print(f'\033[30mWARNING!\033[0m temperature is {temper}')
-                            sleep(0.2)
-                            os.system('cls')
-                            print(f'\033[33mWARNING!\033[0m temperature is {temper}')
-                            sleep(0.2)
+                             cls()
+                             for timer in range(int(period), -1, -1):
+                                  if timer % 2 == 0:                                      
+                                      sys.stdout.write(f'{color.yellow('WARNING!')} temperature is {temper}\r')
+                                      sys.stdout.flush()
+                                      sleep(0.2)
+                                  else:
+                                      sys.stdout.write(f'{color.grey('WARNING!')} temperature is {temper}\r')
+                                      sys.stdout.flush()
+                                      sleep(0.2)
+                            #os.system('cls')
+                            #print(f'\033[33mWARNING!\033[0m temperature is {temper}')
+                            #sleep(0.2)
+                            #os.system('cls')
+                            #print(f'\033[30mWARNING!\033[0m temperature is {temper}')
+                            #sleep(0.2)
+                            #os.system('cls')
+                            #print(f'\033[33mWARNING!\033[0m temperature is {temper}')
+                            #os.system('cls')
+                            #print(f'\033[30mWARNING!\033[0m temperature is {temper}')
+                            #sleep(0.2)
+                            #os.system('cls')
+                            #print(f'\033[33mWARNING!\033[0m temperature is {temper}')
+                            #sleep(0.2)
 
                         elif float(temper) >= float(alert):
                             os.system('cls')
