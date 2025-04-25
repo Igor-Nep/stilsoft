@@ -24,7 +24,8 @@ class Remote:
         "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
         "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
-        "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False}
+        "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
+        "192.168.202.200": {"name":"user", "password":"stilsoft", "back_dir":"/opt/onvif-server", "registry_dir":"/config", "need_video":False}
         }
 
         self.video_partner = {"192.168.202.10":"192.168.202.9",
@@ -644,9 +645,12 @@ class Remote:
         if changes:
             answer = input(f'обновить docker-compose.yml на {self.ip}? (y/n): ')
             if answer == 'y':
+                print(color.yellow('[IN PROGRESS]'))
                 sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                print('copying docker-compose.yml to server')
                 sleep(1)
                 stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.config('back_dir')}')
+                print('copying docker-compose.yml to /back/')
                 sleep(1)
                 try:
                     stdin.write(self.config('password')+'\n')
@@ -655,16 +659,18 @@ class Remote:
                 except:
                     next
                 sleep(1) 
-                stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')       
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
+                print('updating docker-compose.yml >')
                 print(stdout.read().decode())
                 print(stderr.read().decode())
-                ssh.exec_command(f'rm /home/user/test_docker-compose.yml')
+                ssh.exec_command(f'rm /home/user/docker-compose.yml')
+                print('deleting tmp files')
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
                 except Exception as err:
                     print(f'delete local temp file error {err}')
                     pass
-
+                print(color.green('[DONE]'))
             else:
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
@@ -672,6 +678,7 @@ class Remote:
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
+                print(color.yellow('[DONE]'))
 
 
 
@@ -758,7 +765,7 @@ class Remote:
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         #print(f'Подключено к {self.ip}\nwrite docker stats logs > ',end='')
         sleep(0.5)
-        ssh.exec_command(f'docker stats > /home/user/Desktop/docker.txt')
+        ssh.exec_command(f'docker stats > /home/user/docker.txt')
         for timer in range(write_time, -1, -1):
             cls()
             sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{timer} sec] {color.yellow('[RECORDING LOGS]')}\r")
@@ -772,8 +779,8 @@ class Remote:
         sys.stdout.flush()        
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         sftp_client = ssh.open_sftp()
-        sftp_client.get('/home/user/Desktop/docker.txt', f'D:/work/logs/{log_pref}_docker.txt')
-        sftp_client.remove('/home/user/Desktop/docker.txt')
+        sftp_client.get('/home/user/docker.txt', f'D:/work/logs/{log_pref}_docker.txt')
+        sftp_client.remove('/home/user/docker.txt')
         sftp_client.close()
         ssh.close()
         service_list = []
@@ -1115,6 +1122,7 @@ class Remote:
                     param_1 = item.strip().split()[11]
                     param_1_value = float(item.strip().split()[12])
                     if isinstance(param_1_value, float):
+                        
                         if str(param_1_prechar) == 'Mbps':
                             param_1_value = param_1_value * 1000
                         param_1_list.append(param_1_value)
