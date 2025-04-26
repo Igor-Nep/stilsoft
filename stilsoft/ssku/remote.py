@@ -386,7 +386,7 @@ class Remote:
                        else:
                            print(f'{server_indicator}{module_name}'+' '*(32-len(module_name))+f'{color.grey(v)} {color.red(mod_serv)}')
                     except:
-                        print(color.red(f'can not get module {server_indicator} version'))
+                        print(color.grey('can not get module '), color.red(f'{module_name}'))
                         next        
                     name_index+=1
             self.terminal('green','[DONE] \n')
@@ -1085,6 +1085,8 @@ class Remote:
         sys.stdout.flush()
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
+        #print(f'stdout: {stdout.read().decode().strip()}')
+        #print(f'stderr: {stderr.read().decode().strip()}')
         sleep(1)
         cls()
         sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[PROCESSING LOGS]')}\r")
