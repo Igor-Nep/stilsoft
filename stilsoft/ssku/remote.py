@@ -24,7 +24,8 @@ class Remote:
         "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
         "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
-        "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False}
+        "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
+        "192.168.202.200": {"name":"user", "password":"stilsoft", "back_dir":"/opt/onvif-server", "registry_dir":"/config", "need_video":False}
         }
 
         self.video_partner = {"192.168.202.10":"192.168.202.9",
@@ -385,7 +386,7 @@ class Remote:
                        else:
                            print(f'{server_indicator}{module_name}'+' '*(32-len(module_name))+f'{color.grey(v)} {color.red(mod_serv)}')
                     except:
-                        print(color.red(f'can not get module {server_indicator} version'))
+                        print(color.grey('can not get module '), color.red(f'{module_name}'))
                         next        
                     name_index+=1
             self.terminal('green','[DONE] \n')
@@ -579,16 +580,16 @@ class Remote:
 
     def change_versions(self, project):
         from color import color
-        import paramiko, json, sys
+        import paramiko, json, os
         from time import sleep
         from datetime import datetime
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print('> init changeversions > ')
+        print('change versions > ')
         print(f'connected {self.ip}')
         
-        log_pref = str(self.ip).strip().split('.')[-1]
+        log_pref = str(self.ip).strip().split('.')[-2]+'.'+str(self.ip).strip().split('.')[-1]
         json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
 
         if self.ip in self.video_partner.keys():
@@ -602,20 +603,20 @@ class Remote:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
         except Exception as err:
-            print(f'open service_list.json error: {color.grey(err)}')
+            print(f'open service_list.json error: {color.red(err)}')
             return
 
         try:
             sftp_client = ssh.open_sftp()
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{timestamp}_backup_{log_pref}_docker-compose.yml')
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
             sleep(1)
-            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker-compose.yml')
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
             sleep(1)
-            with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
                 docker_lines = file.readlines()
         except Exception as err:
-            print(f'open docker-compose.yml error: {color.grey(err)}')
+            print(f'open docker-compose.yml error: {color.red(err)}')
             return
 
         changes = False
@@ -634,14 +635,54 @@ class Remote:
 
         if changes:
             try:
-                with open(f'D:/work/logs/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
                 print(color.green('[DONE]'))
             except Exception as err:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
         else:
-            print(color.yellow('docker-compose is up to date'))  
-      
+            print(color.yellow('docker-compose is up to date')) 
+        if changes:
+            answer = input(f'обновить docker-compose.yml на {self.ip}? (y/n): ')
+            if answer == 'y':
+                print(color.yellow('[IN PROGRESS]'))
+                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                print('copying docker-compose.yml to server')
+                sleep(1)
+                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.config('back_dir')}')
+                print('copying docker-compose.yml to /back/')
+                sleep(1)
+                try:
+                    stdin.write(self.config('password')+'\n')
+                    stdin.flush()
+                    print(stderr.read().decode())
+                except:
+                    next
+                sleep(1) 
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
+                print('updating docker-compose.yml >')
+                print(stdout.read().decode())
+                print(stderr.read().decode())
+                ssh.exec_command(f'rm /home/user/docker-compose.yml')
+                print('deleting tmp files')
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                except Exception as err:
+                    print(f'delete local temp file error {err}')
+                    pass
+                print(color.green('[DONE]'))
+            else:
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                except Exception as err:
+                    print(f'delete local temp files error {err}')
+                    pass
+                print(color.yellow('[DONE]'))
+
+
+
+
 
 
     def docker_chech(self):
@@ -724,7 +765,7 @@ class Remote:
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         #print(f'Подключено к {self.ip}\nwrite docker stats logs > ',end='')
         sleep(0.5)
-        ssh.exec_command(f'docker stats > /home/user/Desktop/docker.txt')
+        ssh.exec_command(f'docker stats > /home/user/docker.txt')
         for timer in range(write_time, -1, -1):
             cls()
             sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{timer} sec] {color.yellow('[RECORDING LOGS]')}\r")
@@ -738,8 +779,8 @@ class Remote:
         sys.stdout.flush()        
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         sftp_client = ssh.open_sftp()
-        sftp_client.get('/home/user/Desktop/docker.txt', f'D:/work/logs/{log_pref}_docker.txt')
-        sftp_client.remove('/home/user/Desktop/docker.txt')
+        sftp_client.get('/home/user/docker.txt', f'D:/work/logs/{log_pref}_docker.txt')
+        sftp_client.remove('/home/user/docker.txt')
         sftp_client.close()
         ssh.close()
         service_list = []
@@ -1044,6 +1085,8 @@ class Remote:
         sys.stdout.flush()
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
+        #print(f'stdout: {stdout.read().decode().strip()}')
+        #print(f'stderr: {stderr.read().decode().strip()}')
         sleep(1)
         cls()
         sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[PROCESSING LOGS]')}\r")
@@ -1081,6 +1124,7 @@ class Remote:
                     param_1 = item.strip().split()[11]
                     param_1_value = float(item.strip().split()[12])
                     if isinstance(param_1_value, float):
+                        
                         if str(param_1_prechar) == 'Mbps':
                             param_1_value = param_1_value * 1000
                         param_1_list.append(param_1_value)
