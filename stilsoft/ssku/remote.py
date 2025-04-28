@@ -586,18 +586,27 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print('change versions > ')
-        print(f'connected {self.ip}')
+        if self.ip in self.video_partner.keys():
+            server_indicator = 'app_server'
+        elif self.ip in self.video_partner.values():
+            server_indicator = 'video-server'
+        else:
+            server_indicator = ''
+        print('change services versions > ')
+
+        print(f'connected {color.grey(server_indicator)} {self.ip}')
         
         log_pref = str(self.ip).strip().split('.')[-2]+'.'+str(self.ip).strip().split('.')[-1]
         json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
 
-        if self.ip in self.video_partner.keys():
-            server_indicator = 'on app_server:    '
-        elif self.ip in self.video_partner.values():
-            server_indicator = 'on video-server:  '
-        else:
-            server_indicator = ''
+        try:
+            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
+                module_list = json.load(file)
+                name_index = 0
+                module_keys_list = list(module_list.keys())
+        except Exception as err:
+            print(f'open module_list.json error: {color.red(err)}')
+            return
 
         try:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
@@ -617,6 +626,16 @@ class Remote:
                 docker_lines = file.readlines()
         except Exception as err:
             print(f'open docker-compose.yml error: {color.red(err)}')
+            return
+        try:
+            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+            sleep(1)
+            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+            sleep(1)
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
+                package_lines = file.readlines()
+        except Exception as err:
+            print(f'open package.json error: {color.red(err)}')
             return
 
         changes = False
@@ -650,7 +669,6 @@ class Remote:
                 print('copying docker-compose.yml to server')
                 sleep(1)
                 stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.config('back_dir')}')
-                print('copying docker-compose.yml to /back/')
                 sleep(1)
                 try:
                     stdin.write(self.config('password')+'\n')
@@ -660,9 +678,29 @@ class Remote:
                     next
                 sleep(1) 
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
-                print('updating docker-compose.yml >')
+                print('updating docker-compose.yml')
                 print(stdout.read().decode())
                 print(stderr.read().decode())
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
+                status = stdout.read().decode()    
+                for line in status.split('\n'):
+                    if 'Exit' in line or "Restarting" in line:
+                        module_name = line.split()[0]
+                        print(f'{module_name} остановлен')
+                        try:
+                            print(f'restarting {module_name}')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose restart {module_name}')
+                            status = stderr.read().decode()
+                        except:
+                            print(f'can not restart docker-compose')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
+                        status = stdout.read().decode()
+                        for line in status.split('\n'):
+                            if 'Exit' in line:
+                                module_name = line.split()[0]
+                                print(f'{module_name} проблема запуска')
+                    
+                print('docker-compose is UP and updated')             
                 ssh.exec_command(f'rm /home/user/docker-compose.yml')
                 print('deleting tmp files')
                 try:

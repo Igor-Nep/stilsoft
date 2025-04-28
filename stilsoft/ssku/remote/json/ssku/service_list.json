@@ -1,6 +1,6 @@
 {
     "node-runner": "1.0.5_1.3.0", 
-    "database-service": "1.1.50",   
+    "database-service": "1.1.52",   
     "api-gateway-tls": "1.1.7",
     "api-gateway": "1.1.7",
     "archive-manager": "1.7.27",

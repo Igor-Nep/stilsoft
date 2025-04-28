@@ -11,21 +11,21 @@ import requests, warnings
 #ApiSsku('192.168.202.10').mode_archive_by_name(mode="splitInterval",value="1m",name="213-шка")
 
 #Remote('192.168.202.221').docker_restart('archive-manager')
-#ApiSsku('192.168.202.221').change_ip('192.168.202.200')
+#ApiSsku('192.168.202.221').change_ip('192.168.203.200')
 
 
 '''нагрузка atop и docker stats'''
-Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
+#Remote('192.168.202.221').docker_logs(write_time=20,cores=48)
 #Remote('192.168.202.200').atop_logs(write_time=10, param='enp3s0')
 #Remote('192.168.202.200').atop_logs(write_time=10, param='enp1s0')
-Remote('192.168.202.221').atop_logs(write_time=20, param='eth0')
-Remote('192.168.202.221').atop_logs(write_time=20, param='eth1')
-Remote('192.168.202.221').atop_logs(write_time=20, param='bond0')
+#Remote('192.168.202.221').atop_logs(write_time=20, param='eth0')
+##Remote('192.168.202.221').atop_logs(write_time=20, param='eth1')
+#Remote('192.168.202.221').atop_logs(write_time=20, param='bond0')
 
 
 '''сверка версий'''
-#Remote('192.168.202.221').check_versions_by_file('ssku')
-#Remote('192.168.207.68').change_versions('ssku')
+Remote('192.168.207.68').check_versions_by_file('ssku')
+Remote('192.168.207.68').change_versions('ssku')
 
 
 '''обновление модулей'''
