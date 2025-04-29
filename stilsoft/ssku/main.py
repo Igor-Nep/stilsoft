@@ -24,7 +24,7 @@ import requests, warnings
 
 
 '''сверка версий'''
-Remote('192.168.207.68').check_versions_by_file('ssku')
+#Remote('192.168.207.68').check_versions_by_file('ssku')
 Remote('192.168.207.68').change_versions_modules('ssku')
 
 

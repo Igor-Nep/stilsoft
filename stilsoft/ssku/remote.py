@@ -773,17 +773,44 @@ class Remote:
             sleep(1)
             sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
             sleep(1)
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
+                package_lines = file.readlines()
             with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
                 module_list = json.load(file)
                 name_index = 0
                 module_keys_list = list(module_list.keys())
-                print(module_keys_list)
                 module_change_list = {}
         except Exception as err:
             print(f'open package.json error: {color.red(err)}')
             return
 
         changes = False
+        for module_name, new_version in module_list.items():
+            for i, line in enumerate(package_lines):
+                if f'{module_name}' in line:
+                    crr_version = line.split(':')[1].strip()
+                    if ',' in line:
+                        current_version = crr_version.split(',')[0]
+                    else:
+                        current_version = crr_version
+
+                    print(f'{color.yellow(current_version)}')
+                    print(f'{color.blue(current_version[1:-1])}')
+                    print(f'{color.red(new_version)}')
+                    if current_version[1:-1] != new_version:
+                        if len(current_version) < 17:
+                            print(f'{color.blue(module_name)} form {color.grey(current_version[1:-1])} to {color.blue(new_version)}')
+
+                            package_lines[i] = line.replace(f'{current_version[1:-1]}', f'{new_version}')
+                        else: 
+                            continue    
+                        changes = True
+                        break
+                    else:
+                        print(f'{current_version[1:-1]} равна {new_version}')
+                        print(f'len current = {len(current_version[1:-1])} len new = {len(new_version)}')
+                        continue
+
         for k,v in module_list.items():
             module_name = module_keys_list[name_index]
             print(f'module name {module_name}')
@@ -819,6 +846,11 @@ class Remote:
                             break
         print(module_change_list)
         if changes:
+            try:
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'w', encoding='utf-8') as file:
+                    file.writelines(package_lines)
+            except Exception as err:
+                print(f'writing package.json error: {color.red(err)}')
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
