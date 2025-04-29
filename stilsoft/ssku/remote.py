@@ -719,6 +719,60 @@ class Remote:
                 print(color.yellow('[DONE]'))
 
 
+    def push_lib_target(self, ip, lib_name, lib_version):
+        import paramiko, os
+        from color import color
+        from time import sleep
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+        print(f'Connect to {ip}')
+        client = ssh.open_sftp()
+        lib_dir = f'D:/work/WHPython/stilsoft/lib/{lib_name}/{lib_version}'
+        if os.path.exists(f'{lib_dir}/lib{lib_name}.so'):
+            pass
+        else:
+            print(f'{color.red("ERROR: ")}библиотека {lib_name} {lib_version} отсутствует в локальном репозитории : <push_lib_target()>')
+            return
+        plugins_dir = f'{self.configurate[ip]['back_dir']}/node-manager/plugins'
+        try:
+            client.put(f'{lib_dir}/lib{lib_name}.so', f'/home/user/lib{lib_name}.so')
+            sleep(2)
+        except Exception as err:
+            print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version} : <push_lib_target()>')
+            return
+        try:
+            client.put(f'{lib_dir}/{lib_name}.json', f'/home/user/{lib_name}.json')
+        except Exception as err:
+            print(f'ошибка при копировании файла {lib_name}.json : <push_lib_target()>')
+            pass
+        print(f'update lib {lib_name} {lib_version}')
+        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
+        sleep(1)
+        try:
+            stdin.write(f'{self.configurate[ip]['password']}\n')
+        except:
+            next
+        try:
+            stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{lib_name}.json {plugins_dir}')
+            sleep(1)
+            try:
+                stdin.write(f'{self.configurate[ip]['password']}\n')
+            except:
+                next
+        except:
+            pass
+        try:
+            print('del tmp_lib >')
+            client.remove(f'/home/user/lib{lib_name}.so')
+        except:
+            print('can not del')
+            next
+        client.close()
+        ssh.close()
+        print('Done')
+
+
     def change_versions_modules(self, project):
         from color import color
         import paramiko, json, os
@@ -743,8 +797,6 @@ class Remote:
         try:
             with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
                 module_list = json.load(file)
-                name_index = 0
-                module_keys_list = list(module_list.keys())
         except Exception as err:
             print(f'open module_list.json error: {color.red(err)}')
             return
@@ -784,7 +836,8 @@ class Remote:
             print(f'open package.json error: {color.red(err)}')
             return
 
-        changes = False
+        module_changes = False
+        service_changes = False
         for module_name, new_version in module_list.items():
             for i, line in enumerate(package_lines):
                 if f'{module_name}' in line:
@@ -793,45 +846,16 @@ class Remote:
                         current_version = crr_version.split(',')[0]
                     else:
                         current_version = crr_version
-
-                    print(f'{color.yellow(current_version)}')
-                    print(f'{color.blue(current_version[1:-1])}')
-                    print(f'{color.red(new_version)}')
                     if current_version[1:-1] != new_version:
                         if len(current_version) < 17:
                             print(f'{color.blue(module_name)} form {color.grey(current_version[1:-1])} to {color.blue(new_version)}')
-
+                            module_change_list[module_name] = new_version
                             package_lines[i] = line.replace(f'{current_version[1:-1]}', f'{new_version}')
                         else: 
                             continue    
-                        changes = True
+                        module_changes = True
                         break
-                    else:
-                        print(f'{current_version[1:-1]} равна {new_version}')
-                        print(f'len current = {len(current_version[1:-1])} len new = {len(new_version)}')
-                        continue
-
-        for k,v in module_list.items():
-            module_name = module_keys_list[name_index]
-            print(f'module name {module_name}')
-            try:
-                outer = self.cat(f'{self.config('back_dir')}{self.config('registry_dir')}/origin', 'package.json')
-            except:
-                print('can not read package.json')
-                next
-            try:
-                module_server = json.loads(outer)['version'][module_name]
-                print(f'module on server {module_name} {module_server}')
-                print(f'target module version {v}')
-                if module_server != v:
-                    module_change_list[module_name] = v
-                    changes = True
-            except:
-                print(f'can not get {module_name}')
-                next
-            name_index+=1
-                
-                
+                            
         for service_name, new_version in service_list.items():
             for i, line in enumerate(docker_lines):
                 if f'{service_name}:' in line and 'image:' in line:
@@ -839,18 +863,21 @@ class Remote:
                     if current_version != new_version:
                         print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}')
                         docker_lines[i] = line.replace(current_version, new_version)
-                        changes = True
+                        service_changes = True
                         if service_name == 'api-gateway':
                             continue
                         else:
                             break
         print(module_change_list)
-        if changes:
+        if module_changes:
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'w', encoding='utf-8') as file:
                     file.writelines(package_lines)
             except Exception as err:
                 print(f'writing package.json error: {color.red(err)}')
+        else:
+            print(color.yellow('module list is up to date'))                
+        if service_changes:    
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
@@ -859,54 +886,94 @@ class Remote:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
         else:
             print(color.yellow('docker-compose is up to date')) 
-        if changes:
-            answer = input(f'обновить docker-compose.yml на {self.ip}? (y/n): ')
+            
+        if module_changes or service_changes:
+            answer = input(f'обновить версии на {self.ip}? (y/n): ')
             if answer == 'y':
                 print(color.yellow('[IN PROGRESS]'))
-                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
-                print('copying docker-compose.yml to server')
-                sleep(1)
-                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.config('back_dir')}')
-                sleep(1)
-                try:
-                    stdin.write(self.config('password')+'\n')
-                    stdin.flush()
+                if service_changes:
+                    sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                    print('copying docker-compose.yml to server')
+                    sleep(1)
+                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.config('back_dir')}')
+                    sleep(1)
+                    try:
+                        stdin.write(self.config('password')+'\n')
+                        stdin.flush()
+                        print(stderr.read().decode())
+                    except:
+                        next
+                    sleep(1)
+
+               
+
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
+                    print('updating docker-compose.yml')
+                    print(stdout.read().decode())
                     print(stderr.read().decode())
-                except:
-                    next
-                sleep(1) 
-                stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
-                print('updating docker-compose.yml')
-                print(stdout.read().decode())
-                print(stderr.read().decode())
-                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
-                status = stdout.read().decode()    
-                for line in status.split('\n'):
-                    if 'Exit' in line or "Restarting" in line:
-                        module_name = line.split()[0]
-                        print(f'{module_name} остановлен')
-                        try:
-                            print(f'restarting {module_name}')
-                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose restart {module_name}')
-                            status = stderr.read().decode()
-                        except:
-                            print(f'can not restart docker-compose')
-                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
-                        status = stdout.read().decode()
-                        for line in status.split('\n'):
-                            if 'Exit' in line:
-                                module_name = line.split()[0]
-                                print(f'{module_name} проблема запуска')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
+                    status = stdout.read().decode()    
+                    for line in status.split('\n'):
+                        if 'Exit' in line or "Restarting" in line:
+                            module_name = line.split()[0]
+                            print(f'{module_name} остановлен')
+                            try:
+                                print(f'restarting {module_name}')
+                                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose restart {module_name}')
+                                status = stderr.read().decode()
+                            except:
+                                print(f'can not restart docker-compose')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
+                            status = stdout.read().decode()
+                            for line in status.split('\n'):
+                                if 'Exit' in line:
+                                    module_name = line.split()[0]
+                                    print(f'{module_name} проблема запуска')
                     
-                print('docker-compose is UP and updated')             
-                ssh.exec_command(f'rm /home/user/docker-compose.yml')
-                print('deleting tmp files')
-                try:
-                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
-                except Exception as err:
-                    print(f'delete local temp file error {err}')
-                    pass
+                    print('docker-compose is UP and updated')             
+                    ssh.exec_command(f'rm /home/user/docker-compose.yml')
+                    print('deleting tmp files')
+                    try:
+                        os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                    except Exception as err:
+                        print(f'delete local temp file error {err}')
+                        pass
+
+                if module_changes:
+                    sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
+                    print('copying package.json to server')
+                    sleep(1)
+                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.config('back_dir')}{self.config('registry_dir')}/origin/')
+                    sleep(1)
+                    try:
+                        stdin.write(self.config('password')+'\n')
+                        stdin.flush()
+                        print(stderr.read().decode())
+                    except:
+                        next
+                    sleep(1)                     
+                    if len(module_change_list) > 0:
+                        print('updating module list')
+                        print('stop node-manager >')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                        sleep(2)
+                        print(stdout.read().decode())
+                        print(stderr.read().decode())
+                        for module_name, new_version in module_change_list.items():
+                            if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
+                                try:
+                                    self.push_lib_target(self.ip, module_name, new_version)
+                                except Exception as err:
+                                    print(f'update {module_name} {new_version} error {err}')
+                            else:
+                                print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} {color.grey(new_version)} отсутствует в локальном репозитории')
+                        print('restart node-manager >')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                        sleep(2)
+                        print(stdout.read().decode())
+                        print(stderr.read().decode())
                 print(color.green('[DONE]'))
+
             else:
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
