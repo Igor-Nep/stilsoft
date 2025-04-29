@@ -24,9 +24,9 @@ import requests, warnings
 
 
 '''сверка версий'''
-#Remote('192.168.207.69').check_versions_by_file('ssku')
-Remote('192.168.207.69').change_versions_modules('ssku')
-
+Remote('192.168.207.68').update_versions('ssku')
+#Remote('192.168.207.68').check_versions('ssku')
+#Remote('192.168.207.69').change_versions_modules('ssku')
 
 '''обновление модулей'''
 #Remote('192.168.207.68').push_pack('sdp858i')

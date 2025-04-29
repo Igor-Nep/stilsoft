@@ -34,7 +34,7 @@ services:
   postgres:
     container_name: postgres
     hostname: postgres
-    image: 192.168.100.242:5012/orspo/rigel/service/postgres-images:postgres-16
+    image: 192.168.100.242:5012/orspo/rigel/service/postgres-images:postgres-11
     user: postgres
     volumes:
       - postgresql-data:/var/lib/postgresql/data

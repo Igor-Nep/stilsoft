@@ -203,141 +203,17 @@ class Remote:
 
 
     def check_versions(self, project):
-        import paramiko, json 
-        from time import sleep
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print('> init check versions by docker-compose')
-        print(f'connected {self.ip}')
-        finded_services = []
-        not_finded_services = []
-        not_finded_modules = []
-        if project == 'ssku':
-            print('project - ssku')
-            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
-        else:
-            print('project - murom')
-            json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
-        if self.ip in self.video_partner.keys():
-            server_indicator = 'on app_server:    '
-        elif self.ip in self.video_partner.values():
-            server_indicator = 'on video-server:  '
-        else:
-            server_indicator = ''
-
-        try:
-            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
-                module_list = json.load(file)
-                name_index = 0
-                module_keys_list = list(module_list.keys())
-
-                for k,v in module_list.items():
-                    module_name = module_keys_list[name_index]
-                    try:
-
-                        outer = self.cat(f'{self.configurate[self.ip]['back_dir']}{self.configurate[self.ip]['registry_dir']}/origin', 'package.json')
-                        mod_serv = json.loads(outer)['version'][module_name]
-                    
-                        if v == mod_serv:
-                            print(f'{server_indicator}{module_name}'+' '*(24-len(module_name))+'\033[32mMATCH\033[0m')
-                        else:
-                            print(f'{server_indicator}{module_name}'+' '*(24-len(module_name))+f'\033[31m{mod_serv}\033[0m')
-                    except: 
-                        not_finded_modules.append(module_name)
-                        next        
-                    name_index+=1
-            print(f'not finded modules: {not_finded_modules}') 
-        except:
-            print('component-registry not found')
-            next
-        print('_'*30)
-
-        try:
-            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
-                service_list = json.load(file)
-                name_index = 0
-                service_keys_list = list(service_list.keys())     
-                for k,v in service_list.items():
-                    service_name = service_keys_list[name_index]
-                    try:
-                        outer = self.cat(self.back[self.ip], 'docker-compose.yml')
-                        #outer = stdout.read().decode()
-                        for line in outer.split('\n'):
-                            word_1 = line.find('image:')
-                            word_2 = line.find(service_name)
-                            if word_1 != -1 and word_2 != -1:
-                                item = line.split(':')
-                                serv_serv = item[-1]
-                                finded_services.append(service_name)
-                                if v == serv_serv:
-                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
-                                else:
-                                    print(f'{server_indicator}{service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
-                    except:
-                        not_finded_services.append(service_name)
-                        next
-                    name_index+=1
-            print(f'not finded services: {not_finded_services}')    
-        except:
-            print('_'*30)
-            next
-
-        #ssh.close()    
-        if self.ip in self.video_partner.keys():
-            try:
-                #ssh = paramiko.SSHClient()
-                #ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ip = self.video_partner[self.ip]
-                print(ip)
-                #ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
-                jump_ssh = ssh.get_transport().open_channel('direct-tcpip', (ip, 22), ('',0))
-                target_ssh = paramiko.SSHClient()
-                target_ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                target_ssh.connect(ip, port = 22, username = self.configurate[ip]['name'], password=self.configurate[ip]['password'], sock=jump_ssh)
-
-                print(' connected')
-                with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
-                    service_list = json.load(file)
-                    name_index = 0
-                    service_keys_list = list(service_list.keys())     
-                    for k,v in service_list.items():
-                        service_name = service_keys_list[name_index]
-                        #outer = self.cat(self.configurate[ip]['back_dir'], self.configurate[ip]['compose_name'])
-                        #print(outer)
-                        stdin, stdout, stderr = target_ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; cat {self.configurate[ip]['compose_name']}')
-                        outer = stdout.read().decode()
-                        for line in outer.split('\n'):
-                            word_1 = line.find('image:')
-                            word_2 = line.find(service_name)
-                            if word_1 != -1 and word_2 != -1:
-                                item = line.split(':')
-                                serv_serv = item[-1]
-                                finded_services.append(service_name)
-                                if v == serv_serv:
-                                    print(f'on video_server:  {service_name}'+' '*(24-len(service_name))+'\033[32mMATCH\033[0m')
-                                else:
-                                    print(f'on video_server:  {service_name}'+' '*(24-len(service_name))+f'\033[31m{serv_serv}\033[0m')
-                        name_index+=1            
-            except:
-                next                        
-            ssh.close()
-            for item in list(service_list.keys()):
-                if item not in finded_services:
-                    not_finded_services.append(item)
-            print(f'not finded services: {not_finded_services}')
-
-    def check_versions_by_file(self, project):
         from color import color
         import paramiko, json, sys
         from time import sleep
+
+        need_change = []
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         print('> init check versions by docker-compose')
         print(f'connected {self.ip}')
         finded_services = []
-        not_finded_services = []
         log_pref = str(self.ip).strip().split('.')[-1]
         if project == 'ssku':
             print('project - ssku')
@@ -385,6 +261,7 @@ class Remote:
                            print(f'{server_indicator}{module_name}'+' '*(32-len(module_name))+f'{color.grey(v)} {color.green(f'{mod_serv}')}')
                        else:
                            print(f'{server_indicator}{module_name}'+' '*(32-len(module_name))+f'{color.grey(v)} {color.red(mod_serv)}')
+                           need_change.append('app_module')
                     except:
                         print(color.grey('can not get module '), color.red(f'{module_name}'))
                         next        
@@ -405,8 +282,6 @@ class Remote:
                         with open(f'D:/work/logs/{log_pref}_docker.txt', 'r') as file:
                             outer = file.read()
                         for line in outer.split('\n'):
-                                #print(line)
-                                #print('finding image of service ')
                                 if 'image:' in line and f'{service_name}:' in line and '#' not in line:
                                     item = line.split(':')
                                     docker_service_version = item[-1]
@@ -414,6 +289,7 @@ class Remote:
                                         print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
                                     else:
                                         print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                        need_change.append('app_service')
                                 else:
                                     pass
 
@@ -423,7 +299,7 @@ class Remote:
                     name_index+=1
             if self.ip not in self.video_partner.keys():
                 print(color.green('[DONE]'))          
-                #print(f'not finded services: {not_finded_services}')    
+                    
         except:
             print('error with open sevice_list'+'_'*30)
             next
@@ -454,8 +330,6 @@ class Remote:
                             with open(f'D:/work/logs/{log_pref}_docker.txt', 'r') as file:
                                 outer = file.read()
                             for line in outer.split('\n'):
-                                    #print(line)
-                                    #print('finding image of service ')
                                     if 'image:' in line and f'{service_name}:' in line and '#' not in line:
                                         item = line.split(':')
                                         docker_service_version = item[-1]
@@ -464,17 +338,16 @@ class Remote:
                                             print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
                                         else:
                                             print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
-
-                                    
+                                            need_change.append('video_service')
 
                         except:
-                            #print('can not open docker file')
                             next
                         name_index+=1
             except:
                 print('can not open service_list')
 
-            print(color.green('[DONE]'))                      
+            print(color.green('[DONE]'))
+            return need_change                       
 
 
     def check_versions_by_logs(self, project):
@@ -690,15 +563,133 @@ class Remote:
                                 module_name = line.split()[0]
                                 print(f'{module_name} проблема запуска')
                     
-                print('docker-compose is UP and updated')             
+                print('docker-compose is updated')             
                 ssh.exec_command(f'rm /home/user/docker-compose.yml')
-                print('deleting tmp files')
+                print('deleting tmp files  ... \r')
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
                 except Exception as err:
                     print(f'delete local temp file error {err}')
                     pass
-                print(color.green('[DONE]'))
+                print('\r done')
+            else:
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                except Exception as err:
+                    print(f'delete local temp files error {err}')
+                    pass
+                print(color.yellow('[DONE]'))
+
+
+    def change_servise_versions(self, ip, project):
+        from color import color
+        import paramiko, json, os
+        from time import sleep
+        from datetime import datetime
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+
+        print('change services versions > ')
+
+        print(f'connected {color.grey(ip)}')
+        
+        log_pref = str(self.ip).strip().split('.')[-2]+'.'+str(self.ip).strip().split('.')[-1]
+        json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
+
+        try:
+            with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
+                service_list = json.load(file)
+        except Exception as err:
+            print(f'open service_list.json error: {color.red(err)}')
+            return
+
+        try:
+            sftp_client = ssh.open_sftp()
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
+            sleep(1)
+            sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+            sleep(1)
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+                docker_lines = file.readlines()
+        except Exception as err:
+            print(f'open docker-compose.yml error: {color.red(err)}')
+            return
+
+        changes = False
+        for service_name, new_version in service_list.items():
+            for i, line in enumerate(docker_lines):
+                if f'{service_name}:' in line and 'image:' in line:
+                    current_version = line.split(':')[-1].strip()
+                    if current_version != new_version:
+                        print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
+                        docker_lines[i] = line.replace(current_version, new_version)
+                        changes = True
+                        if service_name == 'api-gateway':
+                            continue
+                        else:
+                            break
+
+        if changes:
+            try:
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
+                    file.writelines(docker_lines)
+                print('\r done')
+            except Exception as err:
+                print(f'writing docker-compose.yml error: {color.red(err)}')
+        else:
+            print(color.yellow('docker-compose is up to date')) 
+        if changes:
+            answer = 'y'
+            if answer == 'y':
+                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                print('copying docker-compose.yml to server')
+                sleep(1)
+
+                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.configurate[ip]['back_dir']}')
+                sleep(1)
+                
+                try:
+                    stdin.write(self.configurate[ip]['password']+'\n')
+                    stdin.flush()
+                    print(stderr.read().decode())
+                except:
+                    next
+                sleep(1) 
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
+                print('updating docker-compose.yml')
+                print(stdout.read().decode())
+                print(stderr.read().decode())
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
+                status = stdout.read().decode()    
+                for line in status.split('\n'):
+                    if 'Exit' in line or "Restarting" in line:
+                        module_name = line.split()[0]
+                        print(f'{module_name} остановлен')
+                        try:
+                            print(f'restarting {module_name}')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose restart {module_name}')
+                            status = stderr.read().decode()
+                        except:
+                            print(f'can not restart docker-compose')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
+                        status = stdout.read().decode()
+                        for line in status.split('\n'):
+                            if 'Exit' in line:
+                                module_name = line.split()[0]
+                                print(f'{module_name} проблема запуска')
+                    
+                print('docker-compose is updated')             
+                ssh.exec_command(f'rm /home/user/docker-compose.yml')
+                print('deleting tmp files  ... \r')
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                except Exception as err:
+                    print(f'delete local temp file error {err}')
+                    pass
+                print('\rdone')
             else:
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
@@ -716,7 +707,6 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
-        print(f'Connect to {ip}')
         client = ssh.open_sftp()
         lib_dir = f'D:/work/WHPython/stilsoft/lib/{lib_name}/{lib_version}'
         if os.path.exists(f'{lib_dir}/lib{lib_name}.so'):
@@ -736,7 +726,7 @@ class Remote:
         except Exception as err:
             print(f'ошибка при копировании файла {lib_name}.json : <push_lib_target()>')
             pass
-        print(f'update lib {lib_name} {lib_version}')
+        print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)} \r')
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
         sleep(1)
         try:
@@ -752,15 +742,152 @@ class Remote:
                 next
         except:
             pass
+        print('done')
         try:
-            print('del tmp_lib >')
+            print('deleting tmpemp lib files: \r')
             client.remove(f'/home/user/lib{lib_name}.so')
         except:
-            print('can not del')
+            print('can not delete temp lib files')
             next
         client.close()
         ssh.close()
-        print('Done')
+        print('done')
+
+
+    def change_modules_versions(self, ip, project):
+        from color import color
+        import paramiko, json, os
+        from time import sleep
+        from datetime import datetime
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, port=22, username=self.config('name'), password=self.config('password'))
+        sftp_client = ssh.open_sftp()
+        print('change modules versions > ')
+        print(f'connected {color.grey(ip)}')
+        
+        log_pref = str(self.ip).strip().split('.')[-2]+'.'+str(self.ip).strip().split('.')[-1]
+        json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
+
+        try:
+            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
+                module_list = json.load(file)
+        except Exception as err:
+            print(f'open module_list.json error: {color.red(err)}')
+            return
+
+        try:
+            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+            sleep(1)
+            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+            sleep(1)
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
+                package_lines = file.readlines()
+            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
+                module_list = json.load(file)
+                module_change_list = {}
+        except Exception as err:
+            print(f'open package.json error: {color.red(err)}')
+            return
+
+        module_changes = False
+        for module_name, new_version in module_list.items():
+            for i, line in enumerate(package_lines):
+                if f'{module_name}' in line:
+                    crr_version = line.split(':')[1].strip()
+                    if ',' in line:
+                        current_version = crr_version.split(',')[0]
+                    else:
+                        current_version = crr_version
+                    if current_version[1:-1] != new_version:
+                        if len(current_version) < 17:
+                            print(f'update {color.grey(module_name)} form {color.grey(current_version[1:-1])} to {color.green(new_version)}')
+                            module_change_list[module_name] = new_version
+                            lib_dir = f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}'
+                            if os.path.exists(f'{lib_dir}/lib{module_name}.so'):
+                                pass
+                            else:
+                                print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} версии {color.grey(new_version)} отсутствует в локальном репозитории')
+                                lib_error = True
+                                continue
+                            package_lines[i] = line.replace(f'{current_version[1:-1]}', f'{new_version}')
+                        else: 
+                            continue    
+                        module_changes = True
+                        break
+
+        if module_changes:
+                try:
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'w', encoding='utf-8') as file:
+                        file.writelines(package_lines)
+                except Exception as err:
+                    print(f'writing package.json error: {color.red(err)}')
+        else:
+            if not lib_error:
+                print(color.yellow('module list is up-to-date'))                
+
+            
+        if module_changes :
+            answer = 'y'
+            if answer == 'y':
+                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
+                print('copying package.json to server \r')
+                sleep(1)
+                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.config('back_dir')}{self.config('registry_dir')}/origin/')
+                sleep(1)
+                try:
+                    stdin.write(self.config('password')+'\n')
+                    stdin.flush()
+                    print(stderr.read().decode())
+                except:
+                    next
+                sleep(1)
+                print('done')                     
+                if len(module_change_list) > 0:
+                    print('updating module list >')
+                    print('stop node-manager: ')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                    for module_name, new_version in module_change_list.items():
+                        if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
+                            try:
+                                self.push_lib_target(self.ip, module_name, new_version)
+                            except Exception as err:
+                                print(f'update {module_name} {new_version} error {err}')
+                        else:
+                            print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} {color.grey(new_version)} отсутствует в локальном репозитории')
+                    print('restart node-manager: ')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                print(color.green('[DONE]'))
+
+
+    def update_versions(self, project):
+        from color import color
+        need_changes = self.check_versions(project)
+        if need_changes:
+            answer = input(f'обновить версии на {self.ip}? (y/n): ')
+            if answer == 'y':
+                for item in need_changes:
+                    if 'app_service' in item:
+                        self.change_servise_versions(self.ip,project)
+                    elif 'video_service' in item:
+                        self.change_servise_versions(self.video_partner[self.ip],project)
+                    elif 'app_module' in item:
+                        self.change_modules_versions(self.ip,project)
+            else:
+                print('exit')
+                exit()            
+        else:
+            print(color.yellow('versions is up-to-date'))
+
+
+               
 
 
     def change_versions_modules(self, project):
