@@ -627,16 +627,6 @@ class Remote:
         except Exception as err:
             print(f'open docker-compose.yml error: {color.red(err)}')
             return
-        try:
-            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
-            sleep(1)
-            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
-            sleep(1)
-            with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
-                package_lines = file.readlines()
-        except Exception as err:
-            print(f'open package.json error: {color.red(err)}')
-            return
 
         changes = False
         for service_name, new_version in service_list.items():
@@ -820,41 +810,41 @@ class Remote:
         except Exception as err:
             print(f'open docker-compose.yml error: {color.red(err)}')
             return
-        try:
-            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
-            sleep(1)
-            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
-            sleep(1)
-            with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
-                package_lines = file.readlines()
-            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
-                module_list = json.load(file)
-                name_index = 0
-                module_keys_list = list(module_list.keys())
-                module_change_list = {}
-        except Exception as err:
-            print(f'open package.json error: {color.red(err)}')
-            return
+        if server_indicator != 'video-server':
+            try:
+                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                sleep(1)
+                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                sleep(1)
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
+                    package_lines = file.readlines()
+                with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
+                    module_list = json.load(file)
+                    module_change_list = {}
+            except Exception as err:
+                print(f'open package.json error: {color.red(err)}')
+                return
 
         module_changes = False
         service_changes = False
-        for module_name, new_version in module_list.items():
-            for i, line in enumerate(package_lines):
-                if f'{module_name}' in line:
-                    crr_version = line.split(':')[1].strip()
-                    if ',' in line:
-                        current_version = crr_version.split(',')[0]
-                    else:
-                        current_version = crr_version
-                    if current_version[1:-1] != new_version:
-                        if len(current_version) < 17:
-                            print(f'{color.blue(module_name)} form {color.grey(current_version[1:-1])} to {color.blue(new_version)}')
-                            module_change_list[module_name] = new_version
-                            package_lines[i] = line.replace(f'{current_version[1:-1]}', f'{new_version}')
-                        else: 
-                            continue    
-                        module_changes = True
-                        break
+        if server_indicator != 'video-server':
+            for module_name, new_version in module_list.items():
+                for i, line in enumerate(package_lines):
+                    if f'{module_name}' in line:
+                        crr_version = line.split(':')[1].strip()
+                        if ',' in line:
+                            current_version = crr_version.split(',')[0]
+                        else:
+                            current_version = crr_version
+                        if current_version[1:-1] != new_version:
+                            if len(current_version) < 17:
+                                print(f'{color.blue(module_name)} form {color.grey(current_version[1:-1])} to {color.blue(new_version)}')
+                                module_change_list[module_name] = new_version
+                                package_lines[i] = line.replace(f'{current_version[1:-1]}', f'{new_version}')
+                            else: 
+                                continue    
+                            module_changes = True
+                            break
                             
         for service_name, new_version in service_list.items():
             for i, line in enumerate(docker_lines):
@@ -868,15 +858,16 @@ class Remote:
                             continue
                         else:
                             break
-        print(module_change_list)
+
         if module_changes:
-            try:
-                with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'w', encoding='utf-8') as file:
-                    file.writelines(package_lines)
-            except Exception as err:
-                print(f'writing package.json error: {color.red(err)}')
-        else:
-            print(color.yellow('module list is up to date'))                
+            if server_indicator != 'video-server':
+                try:
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'w', encoding='utf-8') as file:
+                        file.writelines(package_lines)
+                except Exception as err:
+                    print(f'writing package.json error: {color.red(err)}')
+            else:
+                print(color.yellow('module list is up to date'))                
         if service_changes:    
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
@@ -940,38 +931,39 @@ class Remote:
                         pass
 
                 if module_changes:
-                    sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
-                    print('copying package.json to server')
-                    sleep(1)
-                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.config('back_dir')}{self.config('registry_dir')}/origin/')
-                    sleep(1)
-                    try:
-                        stdin.write(self.config('password')+'\n')
-                        stdin.flush()
-                        print(stderr.read().decode())
-                    except:
-                        next
-                    sleep(1)                     
-                    if len(module_change_list) > 0:
-                        print('updating module list')
-                        print('stop node-manager >')
-                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
-                        sleep(2)
-                        print(stdout.read().decode())
-                        print(stderr.read().decode())
-                        for module_name, new_version in module_change_list.items():
-                            if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
-                                try:
-                                    self.push_lib_target(self.ip, module_name, new_version)
-                                except Exception as err:
-                                    print(f'update {module_name} {new_version} error {err}')
-                            else:
-                                print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} {color.grey(new_version)} отсутствует в локальном репозитории')
-                        print('restart node-manager >')
-                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
-                        sleep(2)
-                        print(stdout.read().decode())
-                        print(stderr.read().decode())
+                    if server_indicator != 'video-server':
+                        sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
+                        print('copying package.json to server')
+                        sleep(1)
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.config('back_dir')}{self.config('registry_dir')}/origin/')
+                        sleep(1)
+                        try:
+                            stdin.write(self.config('password')+'\n')
+                            stdin.flush()
+                            print(stderr.read().decode())
+                        except:
+                            next
+                        sleep(1)                     
+                        if len(module_change_list) > 0:
+                            print('updating module list')
+                            print('stop node-manager >')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                            sleep(2)
+                            print(stdout.read().decode())
+                            print(stderr.read().decode())
+                            for module_name, new_version in module_change_list.items():
+                                if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
+                                    try:
+                                        self.push_lib_target(self.ip, module_name, new_version)
+                                    except Exception as err:
+                                        print(f'update {module_name} {new_version} error {err}')
+                                else:
+                                    print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} {color.grey(new_version)} отсутствует в локальном репозитории')
+                            print('restart node-manager >')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                            sleep(2)
+                            print(stdout.read().decode())
+                            print(stderr.read().decode())
                 print(color.green('[DONE]'))
 
             else:
