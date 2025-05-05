@@ -235,10 +235,20 @@ class Remote:
             next
         try:
             sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
-            sftp_client.close()  
+            sleep(1)
+             
         except:
             print(color.red('can not get docker file'))
             next
+        if self.ip in self.video_partner.keys():
+            try:
+                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
+                sleep(1)
+                
+            except:
+                print(color.red('can not get package file'))
+                next
+        sftp_client.close()                 
         print(self.ip)
         try:
             print(color.yellow('check modules versions \r'))
@@ -251,7 +261,9 @@ class Remote:
                 for k,v in module_list.items():
                     module_name = module_keys_list[name_index]
                     try:
-                       outer = self.cat(f'{self.config('back_dir')}{self.config('registry_dir')}/origin', 'package.json')
+                       #outer = self.cat(f'{self.config('back_dir')}{self.config('registry_dir')}/origin', 'package.json')
+                       with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt') as file:
+                           outer = file.read()
                     except:
                        print(color.red('can not open package.json'))
                        next
