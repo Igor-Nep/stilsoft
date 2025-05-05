@@ -204,7 +204,7 @@ class Remote:
 
     def check_versions(self, project):
         from color import color
-        import paramiko, json, sys
+        import paramiko, json, os
         from time import sleep
 
         need_change = []
@@ -234,7 +234,7 @@ class Remote:
             print(color.red('can not open sftp'))
             next
         try:
-            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
+            sftp_client.get(f'{self.config('back_dir')}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
             sleep(1)
              
         except:
@@ -291,7 +291,7 @@ class Remote:
                 for k,v in service_list.items():
                     service_name = service_keys_list[name_index]
                     try:
-                        with open(f'D:/work/logs/{log_pref}_docker.txt', 'r') as file:
+                        with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
                             outer = file.read()
                         for line in outer.split('\n'):
                                 if 'image:' in line and f'{service_name}:' in line and '#' not in line:
@@ -324,7 +324,7 @@ class Remote:
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
                 sftp_client = ssh.open_sftp()
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/logs/{log_pref}_docker.txt')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
                 sftp_client.close()
                 
             
@@ -339,7 +339,7 @@ class Remote:
                     for k,v in service_list.items():
                         service_name = service_keys_list[name_index]
                         try:
-                            with open(f'D:/work/logs/{log_pref}_docker.txt', 'r') as file:
+                            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
                                 outer = file.read()
                             for line in outer.split('\n'):
                                     if 'image:' in line and f'{service_name}:' in line and '#' not in line:
@@ -357,9 +357,14 @@ class Remote:
                         name_index+=1
             except:
                 print('can not open service_list')
-
+            try:
+                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
+                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
+            except Exception as err:
+                print(f'can not remove local temp files. {err}')    
+            
             print(color.green('[DONE]'))
-            return need_change                       
+            return list(set(need_change))                      
 
 
     def check_versions_by_logs(self, project):
@@ -734,11 +739,7 @@ class Remote:
         except Exception as err:
             print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version} : <push_lib_target()>')
             return
-        try:
-            client.put(f'{lib_dir}/{lib_name}.json', f'/home/user/{lib_name}.json')
-        except Exception as err:
-            print(f'ошибка при копировании файла {lib_name}.json : <push_lib_target()>')
-            pass
+
         print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)} \r')
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
         sleep(1)
@@ -746,19 +747,12 @@ class Remote:
             stdin.write(f'{self.configurate[ip]['password']}\n')
         except:
             next
-        try:
-            stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/{lib_name}.json {plugins_dir}')
-            sleep(1)
-            try:
-                stdin.write(f'{self.configurate[ip]['password']}\n')
-            except:
-                next
-        except:
-            pass
+
         print('done')
         try:
             print('deleting temp lib files: \r')
             client.remove(f'/home/user/lib{lib_name}.so')
+
         except:
             print('can not delete temp lib files')
             next
@@ -858,7 +852,7 @@ class Remote:
                 if package:
                     sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
                     print('copying package.json to server \r')
-                    sleep(1)
+                    sleep(2)
                     stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/')
                     sleep(1)
                     try:
@@ -873,13 +867,13 @@ class Remote:
                     print('updating module list >')
                     print('stop node-manager: ')
                     stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
-                    sleep(2)
                     print(stdout.read().decode())
                     print(stderr.read().decode())
+                    sleep(2)
                     for module_name, new_version in module_change_list.items():
                         if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
                             try:
-                                self.push_lib_target(self.ip, module_name, new_version)
+                                self.push_lib_target(ip, module_name, new_version)
                             except Exception as err:
                                 print(f'update {module_name} {new_version} error {err}')
                         else:
@@ -933,8 +927,7 @@ class Remote:
 
     def update_versions(self, project):
         from color import color
-        changes_list = self.check_versions(project)
-        need_changes = list(set(changes_list))
+        need_changes = self.check_versions(project)
         
         if need_changes:
             answer = input(f'обновить версии на {self.ip}? (y/n): ')

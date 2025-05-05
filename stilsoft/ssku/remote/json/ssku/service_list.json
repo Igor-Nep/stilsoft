@@ -11,7 +11,7 @@
     "mediamxt":"1.11.3",
     "webrtc-www": "latest",
     "component-registry": "1.2.7",
-    "event-monitor": "1.2.23",
+    "event-monitor": "1.2.25",
     "event-combiner": "1.0.9",
     "signalling-server": "latest",
     "prometheus-discovery": "0.2.7",
