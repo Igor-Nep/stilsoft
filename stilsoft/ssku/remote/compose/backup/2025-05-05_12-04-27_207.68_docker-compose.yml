@@ -177,7 +177,7 @@ services:
   health-monitor:
     container_name: health-monitor
     hostname: health-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/health-monitor:1.1.5
+    image: 192.168.100.242:5012/orspo/rigel/service/health-monitor:1.0.5
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - DB_SRV=${DATABASE_SERVICE_ENDPOINT}
@@ -211,7 +211,7 @@ services:
   event-monitor:
     container_name: event-monitor
     hostname: event-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.23
+    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.21
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${EVENT_MONITOR_PORT}
@@ -248,7 +248,7 @@ services:
   config-service:
     container_name: config-service
     hostname: config-service
-    image: 192.168.100.242:5012/orspo/rigel/service/config-service:1.3.1
+    image: 192.168.100.242:5012/orspo/rigel/service/config-service:1.3.0
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - DB_SRV=${DATABASE_SERVICE_ENDPOINT}
@@ -285,7 +285,7 @@ services:
   database-service:
     container_name: database-service
     hostname: database-service
-    image: 192.168.100.242:5012/orspo/rigel/service/database-service:1.1.50
+    image: 192.168.100.242:5012/orspo/rigel/service/database-service:1.1.59
     ports:
       - 8080:8080
     environment:
@@ -323,7 +323,7 @@ services:
   auth-service:
     container_name: auth-service
     hostname: auth-service
-    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.19
+    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.20
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${AUTH_SERVICE_PORT}
@@ -426,7 +426,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.73
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.74-alpha.19
     ports:
       - 8443:443
       - 8181:80

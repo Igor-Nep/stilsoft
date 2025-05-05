@@ -109,7 +109,7 @@ services:
   api-gateway:
     container_name: api-gateway
     hostname: api-gateway
-    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.8
+    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.7
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${API_GATEWAY_PORT}
@@ -177,7 +177,7 @@ services:
   health-monitor:
     container_name: health-monitor
     hostname: health-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/health-monitor:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/health-monitor:1.1.5
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - DB_SRV=${DATABASE_SERVICE_ENDPOINT}
@@ -211,7 +211,7 @@ services:
   event-monitor:
     container_name: event-monitor
     hostname: event-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.24
+    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.23
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${EVENT_MONITOR_PORT}
@@ -426,7 +426,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.74-alpha.11
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.73
     ports:
       - 8443:443
       - 8181:80

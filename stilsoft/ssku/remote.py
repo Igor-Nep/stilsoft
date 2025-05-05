@@ -619,6 +619,7 @@ class Remote:
             return
 
         changes = False
+        
         for service_name, new_version in service_list.items():
             for i, line in enumerate(docker_lines):
                 if f'{service_name}:' in line and 'image:' in line:
@@ -677,7 +678,7 @@ class Remote:
                         stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
                         status = stdout.read().decode()
                         for line in status.split('\n'):
-                            if 'Exit' in line:
+                            if 'Exit' in line or 'Restarting' in line:
                                 module_name = line.split()[0]
                                 print(f'{module_name} проблема запуска')
                     
@@ -744,7 +745,7 @@ class Remote:
             pass
         print('done')
         try:
-            print('deleting tmpemp lib files: \r')
+            print('deleting temp lib files: \r')
             client.remove(f'/home/user/lib{lib_name}.so')
         except:
             print('can not delete temp lib files')
@@ -857,7 +858,6 @@ class Remote:
                     sleep(1)
                     print('done')                     
                 if len(module_change_list) > 0:
-                    print(f'DEBUG 207.68 change_list: {module_change_list}')
                     print('updating module list >')
                     print('stop node-manager: ')
                     stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
@@ -914,10 +914,16 @@ class Remote:
                     print(stdout.read().decode())
                     print(stderr.read().decode())
             print(color.green('[DONE]'))
+            try:
+                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+            except Exception as err:
+                print(f'delte local temp file error {err}')    
 
     def update_versions(self, project):
         from color import color
-        need_changes = self.check_versions(project)
+        changes_list = self.check_versions(project)
+        need_changes = list(set(changes_list))
+        
         if need_changes:
             answer = input(f'обновить версии на {self.ip}? (y/n): ')
             if answer == 'y':
@@ -1043,7 +1049,8 @@ class Remote:
                 except Exception as err:
                     print(f'writing package.json error: {color.red(err)}')
             else:
-                print(color.yellow('module list is up to date'))                
+                print(color.yellow('module list is up to date'))
+
         if service_changes:    
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
@@ -1099,7 +1106,7 @@ class Remote:
                     
                     print('docker-compose is UP and updated')             
                     ssh.exec_command(f'rm /home/user/docker-compose.yml')
-                    print('deleting tmp files')
+                    print('deleting temp files')
                     try:
                         os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
                     except Exception as err:
@@ -1141,11 +1148,18 @@ class Remote:
                             print(stdout.read().decode())
                             print(stderr.read().decode())
                 print(color.green('[DONE]'))
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                except Exception as err:
+                    print(f'deleting local temp file error {err}')
+                    pass    
 
             else:
                 try:
-                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
