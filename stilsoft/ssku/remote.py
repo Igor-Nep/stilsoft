@@ -221,7 +221,7 @@ class Remote:
         else:
             print('project - murom')
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
-        if self.ip in self.video_partner.keys():
+        if self.ip in self.video_partner.keys() or project == 'murom':
             server_indicator = 'on app_server:    '
         elif self.ip in self.video_partner.values():
             server_indicator = 'on video-server:  '
@@ -240,7 +240,7 @@ class Remote:
         except:
             print(color.red('can not get docker file'))
             next
-        if self.ip in self.video_partner.keys():
+        if self.ip in self.video_partner.keys() or project == 'murom':
             try:
                 sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
                 sleep(1)
@@ -293,6 +293,7 @@ class Remote:
                     try:
                         with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
                             outer = file.read()
+                            
                         for line in outer.split('\n'):
                                 if 'image:' in line and f'{service_name}:' in line and '#' not in line:
                                     item = line.split(':')
@@ -316,6 +317,7 @@ class Remote:
             print('error with open sevice_list'+'_'*30)
             next
         ssh.close()
+        
         if self.ip in self.video_partner.keys():
             server_indicator = 'on video-server:  '
             try:    
@@ -364,7 +366,7 @@ class Remote:
                 print(f'can not remove local temp files. {err}')    
             
             print(color.green('[DONE]'))
-            return list(set(need_change))                      
+        return list(set(need_change))                      
 
 
     def check_versions_by_logs(self, project):
@@ -928,7 +930,7 @@ class Remote:
     def update_versions(self, project):
         from color import color
         need_changes = self.check_versions(project)
-        
+
         if need_changes:
             answer = input(f'обновить версии на {self.ip}? (y/n): ')
             if answer == 'y':
