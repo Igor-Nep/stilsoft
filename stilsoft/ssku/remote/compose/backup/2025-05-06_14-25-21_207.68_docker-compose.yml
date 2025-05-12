@@ -1,0 +1,203 @@
+version: '3.3'
+services:
+
+  archive-manager:
+    container_name: archive-manager
+    hostname: archive-manager
+    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
+    environment:
+      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
+      - LISTEN=0.0.0.0:${ARCHIVE_MANAGER_PORT}
+      - MAILBOX_ADDRS=${RABBITMQ_ENDPOINT}
+      - MAILBOX_LOGIN=${RABBITMQ_USER}
+      - MAILBOX_PASSWORD=${RABBITMQ_PASS}
+      - FMT_LEVEL=info,lapin=error,archive_manager=debug
+      - USED_SPACE_LIMIT=5 GiB
+      - FREE_SPACE_LIMIT=110 GiB
+    ports:
+      - ${ARCHIVE_MANAGER_PORT}:${ARCHIVE_MANAGER_PORT}
+    volumes:
+      - /raid_5_intel/archive_syn5:/opt/archive-manager/archive
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    restart: unless-stopped
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+  media-server:
+    container_name: media-server
+    hostname: media-server
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server:1.16.0-alpha.10
+    labels:
+      - autoheal=true
+    environment:
+      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
+      - FMT_LEVEL=info,gstreamer::video-info=off
+      - SIGNALLER_ADDRESS=ws://${MEDIA_SERVER_IP}:8443
+      - MAILBOX_ADDRS=${RABBITMQ_ENDPOINT}
+      - MAILBOX_LOGIN=${RABBITMQ_USER}
+      - MAILBOX_PASSWORD=${RABBITMQ_PASS}
+      - BUFFER_LATENCY=0
+      - RTSP_PROTO=auto
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    restart: unless-stopped
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+  signalling-server:
+    container_name: signalling-server
+    hostname: signalling-server
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:latest
+    environment:
+      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    restart: unless-stopped
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+  webrtc-www:
+    container_name: webrtc-www
+    hostname: webrtc-www
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:latest
+    ports:
+      - 8099:80
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    restart: unless-stopped
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+  node-manager:
+    container_name: node-manager
+    hostname: node-manager
+    image: 192.168.100.242:5012/orspo/rigel/service/node-runner:1.0.5_1.3.0
+    environment:
+      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
+      - LISTEN=0.0.0.0:${NODE_MANAGER_PORT}
+      - CONFIG=/config/config.json
+      - FMT_LEVEL=info
+      - GST_PLUGIN_PATH=/opt/node_manager/plugins
+    volumes:
+      - ./node-manager/config:/config
+      - ./node-manager/plugins:/opt/node_manager/plugins
+      - ./node-manager/runtime:/opt/node_manager/runtime
+      - /raid_5_intel:/opt/node_manager/runtime/archive
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    restart: unless-stopped
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+
+  autoheal-service:
+    container_name: autoheal-service
+    hostname: autoheal-service
+    image: 192.168.100.242:5012/orspo/rigel/service/autoheal:latest
+    environment:
+      - AUTOHEAL_ONLY_MONITOR_RUNNING=true
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    restart: unless-stopped
+
+  prometheus-discovery:
+    image: 192.168.100.242:5012/orspo/rigel/service/prometheus-discovery:0.2.7
+    container_name: prometheus-discovery
+    restart: always
+    hostname: promqtheus-discovery
+    environment:
+      - LISTEN=0.0.0.0:${PROMETHEUS_PORT}
+    ports:
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+  mediamtx-server:
+    image:  192.168.100.242:5012/orspo/rigel/service/mediamtx:1.11.3
+    container_name: mediamtx-server
+    network_mode: "host"
+    volumes:
+      - ./mediamtx_config/mediamtx.yml:/mediamtx.yml
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+  mediamtx-controller:
+    image: 192.168.100.242:5012/orspo/rigel/service/mediamtx-controller:0.2.2
+    container_name: mediamtx_controller
+    environment:
+      - FMT_LEVEL=info,mediamtx_controller=debug,mailbox::amqp_lapin::metrics=off
+      - MEDIAMTX_API=http://10.201.0.1:9997
+      - MEDIAMTX_WEBRTC=http://${MEDIA_SERVER_IP}:8889
+      - MAILBOX_ADDRS=192.168.206.68:5672
+      - MAILBOX_LOGIN=user
+      - MAILBOX_PASSWORD=pass
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "200m"
+    extra_hosts:
+      - "app.server.ru:192.168.206.68"
+      - "video.server.ru:192.168.206.69"
+      - "db.server.ru:192.168.207.67"
+      - "gate.synerget.ru:10.201.0.1"
+
+
+networks:
+  default:
+    external:
+      name: external-net
+
+

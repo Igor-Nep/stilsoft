@@ -560,7 +560,7 @@ class Remote:
                     next
                 sleep(1) 
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
-                print('updating docker-compose.yml')
+                print('updating docker-compose')
                 print(stdout.read().decode())
                 print(stderr.read().decode())
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
@@ -584,7 +584,7 @@ class Remote:
                     
                 print('docker-compose is updated')             
                 ssh.exec_command(f'rm /home/user/docker-compose.yml')
-                print('deleting tmp files  ... \r')
+                print('deleting temp files  ... \r')
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
                 except Exception as err:
@@ -679,7 +679,7 @@ class Remote:
                     next
                 sleep(1) 
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
-                print('updating docker-compose.yml')
+                print('updating docker-compose')
                 print(stdout.read().decode())
                 print(stderr.read().decode())
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
@@ -703,7 +703,7 @@ class Remote:
                     
                 print('docker-compose is updated')             
                 ssh.exec_command(f'rm /home/user/docker-compose.yml')
-                print('deleting tmp files  ... ', end='')
+                print('deleting temp files  ... ', end='')
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
                 except Exception as err:
@@ -1089,7 +1089,7 @@ class Remote:
                
 
                     stdin, stdout, stderr = ssh.exec_command(f'cd {self.config('back_dir')}; docker-compose up -d')
-                    print('updating docker-compose.yml')
+                    print('updating docker-compose')
                     print(stdout.read().decode())
                     print(stderr.read().decode())
                     stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')

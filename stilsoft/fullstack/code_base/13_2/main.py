@@ -20,6 +20,7 @@ class Employee:
     
     @classmethod
     def set_raise_amount(cls, new_coef):
+
         cls.raise_coef = new_coef
 
     @staticmethod
@@ -38,8 +39,9 @@ class Employee:
     def pay(self):
         return self.__pay
     
+    
     def raise_pay(self):
-        self.pay *= self.raise_coef
+        self.__pay = self.raise_coef
           
 
 if __name__ == '__main__':
@@ -49,7 +51,7 @@ if __name__ == '__main__':
 
     #test_case_2
     emp_1.raise_pay()
-    assert 50000 * Employee.raise_coef == emp_1.pay
+    assert 50000 * Employee.raise_coef == emp_1.__pay
 
     assert emp_1.pay == 55000.00000000001
 

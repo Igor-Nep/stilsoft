@@ -15,8 +15,8 @@ import requests, warnings
 
 
 '''нагрузка atop и docker stats'''
-Remote('192.168.207.69').docker_logs(write_time=20,cores=40)
-#Remote('192.168.207.69').atop_logs(write_time=10, param='eth0')
+#Remote('192.168.207.69').docker_logs(write_time=20,cores=40)
+#Remote('192.168.202.161').atop_logs(write_time=10, param='eth0')
 #Remote('192.168.207.69').atop_logs(write_time=10, param='eth1')
 #Remote('192.168.202.221').atop_logs(write_time=20, param='eth0')
 ##Remote('192.168.202.221').atop_logs(write_time=20, param='eth1')
@@ -24,13 +24,13 @@ Remote('192.168.207.69').docker_logs(write_time=20,cores=40)
 
 
 '''сверка версий'''
-#Remote('192.168.207.68').update_versions('ssku')
+Remote('192.168.207.68').update_versions('ssku')
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 
 '''обновление модулей'''
 #Remote('192.168.207.68').push_pack('sdp858i')
-#Remote('192.168.207.69').push_lib('libsdp858i')
+#Remote('192.168.202.9').push_lib('libsdp858i')
 
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 

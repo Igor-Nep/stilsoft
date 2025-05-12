@@ -9,7 +9,7 @@
     "health-monitor": "latest",
     "media-server": "1.16.0-alpha.10",
     "mediamxt":"1.11.3",
-    "webrtc-www": "latest",
+    "webrtc-www": "1.1.1",
     "component-registry": "1.2.7",
     "event-monitor": "1.2.25",
     "event-combiner": "1.0.9",
@@ -21,6 +21,6 @@
     "mediamtx-web-debug": "1.0.0",
     "hls-web-debug": "1.0.0",
     "mediamtx-server": "1.11.3",
-    "mediamtx-controller": "0.2.1",
+    "mediamtx-controller": "0.2.3",
     "autoheal": "latest"
     }

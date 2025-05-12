@@ -267,7 +267,8 @@ class ApiMurom:
             i = int(input('Введите количество итераций: '))
             self.refresh_token()
             for _ in range (0, i):
-                requests.post(self.url+'/api/data/events/history/list', headers=self.get_token(), json=body, verify=False) 
+                resp = requests.post(self.url+'/api/data/events/history', headers=self.get_token(), json=body, verify=False) 
+                print(resp)
                           
 
     def get_node(self): #получение id ноды
