@@ -24,14 +24,19 @@ import requests, warnings
 
 
 '''сверка версий'''
-Remote('192.168.207.68').update_versions('ssku')
+#Remote('192.168.207.68').update_versions('ssku')
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
+#self.push_lib_target(ip, module_name, new_version)
+#Remote('192.168.202.9').push_lib_targeting('192.168.202.9','sdp850','1.2.1')
 
 '''обновление модулей'''
 #Remote('192.168.207.68').push_pack('sdp858i')
-#Remote('192.168.202.9').push_lib('libsdp858i')
+#Remote('192.168.202.9').push_lib('libsdp850')
 
+
+'''переключение стримов'''
+Remote('192.168.207.69').change_ms_view('UP')
 #ApiSsku().get_sub_zones('/api/data/system/zone')
 
 #print(ApiSsku('192.168.202.221').get_node('video'))

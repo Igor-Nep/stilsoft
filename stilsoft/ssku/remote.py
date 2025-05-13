@@ -720,6 +720,69 @@ class Remote:
                 print(color.yellow('[DONE]'))
 
 
+
+    def push_lib_targeting(self, ip, lib_name, lib_version):
+        import paramiko, os
+        from color import color
+        from time import sleep
+
+    
+        with paramiko.SSHClient() as ssh:
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            try:
+                ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+            except Exception as e:
+                print(f'{color.red("ERROR: ")}Не удалось подключиться: {str(e)}')
+                return
+
+            with ssh.open_sftp() as sftp:
+                lib_dir = f'd:/work/WHPython/stilsoft/lib/{lib_name}/{lib_version}'
+                if not os.path.exists(f'{lib_dir}/lib{lib_name}.so'):
+                    print(f'{color.red("ERROR: ")}библиотека {lib_name} {lib_version} отсутствует в локальном репозитории : <push_lib_target()>')
+                    return
+
+                plugins_dir = f'{self.configurate[ip]['back_dir']}/node-manager/plugins'
+
+                try:
+                    sftp.put(f'{lib_dir}/lib{lib_name}.so', f'/home/user/lib{lib_name}.so')
+                    sleep(2)
+                    print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)}\r')
+                    print('stop node-manager >')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                
+
+                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
+                    sleep(2)
+                    try:
+                        stdin.write(f'{self.configurate[ip]['password']}\n')
+                    except:
+                        print('DEBUG: can not write password')
+                        next
+
+                    
+
+                    print('restart node-manager >')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode()) 
+                    print('done')
+                except Exception as err:
+                    print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version}: {str(err)}')
+                finally:
+                    try:
+                        sftp.remove(f'/home/user/lib{lib_name}.so') 
+                    except Exception as err:
+                        print(f'can not delete temp lib files: {err}')
+                        pass
+
+        print('done')
+
+
+
     def push_lib_target(self, ip, lib_name, lib_version):
         import paramiko, os
         from color import color
@@ -745,9 +808,11 @@ class Remote:
         print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)} \r')
         stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
         sleep(1)
+
         try:
             stdin.write(f'{self.configurate[ip]['password']}\n')
         except:
+
             next
 
         print('done')
@@ -755,8 +820,8 @@ class Remote:
             print('deleting temp lib files: \r')
             client.remove(f'/home/user/lib{lib_name}.so')
 
-        except:
-            print('can not delete temp lib files')
+        except Exception as err:
+            print(f'can not delete temp lib files: {err}')
             next
         client.close()
         ssh.close()
@@ -1740,6 +1805,84 @@ class Remote:
                 need_timer = False
                 print(color.grey(f'\n{'='*int(len(decorline))}\n'))
         os.remove(f'D:/work/logs/{log_pref}_atop.txt')
+
+
+    def change_ms_view(self, view, ip='192.168.207.69'):
+        import paramiko, os
+        from color import color
+        from time import sleep
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, port=22, username=self.config('name'), password=self.config('password'))
+        client = ssh.open_sftp()
+        client.get(f'{self.configurate[ip]['back_dir']}/.env', f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+        if view == 'UP':
+            need_ip = '192.168.207.69'
+        elif view == 'DOWN':
+            need_ip = '192.168.206.69'
+        else:
+            print(f'{color.red('ERROR')} view is not correct')        
+        with open(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'r') as file:
+            env_lines = file.readlines()
+        for i, line in enumerate(env_lines):
+            if 'MEDIA_SERVER_IP=' in line:
+                current_ip = line.split('=')[-1].strip()
+                if current_ip == '192.168.207.69':
+                    print(f'Media-server view is {color.green('UP')}')
+                else:
+                    print(f'Media-server view is {color.blue('DOWN')}')
+                if current_ip != need_ip:
+                    print(f'change media-server view to {color.grey(view)}')
+                    env_lines[i] = line.replace(current_ip, need_ip)
+                    break
+                else:
+                    if view == 'UP':
+                        print(f'media-server is already {color.green('UP')}')
+                    else:
+                        print(f'media-server is already {color.blue('DOWN')}')
+                    break
+        with open(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'w') as file:
+            file.writelines(env_lines)
+        try:
+            client.put(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', f'/home/user/env.txt')
+        except:
+            print(f'{color.red('ERROR')} can not copy env file to server')
+        sleep(1)
+        try:
+            stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/env.txt {self.configurate[ip]['back_dir']}/.env')
+            sleep(1)
+            try:
+                stdin.write(f'{self.configurate[ip]['password']}\n')
+            except:
+                next
+
+        except:
+            print(f'{color.red('ERROR')} can not copy env file to backdir')
+        sleep(1)
+        try:
+            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
+            sleep(1)
+            print(stdout.read().decode())
+            print(stderr.read().decode())
+        except:
+            print(f'{color.red('ERROR')} can not restart docker-compose')
+        try:
+            client.remove('/home/user/env.txt')
+        except:
+            print(f'{color.red('ERROR')} can not remove env file from server')
+        try:
+            os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+        except:
+            print(f'{color.red('ERROR')} can not remove env file from local')
+        if view == 'UP':
+            print(f'media-server view is {color.green('UP')}')
+        else:
+            print(f'media-server view is {color.blue('DOWN')}')
+        client.close()
+        ssh.close()
+            
+
 
 
 
