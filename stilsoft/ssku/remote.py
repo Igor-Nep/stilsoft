@@ -48,22 +48,25 @@ class Remote:
         sys.stdout.flush()        
         log_pref = str(self.ip).strip().split('.')[-1]
 
-    def terminal(self,paint,text):
+    def terminal(self,paint,text,nextrow=True):
         import sys
         from color import color
         self.cls()
         if paint == 'yellow':
-            sys.stdout.write(color.yellow(f'{text}'))
+            sys.stdout.write(f'{color.grey('[')}{color.yellow(f'{text}')}{color.grey(']')}')
         elif paint == 'green':
-            sys.stdout.write(color.green(f'{text}'))
+            sys.stdout.write(f'{color.grey('[')}{color.green(f'{text}')}{color.grey(']')}')
         elif paint == 'red':
-            sys.stdout.write(color.red(f'{text}'))
+            sys.stdout.write(f'{color.grey('[')}{color.red(f'{text}')}{color.grey(']')}')
         elif paint == 'grey':
-            sys.stdout.write(color.grey(f'{text}'))
+            sys.stdout.write(f'{color.grey('[')}{color.grey(f'{text}')}{color.grey(']')}')
         elif paint == 'non':
-            sys.stdout.write(color.non(f'{text}'))
+            sys.stdout.write(f'{color.grey('[')}{color.non(f'{text}')}{color.grey(']')}')
         sys.stdout.flush() 
+        if nextrow:
+            sys.stdout.write('\n')
     
+
     def push_lib(self, lib_name):
         import paramiko 
         from time import sleep
@@ -101,7 +104,7 @@ class Remote:
             next
         client.close()
         ssh.close()
-        print('Done')    
+        self.terminal('non','done')    
 
 
 
@@ -179,7 +182,7 @@ class Remote:
                 print(line)
         client.close()
         ssh.close()
-        print('Done')
+        self.terminal('non','done')
 
     def cat(self, directory, file):
         import paramiko, json
@@ -278,7 +281,8 @@ class Remote:
                         print(color.grey('can not get module '), color.red(f'{module_name}'))
                         next        
                     name_index+=1
-            self.terminal('green','[DONE] \n')
+            self.terminal('green','done')
+
         except:
             pass
 
@@ -311,7 +315,8 @@ class Remote:
                         next
                     name_index+=1
             if self.ip not in self.video_partner.keys():
-                print(color.green('[DONE]'))          
+                self.terminal('green','done')
+     
                     
         except:
             print('error with open sevice_list'+'_'*30)
@@ -365,7 +370,8 @@ class Remote:
             except Exception as err:
                 print(f'can not remove local temp files. {err}')    
             
-            print(color.green('[DONE]'))
+            self.terminal('green','done')
+
         return list(set(need_change))                      
 
 
@@ -538,7 +544,7 @@ class Remote:
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
-                print(color.green('[DONE]'))
+                self.terminal('green','done')
             except Exception as err:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
         else:
@@ -590,7 +596,7 @@ class Remote:
                 except Exception as err:
                     print(f'delete local temp file error {err}')
                     pass
-                print('\r done')
+                self.terminal('non','done')
             else:
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
@@ -598,7 +604,7 @@ class Remote:
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
-                print(color.yellow('[DONE]'))
+                self.terminal('yellow','done')
 
 
     def change_servise_versions(self, ip, project):
@@ -656,7 +662,8 @@ class Remote:
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
-                print('\r done')
+                self.terminal('non','done')
+
             except Exception as err:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
         else:
@@ -709,7 +716,7 @@ class Remote:
                 except Exception as err:
                     print(f'delete local temp file error {err}')
                     pass
-                print('done')
+                self.terminal('green','done')
             else:
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
@@ -717,7 +724,7 @@ class Remote:
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
-                print(color.yellow('[DONE]'))
+                self.terminal('yellow','done')
 
 
 
@@ -769,7 +776,7 @@ class Remote:
                     sleep(2)
                     print(stdout.read().decode())
                     print(stderr.read().decode()) 
-                    print('done')
+                    self.terminal('non','done')
                 except Exception as err:
                     print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version}: {str(err)}')
                 finally:
@@ -779,7 +786,7 @@ class Remote:
                         print(f'can not delete temp lib files: {err}')
                         pass
 
-        print('done')
+        self.terminal('non','done')
 
 
 
@@ -815,7 +822,7 @@ class Remote:
 
             next
 
-        print('done')
+        self.terminal('non','done')
         try:
             print('deleting temp lib files: \r')
             client.remove(f'/home/user/lib{lib_name}.so')
@@ -825,7 +832,7 @@ class Remote:
             next
         client.close()
         ssh.close()
-        print('done')
+        self.terminal('non','done')
 
 
     def change_modules_versions(self, ip, project):
@@ -929,7 +936,7 @@ class Remote:
                     except:
                         next
                     sleep(1)
-                    print('done')                     
+                    self.terminal('non','done')                     
                 if len(module_change_list) > 0:
                     print('updating module list >')
                     print('stop node-manager: ')
@@ -953,7 +960,7 @@ class Remote:
 
                 sftp_client.close()
                 ssh.close()    
-                print(color.green('[DONE]'))
+                self.terminal('green','done')
         if ip in self.video_partner.keys():
 
             video_ip = self.video_partner[ip]
@@ -986,7 +993,7 @@ class Remote:
                     sleep(2)
                     print(stdout.read().decode())
                     print(stderr.read().decode())
-            print(color.green('[DONE]'))
+            self.terminal('green','done')
             try:
                 os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
             except Exception as err:
@@ -1127,7 +1134,7 @@ class Remote:
             try:
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                     file.writelines(docker_lines)
-                print(color.green('[DONE]'))
+                self.terminal('green','done')
             except Exception as err:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
         else:
@@ -1219,7 +1226,7 @@ class Remote:
                             sleep(2)
                             print(stdout.read().decode())
                             print(stderr.read().decode())
-                print(color.green('[DONE]'))
+                self.terminal('green','done')
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
                 except Exception as err:
@@ -1235,7 +1242,7 @@ class Remote:
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
-                print(color.yellow('[DONE]'))
+                self.terminal('yellow','done')
 
 
 
@@ -1289,7 +1296,7 @@ class Remote:
 
     def docker_restart(self,service):
         import paramiko
-
+        from color import color
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
@@ -1300,7 +1307,7 @@ class Remote:
         status = stdout.read().decode()    
         #print(status) 
         print(stdout.read())
-        print(f'{self.GREY}docker_restart {self.GREEN}[DONE]{self.NON}') 
+        print(f'{color.grey('docker_restart')} {self.terminal('green','done')}') 
 
 
     def docker_logs(self, write_time=60, cores=48):
@@ -1315,7 +1322,7 @@ class Remote:
         log_pref = str(self.ip).strip().split('.')[-1]
         #postfix = input(f'POSTFIX{prefix}= ')        
         cls()
-        sys.stdout.write(f'{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{write_time} sec] {color.yellow('[START]')}\r')
+        sys.stdout.write(f'{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{write_time} sec] [{color.yellow('start')}]\r')
         sys.stdout.flush()
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -1325,14 +1332,14 @@ class Remote:
         ssh.exec_command(f'docker stats > /home/user/docker.txt')
         for timer in range(write_time, -1, -1):
             cls()
-            sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{timer} sec] {color.yellow('[RECORDING LOGS]')}\r")
+            sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{timer} sec] [{color.yellow('recording logs')}]\r")
             sys.stdout.flush()
             sleep(1)
         sleep(1)        
         #sleep(write_time)
         ssh.exec_command("\x03")
         cls()
-        sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] {color.yellow('[PROSESSING LOGS]')}\r")
+        sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] [{color.yellow('processing logs')}]\r")
         sys.stdout.flush()        
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         sftp_client = ssh.open_sftp()
@@ -1360,7 +1367,7 @@ class Remote:
                             if isinstance(float_cpu, float):
                                 cpu_list.append(float_cpu)
                         except:
-                            print(f'collect {service} cpu: {self.RED}[FAILED]{self.NON}')
+                            print(f'collect {service} cpu: [{self.RED}FAILED{self.NON}]')
                             next    
                  
                         try:
@@ -1376,10 +1383,10 @@ class Remote:
                                 for i in num_del:
                                     mem_liter = mem_liter.replace(i, '')
                         except:
-                            print(f'collect {service} mem: {color.red("[FAILED]")}')
+                            print(f'collect {service} mem: [{color.red("FAILED")}]')
                             next
                 cls()
-                sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] {color.yellow('[PROSESSING LOGS]')}\r")
+                sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] [{color.yellow('processing logs')}]\r")
                 sys.stdout.flush()
                 with open(f'D:/work/logs/{timestamp}_{log_pref}_DOCKER_LOG.txt', 'a') as file:
                     
@@ -1407,7 +1414,7 @@ class Remote:
                         
                     if need_timer:
                         cls()
-                        sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] {color.green('[DONE]')}\n")
+                        sys.stdout.write(f"{color.grey(' docker_logs')} [{self.ip}] [cores: {cores}] [{color.grey(write_time)} sec] [{color.green('done')}]\n")
                         sys.stdout.flush()
                         print('\n')
                         print(f'{timestamp} {self.ip}\n')
@@ -1463,7 +1470,7 @@ class Remote:
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
         sleep(1)
-        print('[done]')
+        self.terminal('non','done')
         sftp_client = ssh.open_sftp()
         sftp_client.get('/home/user/log.txt', f'D:/work/logs/{log_pref}_atop.txt')  
         sleep(1)
@@ -1472,7 +1479,7 @@ class Remote:
         sftp_client.remove('/home/user/log.txt') 
         sftp_client.close()
         ssh.close()
-        print('[done]')
+        self.terminal('non','done')
 
         need_timer = True
         with open(f'D:/work/logs/{log_pref}_atop.txt','r') as file:
@@ -1598,7 +1605,9 @@ class Remote:
                     next                       
                 need_timer = False      
         os.remove(f'D:/work/logs/{log_pref}_atop.txt')
-        print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[32m[DONE]\033[0m')
+        from color import color
+        #print(f'\033[90matop_logs(\033[0m{self.ip}\033[90m) \033[32m[DONE]\033[0m')
+        print(f'{color.grey('atop_logs')} {self.ip} {self.terminal('green','done')}')
 
 
     def atop_logs(self, write_time=15, param='md126'):
@@ -1612,7 +1621,7 @@ class Remote:
             sys.stdout.flush()
         log_pref = str(self.ip).strip().split('.')[-1]
         cls()
-        sys.stdout.write(f'{color.grey(' atop_logs')} [{self.ip}] [{param}] [{write_time} sec] {color.yellow('[START]')}\r')
+        sys.stdout.write(f'{color.grey(' atop_logs')} [{self.ip}] [{param}] [{write_time} sec] [{color.yellow('start')}]\r')
         sys.stdout.flush()
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -1623,7 +1632,7 @@ class Remote:
         installed = stdout.read().decode().strip()
         if not installed:
             cls()
-            sys.stdout.write(f'{color.grey('atop')} {color.red('[НЕ УСТАНОВЛЕН]')} на {self.ip}')
+            sys.stdout.write(f'{color.grey('atop')} [{color.red('не установлен')}] на {self.ip}')
             sys.stdout.flush()
             sleep(1)
             exit()
@@ -1632,13 +1641,13 @@ class Remote:
         
         for timer in range(write_time, -1, -1):
             cls()
-            sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{timer} sec] {color.yellow('[RECORDING LOGS]')}\r")
+            sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{timer} sec] [{color.yellow('recording logs')}]\r")
             sys.stdout.flush()
             sleep(1)
         sleep(1)
         #sleep(write_time+1)
         cls()
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.yellow('[PROSESSING LOGS]')}\r")
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.yellow('processing logs')}]\r")
         sys.stdout.flush()
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         ssh.exec_command(f'atop -r /home/user/atop.txt | grep {param} > /home/user/log.txt')
@@ -1646,19 +1655,19 @@ class Remote:
         #print(f'stderr: {stderr.read().decode().strip()}')
         sleep(1)
         cls()
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[PROCESSING LOGS]')}\r")
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.green('processing logs')}]\r")
         sys.stdout.flush()
         sftp_client = ssh.open_sftp()
         sftp_client.get('/home/user/log.txt', f'D:/work/logs/{log_pref}_atop.txt')  
         sleep(1)
-        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.yellow('[CLEAR TMP]')}\r")
+        sys.stdout.write(f"{color.grey('atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.yellow('clear temp')}]\r")
         sys.stdout.flush()
         sftp_client.remove('/home/user/atop.txt')
         sftp_client.remove('/home/user/log.txt') 
         sftp_client.close()
         ssh.close()
         cls()
-        sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[CLEAR TMP]')}\r")
+        sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.green('clear temp')}]\r")
         sys.stdout.flush()
 
         need_timer = True
@@ -1697,7 +1706,7 @@ class Remote:
                 
                 except:
                     cls()
-                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red(f'[COLLECT {param}: FAILED]')}\r")
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.red(f'collect {param}: failed')}]\r")
                     sys.stdout.flush()
                     continue
 
@@ -1759,7 +1768,7 @@ class Remote:
                 except:
                     file.write('ПИКОВОЕ - ОШИБКА\n')
                     cls()
-                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red('[ERROR IN MAX]')}\n")
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.red('error in max')}]\n")
                     sys.stdout.flush()
                     next    
                 try:                                                                    
@@ -1767,18 +1776,18 @@ class Remote:
                 except:
                     file.write('МЕДИАННОЕ - ОШИБКА\n')
                     cls()
-                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red('[ERROR IN MEDIAN]')}\n")
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.red('error in median')}]\n")
                     sys.stdout.flush()                    
                 try:                                           
                     file.write(f'МИНИМАЛЬНОЕ   {round(min(percent_list),2)}% | {param_1}: {min_param_1} {param_1_min_char}   | {param_2}: {min_param_2} {param_2_min_char} \n')
                 except:    
                     file.write('МИНИМАЛЬНОЕ - ОШИБКА\n')
                     cls()
-                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.red('[ERROR IN MIN]')}\n")
+                    sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.red('error in min')}]\n")
                     sys.stdout.flush() 
                     next
                 cls()
-                sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] {color.green('[DONE]')}\n")
+                sys.stdout.write(f"{color.grey(' atop_logs')} [{self.ip}] [{param}] [{color.grey(write_time)} sec] [{color.green('done')}]\n")
                 sys.stdout.flush()
                     
                 
@@ -1807,19 +1816,19 @@ class Remote:
         os.remove(f'D:/work/logs/{log_pref}_atop.txt')
 
 
-    def change_ms_view(self, view, ip='192.168.207.69'):
+    def change_ms_view(self, view):
         import paramiko, os
         from color import color
         from time import sleep
-
+        need_to_change = False
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, port=22, username=self.config('name'), password=self.config('password'))
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         client = ssh.open_sftp()
-        client.get(f'{self.configurate[ip]['back_dir']}/.env', f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
-        if view == 'UP':
+        client.get(f'{self.configurate[self.ip]['back_dir']}/.env', f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+        if view == 'open':
             need_ip = '192.168.207.69'
-        elif view == 'DOWN':
+        elif view == 'close':
             need_ip = '192.168.206.69'
         else:
             print(f'{color.red('ERROR')} view is not correct')        
@@ -1828,57 +1837,53 @@ class Remote:
         for i, line in enumerate(env_lines):
             if 'MEDIA_SERVER_IP=' in line:
                 current_ip = line.split('=')[-1].strip()
-                if current_ip == '192.168.207.69':
-                    print(f'Media-server view is {color.green('UP')}')
-                else:
-                    print(f'Media-server view is {color.blue('DOWN')}')
+
                 if current_ip != need_ip:
                     print(f'change media-server view to {color.grey(view)}')
                     env_lines[i] = line.replace(current_ip, need_ip)
+                    need_to_change = True
                     break
                 else:
-                    if view == 'UP':
-                        print(f'media-server is already {color.green('UP')}')
+                    if view == 'open':
+                        print(f'media-server view is already {color.green('open')}')
                     else:
-                        print(f'media-server is already {color.blue('DOWN')}')
+                        print(f'media-server view is already {color.blue('close')}')
                     break
-        with open(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'w') as file:
-            file.writelines(env_lines)
-        try:
-            client.put(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', f'/home/user/env.txt')
-        except:
-            print(f'{color.red('ERROR')} can not copy env file to server')
-        sleep(1)
-        try:
-            stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/env.txt {self.configurate[ip]['back_dir']}/.env')
+        if need_to_change:
+            with open(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'w') as file:
+                file.writelines(env_lines)
+            try:
+                client.put(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', f'/home/user/env.txt')
+            except:
+                print(f'{color.red('ERROR')} can not copy env file to server')
             sleep(1)
             try:
-                stdin.write(f'{self.configurate[ip]['password']}\n')
-            except:
-                next
+                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/env.txt {self.configurate[self.ip]['back_dir']}/.env')
+                sleep(1)
+                try:
+                    stdin.write(f'{self.configurate[self.ip]['password']}\n')
+                except:
+                    next
 
-        except:
-            print(f'{color.red('ERROR')} can not copy env file to backdir')
-        sleep(1)
-        try:
-            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
+            except:
+                print(f'{color.red('ERROR')} can not copy env file to backdir')
             sleep(1)
-            print(stdout.read().decode())
-            print(stderr.read().decode())
-        except:
-            print(f'{color.red('ERROR')} can not restart docker-compose')
-        try:
-            client.remove('/home/user/env.txt')
-        except:
-            print(f'{color.red('ERROR')} can not remove env file from server')
-        try:
-            os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
-        except:
-            print(f'{color.red('ERROR')} can not remove env file from local')
-        if view == 'UP':
-            print(f'media-server view is {color.green('UP')}')
-        else:
-            print(f'media-server view is {color.blue('DOWN')}')
+            try:
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose up -d')
+                sleep(1)
+                print(stdout.read().decode())
+                print(stderr.read().decode())
+            except:
+                print(f'{color.red('ERROR')} can not restart docker-compose')
+            try:
+                client.remove('/home/user/env.txt')
+            except:
+                print(f'{color.red('ERROR')} can not remove env file from server')
+            try:
+                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+            except:
+                print(f'{color.red('ERROR')} can not remove env file from local')
+        self.terminal('green','done')
         client.close()
         ssh.close()
             

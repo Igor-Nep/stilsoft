@@ -100,6 +100,10 @@ class DbSsku:
         rows = self.db.execute(f"select * from security.users where login='{login}'").fetchall()
         return rows[0]['id']
     
+    def get_user_hash_by_name(self, name):
+        rows = self.db.execute(f"select * from security.arm where name='{name}'").fetchall()
+        return rows[0]['hash']
+
 
     def get_user_login_by_id(self, id):
         rows = self.db.execute(f"select * from security.users where id='{id}'").fetchall()
@@ -123,7 +127,7 @@ class DbSsku:
         apim.add_user(login, login, new_password)
         print('add user is ok')
         from murom.db import DbMurom
-        dbm = DbMurom('192.168.202.238')
+        dbm = DbMurom('192.168.202.30')
         print('dbMurom')
         changed_password = dbm.get_user_argon_password(dbm.get_user_id_by_login(login))
         sleep(1)
