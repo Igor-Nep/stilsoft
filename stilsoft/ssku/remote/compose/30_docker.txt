@@ -396,6 +396,7 @@ services:
       - MAILBOX_PASSWORD=${RABBITMQ_PASS}
       - BUFFER_LATENCY=0
       - RTSP_PROTO=auto
+      - WEBRTC_FORCE_MAX_BITRATE=0
     network_mode: host
     deploy:
       resources:

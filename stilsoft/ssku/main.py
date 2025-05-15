@@ -24,7 +24,7 @@ import requests, warnings
 
 
 '''сверка версий'''
-#Remote('192.168.202.10').update_versions('ssku')
+#Remote('192.168.207.68').update_versions('ssku')
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
@@ -36,7 +36,7 @@ import requests, warnings
 
 
 '''переключение стримов'''
-#Remote('192.168.207.69').change_ms_view('open')
+Remote('192.168.207.69').change_ms_view('open')
 
 
 #ApiSsku('192.168.207.68').get_sub_zones('/api/data/system/zone') #найти ОО с вложенными зонами
@@ -54,7 +54,7 @@ import requests, warnings
 
 #DbSsku('192.168.207.68').change_password('testauth','test')
 
-Remote('192.168.202.10').check_versions_by_manifest('ssku')
+#Remote('192.168.202.10').check_versions_by_manifest('ssku')
 #Remote('192.168.207.68').check_versions_by_logs('ssku')
 
 

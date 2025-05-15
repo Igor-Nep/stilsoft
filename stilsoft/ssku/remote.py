@@ -219,7 +219,7 @@ class Remote:
         finded_services = []
         log_pref = str(self.ip).strip().split('.')[-1]
         if project == 'ssku':
-            print('project - ssku')
+            print('project - Syn5')
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
         else:
             print('project - murom')
@@ -1839,7 +1839,10 @@ class Remote:
                 current_ip = line.split('=')[-1].strip()
 
                 if current_ip != need_ip:
-                    print(f'change media-server view to {color.grey(view)}')
+                    if view == 'open':
+                        print(f'change media-server view to {color.green('open')}')
+                    else:
+                        print(f'change media-server view to {color.blue('close')}')
                     env_lines[i] = line.replace(current_ip, need_ip)
                     need_to_change = True
                     break

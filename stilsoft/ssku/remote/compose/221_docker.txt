@@ -4,7 +4,7 @@ services:
   rabbitmq:
     container_name: rabbitmq
     hostname: rabbitmq
-    image: 192.168.100.242:5012/orspo/rigel/service/rabbitmq:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/rabbitmq:rabbitmq-3.11.0-management
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
@@ -29,7 +29,7 @@ services:
   postgres:
     container_name: postgres
     hostname: postgres
-    image: 192.168.100.242:5012/orspo/rigel/service/postgres-images:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/postgres-images:postgres-16
     user: postgres
     volumes:
       - postgresql-data:/var/lib/postgresql/data
@@ -279,7 +279,7 @@ services:
     privileged: true
     container_name: archive-manager
     hostname: archive-manager
-    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
     #image: archive-manager:debian
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
@@ -377,7 +377,7 @@ services:
   signalling-server:
     container_name: signalling-server
     hostname: signalling-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:mediamtx-patch-d4784faa
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
     network_mode: host
@@ -397,7 +397,7 @@ services:
   webrtc-www:
     container_name: webrtc-www
     hostname: webrtc-www
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:mediamtx-patch-d4784faa
     ports:
       - 8099:80
     deploy:
@@ -416,7 +416,7 @@ services:
   node-manager:
     container_name: node-manager
     hostname: node-manager
-    image: 192.168.100.242:5012/orspo/rigel/service/node-runner:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/node-runner:1.0.5_1.3.0
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${NODE_MANAGER_PORT}
@@ -475,7 +475,7 @@ services:
   prometheus-discovery:
     container_name: prometheus-discovery
     hostname: prometheus-discovery
-    image: 192.168.100.242:5012/orspo/rigel/service/prometheus-discovery:latest
+    image: 192.168.100.242:5012/orspo/rigel/service/prometheus-discovery:0.2.7
     environment:
       - LISTEN=0.0.0.0:${PROMETHEUS_DISCOVERY_CLI_PORT}
       - PROMETHEUS_DISCOVERY=http://${GATEWAY_IP}:${PROMETHEUS_DISCOVERY_CLI_PORT}
