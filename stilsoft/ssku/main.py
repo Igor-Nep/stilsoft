@@ -6,6 +6,7 @@ import requests, warnings
 
 '''камеры на vs90'''
 #DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_221_04_17_1')
+#DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10000, to_n=10040, file_name='reserved_221_1404.txt')
 #ApiSsku('192.168.202.221').add_suml('192.168.202.201',0,89)
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
 #ApiSsku('192.168.202.10').mode_archive_by_name(mode="splitInterval",value="1m",name="213-шка")
@@ -31,7 +32,7 @@ import requests, warnings
 #Remote('192.168.202.9').push_lib_targeting('192.168.202.9','sdp850','1.2.1')
 
 '''обновление модулей'''
-#Remote('192.168.207.68').push_pack('sdp858i')
+#Remote('192.168.207.68').push_pack('sts-411')
 #Remote('192.168.202.9').push_lib('libsdp850')
 
 
