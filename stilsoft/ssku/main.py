@@ -3,11 +3,13 @@ from api import ApiSsku
 from postman import Postman
 from remote import Remote
 import requests, warnings
-
+Remote('192.168.202.221').hosts_check()
 '''камеры на vs90'''
 #DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_221_04_17_1')
-#DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10000, to_n=10040, file_name='reserved_221_1404.txt')
+#DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10000, to_n=10090, file_name='reserved_221_2105-2-30-anal.txt')
+#DbSsku('192.168.202.221').reset_needed_modules(from_n=10030, to_n=10090)
 #ApiSsku('192.168.202.221').add_suml('192.168.202.201',0,89)
+#ApiSsku('192.168.202.221').add_vs('192.168.202.112',30,89)
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
 #ApiSsku('192.168.202.10').mode_archive_by_name(mode="splitInterval",value="1m",name="213-шка")
 
@@ -25,26 +27,27 @@ import requests, warnings
 
 
 '''сверка версий'''
-#Remote('192.168.207.68').update_versions('ssku')
+#Remote('192.168.202.221').update_versions('ssku')
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
-#Remote('192.168.202.9').push_lib_targeting('192.168.202.9','sdp850','1.2.1')
+#Remote('192.168.202.221').push_lib_targeting('192.168.202.221','sdp858i','1.2.9')
 
 '''обновление модулей'''
-#Remote('192.168.207.68').push_pack('sts-411')
-#Remote('192.168.202.9').push_lib('libsdp850')
+#Remote('192.168.202.221').push_pack('object-detector')
+#Remote('192.168.207.69').push_lib('libsdp858i')
 
 
 '''переключение стримов'''
-Remote('192.168.207.69').change_ms_view('open')
+#Remote('192.168.207.69').change_ms_view('open')
 
 
+#print(ApiSsku('192.168.202.221').check_module_state('Камера 10039'))
 #ApiSsku('192.168.207.68').get_sub_zones('/api/data/system/zone') #найти ОО с вложенными зонами
 
 #print(ApiSsku('192.168.207.68').get_node('video'))
 #ApiSsku('192.168.202.221').mode_archive("mode","write")
-#ApiSsku('192.168.202.221').mode_settings('useMediamtx', True)
+#ApiSsku('192.168.202.221').mode_settings('useMediamtx', False)
 #DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10000, to_n=10040, file_name='reserved_221_1404.txt')
 #DbSsku('192.168.202.221').reset_archived_modules('kill_221_04_17_1')
 #DbSsku('192.168.207.68').get_rows_in_massive('select event_code from events.history')

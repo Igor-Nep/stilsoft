@@ -30,6 +30,7 @@ services:
     container_name: postgres
     hostname: postgres
     image: 192.168.100.242:5012/orspo/rigel/service/postgres-images:postgres-16
+
     user: postgres
     volumes:
       - postgresql-data:/var/lib/postgresql/data
@@ -60,7 +61,7 @@ services:
   api-gateway-tls:
     container_name: api-gateway-tls
     hostname: api-gateway-tls
-    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.4
+    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.9
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${API_GATEWAY_TLS_PORT}
@@ -94,7 +95,7 @@ services:
   api-gateway:
     container_name: api-gateway
     hostname: api-gateway
-    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.4
+    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.9
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${API_GATEWAY_PORT}
@@ -183,7 +184,7 @@ services:
   event-monitor:
     container_name: event-monitor
     hostname: event-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.18
+    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.25
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${EVENT_MONITOR_PORT}
@@ -247,7 +248,7 @@ services:
   database-service:
     container_name: database-service
     hostname: database-service
-    image: 192.168.100.242:5012/orspo/rigel/service/database-service:1.1.43
+    image: 192.168.100.242:5012/orspo/rigel/service/database-service:1.1.59
     ports:
       - 8080:8080
     environment:
@@ -280,7 +281,7 @@ services:
     container_name: archive-manager
     hostname: archive-manager
     image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
-    #image: archive-manager:debian
+    #image: archive-manager:1.7.35
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${ARCHIVE_MANAGER_PORT}
@@ -314,7 +315,7 @@ services:
   auth-service:
     container_name: auth-service
     hostname: auth-service
-    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.17
+    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.20
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${AUTH_SERVICE_PORT}
@@ -348,7 +349,7 @@ services:
   media-server:
     container_name: media-server
     hostname: media-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server:1.16.0-alpha.9
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server:1.16.0-alpha.10
     labels:
       - autoheal=true
     environment:
@@ -377,7 +378,7 @@ services:
   signalling-server:
     container_name: signalling-server
     hostname: signalling-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:mediamtx-patch-d4784faa
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:latest
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
     network_mode: host
@@ -397,7 +398,7 @@ services:
   webrtc-www:
     container_name: webrtc-www
     hostname: webrtc-www
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:mediamtx-patch-d4784faa
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:1.1.1
     ports:
       - 8099:80
     deploy:
@@ -519,7 +520,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.73
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.75-rc.9
     ports:
       - 8181:80
       - 8445:445
@@ -616,7 +617,7 @@ services:
         max-size: "200m"
 
   mediamtx-controller:
-    image: 192.168.100.242:5012/orspo/rigel/service/mediamtx-controller:0.2.2
+    image: 192.168.100.242:5012/orspo/rigel/service/mediamtx-controller:0.2.4
     container_name: mediamtx_controller
     environment:
       - FMT_LEVEL=info,mediamtx_controller=debug,mailbox::amqp_lapin::metrics=off

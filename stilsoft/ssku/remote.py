@@ -16,15 +16,15 @@ class Remote:
          }
         
         self.configurate = {
-        "192.168.202.238": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
-        "192.168.202.30": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
+        "192.168.202.238": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
+        "192.168.202.30": {"name":"user", "password":"stilsoft", "back_dir":"/opt/murom/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
         "192.168.202.82": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/dev/rigel/DevOps/Murom", "registry_dir":"", "need_video":False},
-        "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry", "need_video":True},
-        "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry", "need_video":False, "compose_name":"docker-compose.yml"},
-        "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
+        "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":True},
+        "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry/origin", "need_video":False, "compose_name":"docker-compose.yml"},
+        "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry/origin", "need_video":True},
         "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
-        "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
-        "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
+        "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
+        "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
         "192.168.202.200": {"name":"user", "password":"stilsoft", "back_dir":"/opt/onvif-server", "registry_dir":"/config", "need_video":False}
         }
 
@@ -37,6 +37,9 @@ class Remote:
         self.YELLOW = '\033[33m'
         self.GREY = '\033[90m'
         self.NON = '\033[0m'
+
+
+  
 
 
     def config(self,param):
@@ -58,6 +61,8 @@ class Remote:
             sys.stdout.write(f'{color.grey('[')}{color.green(f'{text}')}{color.grey(']')}')
         elif paint == 'red':
             sys.stdout.write(f'{color.grey('[')}{color.red(f'{text}')}{color.grey(']')}')
+        elif paint == 'blue':
+            sys.stdout.write(f'{color.grey('[')}{color.blue(f'{text}')}{color.grey(']')}')
         elif paint == 'grey':
             sys.stdout.write(f'{color.grey('[')}{color.grey(f'{text}')}{color.grey(']')}')
         elif paint == 'non':
@@ -65,6 +70,20 @@ class Remote:
         sys.stdout.flush() 
         if nextrow:
             sys.stdout.write('\n')
+
+    def hosts_check(self):
+        from color import color
+        host_file =  open('c:/windows/system32/drivers/etc/hosts', 'r')
+        len_host = int(len(host_file.readlines()))
+        host_file.seek(0,0)
+        active_host = []
+        for _ in range(0, len_host):
+            s = host_file.readline()
+            if '#' not in s:
+                active_host.append(s)
+        newti=str(active_host[0])
+        self.terminal('blue',(newti))
+        host_file.close() 
     
 
     def push_lib(self, lib_name):
@@ -243,14 +262,14 @@ class Remote:
         except:
             print(color.red('can not get docker file'))
             next
-        if self.ip in self.video_partner.keys() or project == 'murom':
-            try:
-                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
-                sleep(1)
+
+        try:
+            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
+            sleep(1)
                 
-            except:
-                print(color.red('can not get package file'))
-                next
+        except:
+            print(color.red('can not get package file'))
+            next
         sftp_client.close()                 
         print(self.ip)
         try:
@@ -766,7 +785,7 @@ class Remote:
                     try:
                         stdin.write(f'{self.configurate[ip]['password']}\n')
                     except:
-                        print('DEBUG: can not write password')
+
                         next
 
                     
@@ -813,8 +832,11 @@ class Remote:
             return
 
         print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)} \r')
-        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
-        sleep(1)
+        try:
+            stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
+            sleep(1)
+        except Exception as err:
+            print(f'color.red(ERROR: )copying lib{lib_name}.so to plugins_dir error: {err}')
 
         try:
             stdin.write(f'{self.configurate[ip]['password']}\n')
@@ -826,7 +848,7 @@ class Remote:
         try:
             print('deleting temp lib files: \r')
             client.remove(f'/home/user/lib{lib_name}.so')
-
+            pass
         except Exception as err:
             print(f'can not delete temp lib files: {err}')
             next
@@ -863,9 +885,9 @@ class Remote:
             return
         if package:
             try:
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
                 sleep(1)
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
                 sleep(1)
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
                     package_lines = file.readlines()
@@ -903,6 +925,7 @@ class Remote:
                             else: 
                                 continue    
                             module_changes = True
+  
                             break
 
         if module_changes:
@@ -924,11 +947,17 @@ class Remote:
             
         if module_changes :
                 if package:
-                    sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
-                    print('copying package.json to server \r')
-                    sleep(2)
-                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/')
-                    sleep(1)
+                    try:
+                        sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
+                        print(f'copying package.json to server \r')
+                        sleep(2)
+                    except Exception as err:
+                        print(f'{color.red("ERROR: ")}copying package.json to server error: {err}')
+                    try:    
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/')
+                        sleep(1)
+                    except Exception as err:
+                        print(f'{color.red("ERROR: ")}copying package.json to server error: {err}')
                     try:
                         stdin.write(self.configurate[ip]['password']+'\n')
                         stdin.flush()
@@ -957,7 +986,10 @@ class Remote:
                     sleep(2)
                     print(stdout.read().decode())
                     print(stderr.read().decode())
-
+                try:
+                    sftp_client.remove(f'/home/user/package.json')
+                except Exception as err:
+                    print(f'can not delete package.json fom /user: {err}')    
                 sftp_client.close()
                 ssh.close()    
                 self.terminal('green','done')
@@ -996,6 +1028,7 @@ class Remote:
             self.terminal('green','done')
             try:
                 os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                
             except Exception as err:
                 print(f'delte local temp file error {err}')    
 
@@ -1073,9 +1106,9 @@ class Remote:
             return
         if server_indicator != 'video-server':
             try:
-                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
                 sleep(1)
-                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
                 sleep(1)
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
                     package_lines = file.readlines()

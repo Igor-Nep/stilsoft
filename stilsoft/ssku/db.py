@@ -73,7 +73,18 @@ class DbSsku:
             reserved = ApiSsku(self.ip).get_module_by_name(name)
             with open(f'D:/work/WHPython/stilsoft/ssku/reserved/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{file_name}', 'a') as file:
                 file.write(str(reserved)+'\n')
-            self.db.execute(f"update system.module set archived=true WHERE archived=false and name='{name}'") 
+            self.db.execute(f"update system.module set archived=true WHERE archived=false and name='{name}'")
+
+
+    def reset_needed_modules(self,from_n, to_n):
+
+        for i in range(from_n, to_n):
+            name = f'Камера {str(i)}'
+            try:
+                self.db.execute(f"update system.module set archived=false WHERE archived=true and name='{name}'")            
+            except Exception as err:
+                print(f'{err} - {name}')
+                pass
 
 
 

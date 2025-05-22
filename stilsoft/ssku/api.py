@@ -551,10 +551,44 @@ class ApiSsku():
             item = resp.json()['data'][i]['id']
             requests.put(self.url+f'/api/data/system/module/{item}', headers=self.token, json=body, verify=False)
 
-                 
+
+    def add_vs(self,ip, from_n=None, to_n=None):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        if from_n != None and to_n != None:
+             n=0
+             for i in range(from_n, to_n+1):
+                if i <10:
+                    cam_pref = 1000
+                elif  9<i<100:
+                    cam_pref = 100
+                elif  99<i<1000:
+                    cam_pref = 10
+                elif  999<i<10000:
+                    cam_pref = 1
+                body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"vs_{cam_pref}{i}","zone":null,"subsystem":"analitics","type":"objectdetector","settings":'+'{'+f'"ip":"{ip}","port":5011,"detectPeriod":0.25,"eventsInterval":5,"minConfidence":0.4'+'}'+'}'
+                body_ = body = json.loads(body)
+                req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
+                n+=1
+                os.system('cls')
+                print(f'Камера {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
+        else:
+            cams = input('Модулей для добавления: ')
+            for i in range(0, int(cams)):
+                if i <10:
+                    cam_pref = 1000
+                elif  9<i<100:
+                    cam_pref = 100
+                body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"vs_{cam_pref}{i}","zone":null,"subsystem":"analitics","type":"objectdetector","settings":'+'{'+f'"ip":"192.168.202.112","port":5011,"detectPeriod":0.25,"eventsInterval":5,"maxFreezeFrameReq":0,"minConfidence":0.4,"periodObjectEmulation":0'+'}'+'}'     
+                body_ = body = json.loads(body)
+                req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
+                n+=1
+                os.system('cls')
+                print(f'Камера {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
          
 
-
+#{"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"7747a3a8-a29e-42d1-9455-1cefb50e07ef","title":"vs_01","zone":null,"subsystem":"analitics","type":"objectdetector","settings":{"ip":"192.168.202.112","port":"5011","detectPeriod":5,"eventsInterval":5,"maxFreezeFrameReq":0,"minConfidence":0.3,"periodObjectEmulation":0}}
 
     def add_suml(self,ip, from_n=None, to_n=None):
         self.refresh_token()
@@ -655,6 +689,7 @@ class ApiSsku():
 
         for id in module_list:
             #body={"settings":{"useMediamtx": True}}
+        
             req = requests.put(self.url +f'/api/data/system/module/{id}', headers=self.token, json=body, verify=False)
             os.system('cls')
             print(f'{module_list.index(id)+1} / {len(module_list)}')
@@ -697,10 +732,40 @@ class ApiSsku():
             
             req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body, verify=False)
             print(f'Камера {cam_pref}{i} {i}/{cams}> [{req.status_code}]')       
-    
+
+    def get_module_id_by_name(self, name): #получение id камеры
+        warnings.filterwarnings('ignore')
+        for i in range (self.get_module_count()):
+            sts_ch = (self.get_modules()['data'][i]['title'])
+            if sts_ch == name:
+                d = i
+        camera = (self.get_module(d)['id'])     
+        return camera 
+
+
+    def check_module_state(self,module_name):
+        warnings.filterwarnings('ignore')
+        module_id = self.get_module_id_by_name(module_name)
+        head = {
+            'Authorization': self.small_token(),
+            'Content-type': 'application/x-msgpack'
+                    }
+        nul={}
+        msp_null = msgpack.packb(nul)
+        resp = requests.post(self.url+f'/api/modules/{module_id}/ModuleStateRequest',headers=head, data=msp_null, verify=False )
+        print(msgpack.unpackb(resp.content))
+
+        if 'offline' in msgpack.unpackb(resp.content)['states']:
+            return 'OFFLINE'
+        elif 'online' in msgpack.unpackb(resp.content)['states']:
+            return 'ONLINE'
+        else:
+            return msgpack.unpackb(resp.content)['states']
+
+
 class ByInputSsku(ApiSsku):
         
-        def get_module_id_by_name(self, name): #получение id камеры
+        def get_module_id_by_name_check(self, name): #получение id камеры
             warnings.filterwarnings('ignore')
             for i in range (self.get_module_count()):
                 sts_ch = (self.get_modules()['data'][i]['title'])
