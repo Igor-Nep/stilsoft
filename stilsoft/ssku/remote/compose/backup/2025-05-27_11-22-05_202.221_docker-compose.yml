@@ -61,7 +61,7 @@ services:
   api-gateway-tls:
     container_name: api-gateway-tls
     hostname: api-gateway-tls
-    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.9
+    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.4
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${API_GATEWAY_TLS_PORT}
@@ -95,7 +95,7 @@ services:
   api-gateway:
     container_name: api-gateway
     hostname: api-gateway
-    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.9
+    image: 192.168.100.242:5012/orspo/rigel/service/api-gateway:1.1.4
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${API_GATEWAY_PORT}
@@ -184,7 +184,7 @@ services:
   event-monitor:
     container_name: event-monitor
     hostname: event-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.25
+    image: 192.168.100.242:5012/orspo/rigel/service/event-monitor:1.2.18
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${EVENT_MONITOR_PORT}
@@ -315,7 +315,7 @@ services:
   auth-service:
     container_name: auth-service
     hostname: auth-service
-    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.20
+    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.17
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${AUTH_SERVICE_PORT}
@@ -349,7 +349,7 @@ services:
   media-server:
     container_name: media-server
     hostname: media-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server:1.16.0-alpha.10
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server:1.16.0-alpha.9
     labels:
       - autoheal=true
     environment:
@@ -378,7 +378,7 @@ services:
   signalling-server:
     container_name: signalling-server
     hostname: signalling-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:0.10.7
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:0.10.7f
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
     network_mode: host
@@ -520,7 +520,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.75-rc.16
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.73
     ports:
       - 8181:80
       - 8445:445

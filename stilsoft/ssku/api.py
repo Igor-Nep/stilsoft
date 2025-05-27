@@ -556,39 +556,48 @@ class ApiSsku():
         self.refresh_token()
         warnings.filterwarnings('ignore')
         os.system('cls')
-        if from_n != None and to_n != None:
-             n=0
-             for i in range(from_n, to_n+1):
-                if i <10:
-                    cam_pref = 1000
-                elif  9<i<100:
-                    cam_pref = 100
-                elif  99<i<1000:
-                    cam_pref = 10
-                elif  999<i<10000:
-                    cam_pref = 1
-                body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"vs_{cam_pref}{i}","zone":null,"subsystem":"analitics","type":"objectdetector","settings":'+'{'+f'"ip":"{ip}","port":5011,"detectPeriod":0.25,"eventsInterval":5,"minConfidence":0.4'+'}'+'}'
-                body_ = body = json.loads(body)
-                req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
-                n+=1
-                os.system('cls')
-                print(f'Камера {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
-        else:
-            cams = input('Модулей для добавления: ')
-            for i in range(0, int(cams)):
-                if i <10:
-                    cam_pref = 1000
-                elif  9<i<100:
-                    cam_pref = 100
-                body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"vs_{cam_pref}{i}","zone":null,"subsystem":"analitics","type":"objectdetector","settings":'+'{'+f'"ip":"192.168.202.112","port":5011,"detectPeriod":0.25,"eventsInterval":5,"maxFreezeFrameReq":0,"minConfidence":0.4,"periodObjectEmulation":0'+'}'+'}'     
-                body_ = body = json.loads(body)
-                req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
-                n+=1
-                os.system('cls')
-                print(f'Камера {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
-         
+        n=0
+        for i in range(from_n, to_n+1):
+            if i <10:
+                cam_pref = 1000
+            elif  9<i<100:
+                cam_pref = 100
+            elif  99<i<1000:
+                cam_pref = 10
+            elif  999<i<10000:
+                cam_pref = 1
+            body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"vs_{cam_pref}{i}","zone":null,"subsystem":"analitics","type":"objectdetector","settings":'+'{'+f'"ip":"{ip}","port":5011,"detectPeriod":0.25,"eventsInterval":5,"minConfidence":0.4'+'}'+'}'
+            body_ = body = json.loads(body)
+            req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
+            n+=1
+            os.system('cls')
+            print(f'Модуль {cam_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
 
-#{"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"7747a3a8-a29e-42d1-9455-1cefb50e07ef","title":"vs_01","zone":null,"subsystem":"analitics","type":"objectdetector","settings":{"ip":"192.168.202.112","port":"5011","detectPeriod":5,"eventsInterval":5,"maxFreezeFrameReq":0,"minConfidence":0.3,"periodObjectEmulation":0}}
+
+
+    def add_link(self,from_n=None, to_n=None):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        n=0
+        for i in range(from_n, to_n+1):
+            if i <10:
+                link_pref = 1000
+            elif  9<i<100:
+                link_pref = 100
+            elif  99<i<1000:
+                link_pref = 10
+            elif  999<i<10000:
+                link_pref = 1
+            camera = self.get_module_by_name(f'Камера {link_pref}{i}')
+            analys = self.get_module_by_name(f'vs_{link_pref}{i}')
+            body = '{'+f'"host":"{analys}","member":"{camera}","role":"videoSource","order":1,"data":'+'{'+'"detectionEnabled": true'+'}'+'}'
+            body_ = body = json.loads(body)
+            req = requests.post(self.url +'/api/data/system/objectlink', headers=self.token, json=body_, verify=False)
+            n+=1
+            os.system('cls')
+            print(f'link {link_pref}{i} {n-1}/{to_n-from_n}> [{req}]')
+        
 
     def add_suml(self,ip, from_n=None, to_n=None):
         self.refresh_token()
@@ -634,6 +643,23 @@ class ApiSsku():
                 req = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
                 os.system('cls')
                 print(f'Камера {cam_pref}{i} {i+1}/{cams}> [{req}]')
+
+
+    def add_rtsp(self,from_n=None, to_n=None):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        n=0
+        for i in range(from_n, to_n+1):
+            body = '{'+f'"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"{self.get_node('video')}","title":"rtsp_{i}","zone":null,"settings":'+'{'+'"ip":"192.168.202.61","port":"8554","rtsp":'+'{'+f'"login":"","password":"","path":"/camera_{i}","sourceTransport":"udp"'+'}'+',"archive":'+'{'+'"mode":"write","maxArchiveSize":"1 GB","archiveLocation":"/archive"'+'}'+'}'+',"subsystem":"video","type":"rtspstream"'+'}'
+            body_ = body = json.loads(body)
+            req = requests.put(self.url +'/api/data/system/module', headers=self.token, json=body_, verify=False)
+            n+=1
+            os.system('cls')
+            print(f'rtsp camera rtsp_{i} {n-1}/{to_n-from_n}> [{req}]')
+
+
+#{"parent":null,"archived":false,"enabled":true,"group":"00000000-0000-0000-0000-000000000000","id":"","node":"937ba7f2-706a-42c0-84ee-5ac4e86642ed","title":"rtsp_2","zone":null,"settings":{"ip":"192.168.202.61","port":"8554","rtsp":{"login":"admin","password":"admin","path":"/camera_2","sourceTransport":"udp"},"archive":{"mode":"write","maxArchiveSize":"1 GB","archiveLocation":"/archive"}},"subsystem":"video","type":"rtspstream"}
 
 
     def mode_archive(self,mode,value):

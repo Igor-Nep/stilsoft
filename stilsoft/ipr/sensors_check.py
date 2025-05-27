@@ -6,7 +6,7 @@ from time import sleep
 #sudo sensors-detect
 #sensors
 
-def check_sensors(host='192.168.202.221', period=6, warn=40, alert=60):
+def check_sensors(host='192.168.202.10', period=6, warn=40, alert=60):
         
         from color import color
         import sys

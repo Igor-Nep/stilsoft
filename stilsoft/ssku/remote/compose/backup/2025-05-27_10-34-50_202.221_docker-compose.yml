@@ -378,7 +378,7 @@ services:
   signalling-server:
     container_name: signalling-server
     hostname: signalling-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:0.10.7
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:mediamtx-patch-d4784faa
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
     network_mode: host
@@ -398,7 +398,7 @@ services:
   webrtc-www:
     container_name: webrtc-www
     hostname: webrtc-www
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:1.1.1
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:mediamtx-patch-d4784faa
     ports:
       - 8099:80
     deploy:
@@ -520,7 +520,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.75-rc.16
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.76-rc.16
     ports:
       - 8181:80
       - 8445:445

@@ -38,6 +38,19 @@ class Remote:
         self.GREY = '\033[90m'
         self.NON = '\033[0m'
 
+    
+        host_file =  open('c:/windows/system32/drivers/etc/hosts', 'r')
+        len_host = int(len(host_file.readlines()))
+        host_file.seek(0,0)
+        active_host = []
+        for _ in range(0, len_host):
+            s = host_file.readline()#.split(' ')[0]
+            if '#' not in s:
+                active_host.append(s)
+        newti=str(active_host[0])
+        self.terminal('blue',(newti))
+        host_file.close() 
+
 
   
 
@@ -233,15 +246,15 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
-        print('> init check versions by docker-compose')
-        print(f'connected {self.ip}')
+        self.terminal("non", "check versions")
+        self.terminal("non", self.ip)
         finded_services = []
         log_pref = str(self.ip).strip().split('.')[-1]
         if project == 'ssku':
-            print('project - Syn5')
+            self.terminal("non", 'Syn5')
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/ssku'
         else:
-            print('project - murom')
+            self.terminal("non", 'Murom')
             json_path = 'D:/work/WHPython/stilsoft/ssku/remote/json/murom'
         if self.ip in self.video_partner.keys() or project == 'murom':
             server_indicator = 'on app_server:    '
@@ -271,7 +284,6 @@ class Remote:
             print(color.red('can not get package file'))
             next
         sftp_client.close()                 
-        print(self.ip)
         try:
             print(color.yellow('check modules versions \r'))
             with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
@@ -300,7 +312,7 @@ class Remote:
                         print(color.grey('can not get module '), color.red(f'{module_name}'))
                         next        
                     name_index+=1
-            self.terminal('green','done')
+            #self.terminal('green','done')
 
         except:
             pass
@@ -1032,7 +1044,7 @@ class Remote:
             except Exception as err:
                 print(f'delte local temp file error {err}')    
 
-    def update_versions(self, project):
+    def update_versions(self, project='ssku'):
         from color import color
         need_changes = self.check_versions(project)
 
@@ -1048,7 +1060,7 @@ class Remote:
                         self.change_modules_versions(self.ip,project)
 
             else:
-                print('exit')
+                self.terminal('red','exit')
                 exit()            
         else:
             print(color.yellow('versions is up-to-date'))

@@ -280,8 +280,8 @@ services:
     privileged: true
     container_name: archive-manager
     hostname: archive-manager
-    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
-    #image: archive-manager:1.7.35
+    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.24
+    #image: archive-manager:1.7.24
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${ARCHIVE_MANAGER_PORT}
@@ -520,7 +520,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.75-rc.16
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.75-rc.9
     ports:
       - 8181:80
       - 8445:445

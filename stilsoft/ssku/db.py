@@ -76,6 +76,23 @@ class DbSsku:
             self.db.execute(f"update system.module set archived=true WHERE archived=false and name='{name}'")
 
 
+    def change_arm_type(self, type):
+        if type == 'new':
+            self.db.execute(f"update security.arm set type='arm-o' WHERE type='arm-cpu'")
+            self.db.execute(f"update security.users set role='operator-o' WHERE role='operator-cpu'")
+            self.db.execute(f"update security.role set name='operator-o' WHERE name='operator-cpu'")
+            self.db.execute(f"update security.role set type_arm='arm-o' WHERE type_arm='arm-cpu'")
+        elif type =='old':
+            self.db.execute(f"update security.arm set type='arm-cpu' WHERE type='arm-o'")
+            self.db.execute(f"update security.users set role='operator-cpu' WHERE role='operator-o'")
+            self.db.execute(f"update security.role set name='operator-cpu' WHERE name='operator-o'")
+            self.db.execute(f"update security.role set type_arm='arm-cpu' WHERE type_arm='arm-o'")
+        else:
+            print("'wrong type need 'old' or 'new'")    
+
+
+
+
     def reset_needed_modules(self,from_n, to_n):
 
         for i in range(from_n, to_n):
