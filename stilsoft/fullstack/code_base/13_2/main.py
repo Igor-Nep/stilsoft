@@ -75,3 +75,5 @@ if __name__ == '__main__':
     #testcase 6 # property get email
     assert emp_1.email == 'Igor.Nemov@mail.com'
 
+
+

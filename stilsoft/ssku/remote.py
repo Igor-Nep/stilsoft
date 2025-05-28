@@ -2020,14 +2020,14 @@ class Remote:
                     #print(f'{color.green(start_time)}')
                     module_trash_id = line.split()[6]
                     if '0001' in module_trash_id:
-                        module_id = line.split()[6].strip('-0002]')
+                        module_id = line.split()[6].strip('-0002]').strip('-0001]')
                         module_value = int(line.split()[9])
                         if module_id not in main_list:
                             main_list[module_id] = [module_value]
                         else:    
                             main_list[module_id].append(module_value)
                     elif '0002' in module_trash_id:
-                        module_id = line.split()[6].strip('-0001]')
+                        module_id = line.split()[6].strip('-0001]').strip('-0002]')
                         module_value = int(line.split()[9])
                         if module_id not in alt_list:
                             alt_list[module_id] = [module_value]
@@ -2037,9 +2037,11 @@ class Remote:
 
    
                 
-        for k in range(len(main_list:))
-            module_id = main_list[k].strip('-0001]').strip('-0002]')
+        for k,v in main_list.items():
+            module_id = k
             module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
+            module_value = sum(v)
+            print(f'[{color.green('main')}] {module_name} - {module_value} потеряных')
             
 
         
