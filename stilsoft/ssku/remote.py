@@ -80,7 +80,11 @@ class Remote:
             sys.stdout.write(f'{color.grey('[')}{color.grey(f'{text}')}{color.grey(']')}')
         elif paint == 'non':
             sys.stdout.write(f'{color.grey('[')}{color.non(f'{text}')}{color.grey(']')}')
-        sys.stdout.flush() 
+        elif paint == 'mod':    
+            sys.stdout.write(f'{color.grey('[')}{text}{color.grey(']')}')
+        sys.stdout.flush()
+        
+            
         if nextrow:
             sys.stdout.write('\n')
 
@@ -1397,6 +1401,7 @@ class Remote:
             file_ = file.read()
             for line in file_.split('\n'):
                 service_list.append(line)
+                print(f'DEBUG: service list: {service_list}')
 
         need_timer = True
         for service in service_list:
@@ -1934,8 +1939,115 @@ class Remote:
         self.terminal('green','done')
         client.close()
         ssh.close()
+
+
+    def docker_check_exit(self):
+        from datetime import datetime
+        import paramiko
+        from color import color
+
+        drop_count = 0
+        drop_modules_list = []
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+        ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
+        self.terminal('non', self.ip)
+
+        while True:
+            if drop_count >= 10:
+                break
+            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']} && docker-compose ps')
+            status = stdout.read().decode().split('\n')
+            
+            for line in status:
+                if 'Exit' in line:
+                    exit_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    module_name = line.split()[0]
+                    if module_name not in drop_modules_list:
+                        drop_modules_list.append(module_name)
+                        #off_status = f'модуль {module_name} остановлен в {exit_time}\n'
+                        self.terminal('mod', f'модуль {color.grey(module_name)} {color.red('остановлен')} в {exit_time}')
+                        drop_count+=1
+                elif 'Restarting' in line:
+                    restarting_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    module_name = line.split()[0]
+                    if module_name not in drop_modules_list:
+                        drop_modules_list.append(module_name)
+                        #off_status = f'модуль {module_name} остановлен (restarting) в {restarting_time}\n'
+                        self.terminal('mod', f'модуль {color.grey(module_name)} {color.yellow('остановлен (restarting)')} в {restarting_time}')
+                        drop_count+=1
+
+                elif 'Up' in line:
+                    module_name = line.split()[0]
+                    if module_name in drop_modules_list:
+                        start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        drop_modules_list.remove(module_name)
+                        on_status = f'Модуль {module_name} запущен в {start_time}\n'
+                        self.terminal('mod', f'модуль {color.grey(module_name)} {color.green('запущен')} в {start_time}')
+
+
+    def mtx_check_rtp(self):
+        import sys
+        from datetime import datetime
+        sys.path.append('D:\work\WHPython\stilsoft')
+        from ssku.db import DbSsku
+        import paramiko
+        from color import color
+
+        drop_count = 0
+
+        main_list = {}
+        alt_list = {}
+        
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+        ip = self.video_partner[self.ip]
+        
+        ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+        self.terminal('non', self.ip)
+
+        while True:
+            if drop_count >= 1:
+                break
+            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose logs --tail 1000 mediamtx-server')
+            status = stdout.read().decode().split('\n')
+            for line in status:
+
+                if 'RTP packets lost' in line:
+                    #start_time = line.split()[3]
+                    #print(f'{color.green(start_time)}')
+                    module_trash_id = line.split()[6]
+                    if '0001' in module_trash_id:
+                        module_id = line.split()[6].strip('-0002]')
+                        module_value = int(line.split()[9])
+                        if module_id not in main_list:
+                            main_list[module_id] = [module_value]
+                        else:    
+                            main_list[module_id].append(module_value)
+                    elif '0002' in module_trash_id:
+                        module_id = line.split()[6].strip('-0001]')
+                        module_value = int(line.split()[9])
+                        if module_id not in alt_list:
+                            alt_list[module_id] = [module_value]
+                        else:    
+                            alt_list[module_id].append(module_value)
+                drop_count+=1                                   
+
+   
+                
+        for k in range(len(main_list:))
+            module_id = main_list[k].strip('-0001]').strip('-0002]')
+            module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
             
 
+        
+
+                #module_id = line.split()[6].strip('-0001]').strip('-0002]')
+                #module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
+ 
+                    
 
 
 

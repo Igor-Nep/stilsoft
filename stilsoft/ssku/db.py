@@ -63,6 +63,11 @@ class DbSsku:
         self.db.execute(f"update system.module set archived=true WHERE archived=false")
 
 
+    def get_module_name_by_id(self, id):
+        rows = self.db.execute(f"select * from system.module where archived = false and id = '{id}'").fetchall() 
+        return rows[0]['name']
+
+
     def archive_and_del_needed_modules(self, from_n, to_n, file_name):
         import sys
         from datetime import datetime
@@ -88,7 +93,7 @@ class DbSsku:
             self.db.execute(f"update security.role set name='operator-cpu' WHERE name='operator-o'")
             self.db.execute(f"update security.role set type_arm='arm-cpu' WHERE type_arm='arm-o'")
         else:
-            print("'wrong type need 'old' or 'new'")    
+            print("'wrong type: need 'old' or 'new'")    
 
 
 
