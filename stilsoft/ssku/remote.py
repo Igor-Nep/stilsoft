@@ -1987,19 +1987,19 @@ class Remote:
                         self.terminal('mod', f'модуль {color.grey(module_name)} {color.green('запущен')} в {start_time}')
 
 
-    def mtx_check_rtp(self):
-        import sys
+    def mtx_check_rtp(self, all=False):
+        import sys,os
         from datetime import datetime
         sys.path.append('D:\work\WHPython\stilsoft')
         from ssku.db import DbSsku
         import paramiko
         from color import color
+        from time import sleep
+        
 
         drop_count = 0
-
+        print(f'DEBUG: dropcount 1 {drop_count}')
         main_list = {}
-        alt_list = {}
-        
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
@@ -2008,47 +2008,97 @@ class Remote:
         ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
         self.terminal('non', self.ip)
 
-        while True:
-            if drop_count >= 1:
+        #while True:
+        for i in range(10):
+            if drop_count >= 20:
+
                 break
-            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose logs --tail 1000 mediamtx-server')
-            status = stdout.read().decode().split('\n')
-            for line in status:
+            else:
+                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose logs --tail 1000 mediamtx-server')
+                status = stdout.read().decode().split('\n')
+                drop_count+=1
+                for line in status:
 
-                if 'RTP packets lost' in line:
-                    #start_time = line.split()[3]
-                    #print(f'{color.green(start_time)}')
-                    module_trash_id = line.split()[6]
-                    if '0001' in module_trash_id:
-                        module_id = line.split()[6].strip('-0002]').strip('-0001]')
-                        module_value = int(line.split()[9])
-                        if module_id not in main_list:
-                            main_list[module_id] = [module_value]
-                        else:    
-                            main_list[module_id].append(module_value)
-                    elif '0002' in module_trash_id:
-                        module_id = line.split()[6].strip('-0001]').strip('-0002]')
-                        module_value = int(line.split()[9])
-                        if module_id not in alt_list:
-                            alt_list[module_id] = [module_value]
-                        else:    
-                            alt_list[module_id].append(module_value)
-                drop_count+=1                                   
-
-   
-                
-        for k,v in main_list.items():
-            module_id = k
-            module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
-            module_value = sum(v)
-            print(f'[{color.green('main')}] {module_name} - {module_value} потеряных')
+                    if 'RTP packets lost' in line:
+                        #start_time = line.split()[3]
+                        #print(f'{color.green(start_time)}')
+                        module_trash_id = line.split()[6]
+                        if '0001' in module_trash_id:
+                            module_id = line.split()[6].strip('-0002]')#.strip('-0001]')
+                            module_value = int(line.split()[9])
+                            if module_id not in main_list:
+                                main_list[module_id] = [module_value]
+                            else:    
+                                main_list[module_id].append(module_value)
+                        elif '0002' in module_trash_id:
+                            module_id = line.split()[6].strip('-0001]')#.strip('-0002]')
+                            module_value = int(line.split()[9])
+                            if module_id not in main_list:
+                                main_list[module_id] = [module_value]
+                            else:    
+                                main_list[module_id].append(module_value)
             
+            from collections import OrderedDict
+            sorted_list = OrderedDict((k, main_list[k]) for k in sorted(main_list.keys()))
 
+            new_list = {}
         
+            for k,v in sorted_list.items():
 
-                #module_id = line.split()[6].strip('-0001]').strip('-0002]')
-                #module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
+                new_values = []
+                for i in range(len(v) - 1):
+                    if v[i] > v[i + 1]:
+                        new_values.append(v[i])
+                new_values.append(v[-1])        
+            
+            
+                #for i in range(0, len(v)-1, 2):
+                #    if v[i] > v[i+1]:
+                #        new_values.append(v[i])
+  
+            
+                #for i in range(len(v)-1, 0, -2):
+                #    now_i = v[i]
+                #    prev_i = v[i-1]
  
+                #    if now_i > prev_i:
+                #            new_values.append(now_i)
+
+
+                    #if pre_value is None or num > pre_value:
+                        #new_values.append(num)
+                        #pre_value = num
+
+                    #if v[v.index(num) + 1] < v[v.index(num)]: #v.index(num) != len(v) - 1 and
+                        #new_values.append(num)
+
+                for i in new_values:
+                    if k not in new_list:
+                        new_list[k] = [i]
+                    else:
+                        new_list[k].append(i)    
+
+            if all:
+                choosed_list = sorted_list
+            else:
+                choosed_list = new_list    
+
+
+            for k,v in choosed_list.items():
+                if '-0001' in k:
+                    stripped_k = k.strip('-0001]')
+                    module_id = stripped_k
+                    module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
+                    module_value = sum(v)
+                    print(f'[{color.green('main')}] {module_name} - {module_value} потеряных')
+                elif '-0002' in k:
+                    stripped_k = k.strip('-0002]')   
+                    module_id = stripped_k
+                    module_name = DbSsku(self.ip).get_module_name_by_id(module_id)
+                    module_value = sum(v)
+                    print(f'[{color.blue('altr')}] {module_name} - {module_value} потеряных') 
+            sleep(3)
+            os.system('cls')        
                     
 
 
