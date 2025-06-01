@@ -32,11 +32,14 @@ import requests, warnings
 #Remote('192.168.207.68').mtx_check_rtp()
 
 '''сверка версий'''
-#Remote('192.168.202.221').update_versions()
+Remote('192.168.207.68').update_versions()
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
 #Remote('192.168.202.221').push_lib_targeting('192.168.202.221','sdp858i','1.2.9')
+
+'''добавление камер'''
+#ApiSsku('192.168.207.68').add_module_by_json()
 
 '''обновление модулей'''
 #Remote('192.168.202.221').push_pack('object-detector')
@@ -46,7 +49,7 @@ import requests, warnings
 '''переключение стримов'''
 #Remote('192.168.207.69').change_ms_view('open')
 
-
+#ApiSsku('192.168.207.68').postman()
 #print(ApiSsku('192.168.202.221').check_module_state('Камера 10039'))
 #ApiSsku('192.168.207.68').get_sub_zones('/api/data/system/zone') #найти ОО с вложенными зонами
 
@@ -72,7 +75,7 @@ import requests, warnings
 '''мониторинг остановки сервисов'''
 #Remote('192.168.207.68').docker_chech()
 
-#Postman().get('/api/data/system/module')
+#Postman().post('/api/events/maping')
 
         
 

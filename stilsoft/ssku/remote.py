@@ -22,7 +22,7 @@ class Remote:
         "192.168.202.10": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/server-app/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":True},
         "192.168.202.9": {"name":"user", "password":"stilsoft", "back_dir":"/home/user/rigel/node-ssku/origin/backend", "registry_dir":"/_component-registry/registry/origin", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.207.68": {"name":"user", "password":"stilsoft1", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry/origin", "need_video":True},
-        "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/video-server/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
+        "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-video/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
         "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry/origin", "need_video":False},
         "192.168.202.200": {"name":"user", "password":"stilsoft", "back_dir":"/opt/onvif-server", "registry_dir":"/config", "need_video":False}
@@ -1875,15 +1875,27 @@ class Remote:
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(self.ip, port=22, username=self.config('name'), password=self.config('password'))
         client = ssh.open_sftp()
-        client.get(f'{self.configurate[self.ip]['back_dir']}/.env', f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+        try:
+            client.get(f'{self.configurate[self.ip]['back_dir']}/.env', f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+        except Exception as err:
+            print(f'can not get .env {err}')
+            pass
+        try:    
+            client.get(f'{self.configurate[self.ip]['back_dir']}/mediamtx/mediamtx-servers.yml', f'D:/work/WHPython/stilsoft/ssku/remote/mediamtx-servers.txt')
+        except Exception as err:
+            print(f'can not get mediamtx-servers.yml {err}')
+            pass
+
         if view == 'open':
             need_ip = '192.168.207.69'
         elif view == 'close':
             need_ip = '192.168.206.69'
         else:
             print(f'{color.red('ERROR')} view is not correct')        
-        with open(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'r') as file:
+        with open('D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'r') as file:
             env_lines = file.readlines()
+        with open('D:/work/WHPython/stilsoft/ssku/remote/mediamtx-servers.txt', 'r') as file:
+            mtx_lines = file.readlines()    
         for i, line in enumerate(env_lines):
             if 'MEDIA_SERVER_IP=' in line:
                 current_ip = line.split('=')[-1].strip()
@@ -1894,6 +1906,22 @@ class Remote:
                     else:
                         print(f'change media-server view to {color.blue('close')}')
                     env_lines[i] = line.replace(current_ip, need_ip)
+                    try:
+                        for i, line in enumerate(mtx_lines):
+                            print(f'DEBUG: open adn lined mtx file\n {mtx_lines}')
+                            print(f'DEBUG: line {i}: {line}')
+                            if 'webrtc:' in line:
+                                print(f'DEBUG: find webrtc')
+                                current_mtx_ip = line.split(':')[-2].strip('//')
+                                print(f'DEBUG: curmtxip {current_mtx_ip}')
+                                mtx_lines[i] = line.replace(current_mtx_ip,need_ip)
+                                break
+                            else:
+                                print('can not see webrtc: in line')
+                            
+                    except Exception as err:
+                        print('can not replace line in mediamtx-servers.txt')
+                        pass            
                     need_to_change = True
                     break
                 else:
@@ -1906,9 +1934,20 @@ class Remote:
             with open(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', 'w') as file:
                 file.writelines(env_lines)
             try:
+                with open('D:/work/WHPython/stilsoft/ssku/remote/mediamtx-servers.txt', 'w') as file:
+                    file.writelines(mtx_lines)
+            except Exception as err:
+                print(f'can not change mediamtx-servers.txt {err}')
+                pass         
+            try:
                 client.put(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt', f'/home/user/env.txt')
             except:
-                print(f'{color.red('ERROR')} can not copy env file to server')
+                print(f'{color.red('ERROR')} can not copy env.txt file to server')
+            sleep(1)
+            try:
+                client.put(f'D:/work/WHPython/stilsoft/ssku/remote/mediamtx-servers.txt', f'/home/user/mediamtx-servers.txt')
+            except:
+                print(f'{color.red('ERROR')} can not copy mediamtx-servers.txt file to server')
             sleep(1)
             try:
                 stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/env.txt {self.configurate[self.ip]['back_dir']}/.env')
@@ -1919,8 +1958,20 @@ class Remote:
                     next
 
             except:
-                print(f'{color.red('ERROR')} can not copy env file to backdir')
+                print(f'{color.red('ERROR')} can not copy .env file to backdir')
             sleep(1)
+            try:
+                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/mediamtx-servers.txt {self.configurate[self.ip]['back_dir']}/mediamtx/mediamtx-servers.yml')
+                sleep(1)
+                try:
+                    stdin.write(f'{self.configurate[self.ip]['password']}\n')
+                except:
+                    next
+
+            except:
+                print(f'{color.red('ERROR')} can not copy mediamtx-servers.yml file to backdir')
+            sleep(1)
+
             try:
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose up -d')
                 sleep(1)
@@ -1930,12 +1981,14 @@ class Remote:
                 print(f'{color.red('ERROR')} can not restart docker-compose')
             try:
                 client.remove('/home/user/env.txt')
+                client.remove('/home/user/mediamtx-servers.txt')
             except:
-                print(f'{color.red('ERROR')} can not remove env file from server')
+                print(f'{color.red('ERROR')} can not remove temp files from server')
             try:
                 os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/env.txt')
+                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/mediamtx-servers.txt')
             except:
-                print(f'{color.red('ERROR')} can not remove env file from local')
+                print(f'{color.red('ERROR')} can not remove temp files from local')
         self.terminal('green','done')
         client.close()
         ssh.close()

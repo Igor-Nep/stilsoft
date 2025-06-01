@@ -107,7 +107,7 @@ class ApiSsku():
 
     
     def get_node(self, type):
-        video_list =['Сервер-видеонаблюдения','Видео-сервер','видео-сервер']
+        video_list =['Сервер-видеонаблюдения','Видео-сервер','видео-сервер','Видеосервер 206.69']
         app_list = ['Сервер-приложений']
         if type == 'video':
              search = video_list
@@ -518,7 +518,7 @@ class ApiSsku():
                      with open('D:\work\WHPython\stilsoft\ssku/video_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
-                          pre_body = pre_body.replace("%%NODE%%", self.get_need_node('video'))
+                          pre_body = pre_body.replace("%%NODE%%", self.get_node('video'))
                           pre_body = pre_body.replace("%%MODULE_NAME%%", module_name)
                           pre_body = pre_body.replace("%%IP%%", v['ip'])
                           pre_body = pre_body.replace("%%PASSWORD%%", "admin")
@@ -536,8 +536,7 @@ class ApiSsku():
                           body = json.loads(pre_body)
                 else:
                      print( f'ERROR IN module_list IN LINE {name_index}')
-                print(body)
-                print(type(body))
+                print('[done]')
                 resp = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body, verify=False)
                 name_index += 1   
             return resp.status_code
@@ -787,6 +786,13 @@ class ApiSsku():
             return 'ONLINE'
         else:
             return msgpack.unpackb(resp.content)['states']
+        
+
+    def check_inident_mapping(self):
+        import sys
+        pass
+
+        
 
 
 class ByInputSsku(ApiSsku):

@@ -1,1 +1,4 @@
-{"codes":"1350","sources":"","timeRange":null,"sort":{"sortAsc":false,"sortBy":"timestamp"},"limit":{"limit":75,"offset":75}}
+{
+  "eventCode": 3550,
+  "isImportant": true
+}

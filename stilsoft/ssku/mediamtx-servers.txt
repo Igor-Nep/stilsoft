@@ -1,0 +1,6 @@
+servers:
+    server1:
+        api: http://192.168.206.69:9997
+        webrtc: http://000000:8889
+        rtsp: rtsp://192.168.206.69:8554
+        source_on_demand: false
