@@ -58,8 +58,8 @@ class Postman():
 
 
 
-    def get(self, url):
-        resp = requests.get(self.url+f'{url}',headers=self.get_token(), verify=False)
+    def get(self, uri):
+        resp = requests.get(self.url+f'{uri}',headers=self.get_token(), verify=False)
         print(resp.json())
 
 

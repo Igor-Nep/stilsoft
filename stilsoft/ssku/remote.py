@@ -795,7 +795,7 @@ class Remote:
                     print(stdout.read().decode())
                     print(stderr.read().decode())
                 
-
+                    print('copying updated lib >')
                     stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
                     sleep(2)
                     try:
@@ -803,7 +803,7 @@ class Remote:
                     except:
 
                         next
-
+                    self.terminal('non','done')
                     
 
                     print('restart node-manager >')
@@ -852,7 +852,7 @@ class Remote:
             stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
             sleep(1)
         except Exception as err:
-            print(f'color.red(ERROR: )copying lib{lib_name}.so to plugins_dir error: {err}')
+            print(f'{color.red('ERROR: ')}copying lib{lib_name}.so to plugins_dir error: {err}')
 
         try:
             stdin.write(f'{self.configurate[ip]['password']}\n')

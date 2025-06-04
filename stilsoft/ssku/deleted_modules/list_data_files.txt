@@ -1,2 +1,4 @@
 2025-05-22_18-02-10 - <_io.TextIOWrapper name='D:\\work\\WHPython\\stilsoft\\ssku\\deleted_modules\\list_data_files.txt' mode='a' encoding='cp1251'>
 2025-05-29_16-23-31 - <_io.TextIOWrapper name='D:\\work\\WHPython\\stilsoft\\ssku\\deleted_modules\\list_data_files.txt' mode='a' encoding='cp1251'>
+2025-06-02_12-26-14 - <_io.TextIOWrapper name='D:\\work\\WHPython\\stilsoft\\ssku\\deleted_modules\\list_data_files.txt' mode='a' encoding='cp1251'>
+2025-06-02_12-26-34 - <_io.TextIOWrapper name='D:\\work\\WHPython\\stilsoft\\ssku\\deleted_modules\\list_data_files.txt' mode='a' encoding='cp1251'>

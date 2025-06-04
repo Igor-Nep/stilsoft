@@ -280,8 +280,8 @@ services:
     privileged: true
     container_name: archive-manager
     hostname: archive-manager
-    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
-    #image: archive-manager:1.7.35
+    #image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
+    image: archive-manager:u1-fat
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${ARCHIVE_MANAGER_PORT}
@@ -627,9 +627,6 @@ services:
       - MAILBOX_ADDRS=192.168.202.221:5672
       - MAILBOX_LOGIN=user
       - MAILBOX_PASSWORD=pass
-      - MEDIAMTX_API=http://${MEDIA_SERVER_IP}:9997
-      - MEDIAMTX_WEBRTC=http://${MEDIA_SERVER_IP}:8889
-      - MEDIAMTX_RTSP=rtsp://${MEDIA_SERVER_IP}:8554
     volumes:
       - ./mediamtx_config/mediamtx-servers.yml:/mediamtx_servers.yml
     network_mode: host

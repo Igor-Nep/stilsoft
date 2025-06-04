@@ -1,5 +1,5 @@
 for_grafana = True
-with open('D:/work/WHPython/vs90_nep.yml', 'w') as file:
+with open('D:/work/WHPython/vs90_a5000.yml', 'w') as file:
     file.write('logLevel: info\n')
     file.write('rtspAddress: :8554\n')
     file.write('\n')
@@ -32,7 +32,7 @@ with open('D:/work/WHPython/vs90_nep.yml', 'w') as file:
         file.write(f"  '{i}':\n")
         file.write('    runOnInit: >-\n')
         file.write('      ffmpeg -stream_loop -1 -re -fflags +genpts\n')
-        file.write(f'      -i /home/user/2korng/main_2560_8.mp4\n')
+        file.write(f'      -i /home/user/2korng/a5000_main.mp4\n')
         file.write('      -c copy\n')
         file.write('      -map 0:v\n')
         file.write('      -f rtsp\n')
@@ -43,7 +43,7 @@ with open('D:/work/WHPython/vs90_nep.yml', 'w') as file:
         file.write(f"  '{i}_sub':\n")
         file.write('    runOnInit: >-\n')
         file.write('      ffmpeg -stream_loop -1 -re -fflags +genpts\n')
-        file.write(f'      -i /home/user/2korng/sub/sub_640-2.mp4\n')
+        file.write(f'      -i /home/user/2korng/sub/a5000_sub.mp4\n')
         file.write('      -c copy\n')
         file.write('      -map 0:v\n')
         file.write('      -f rtsp\n')

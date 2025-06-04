@@ -289,12 +289,16 @@ services:
       - MAILBOX_LOGIN=${RABBITMQ_USER}
       - MAILBOX_PASSWORD=${RABBITMQ_PASS}
       - FMT_LEVEL=info,lapin=error
+      - RECORDER=gst
       - RECORDER_RTSP_BUFFER_MODE=buffer
       - SEGMENT_WRITE_BUFFER=2 MiB
+      #- SEGMENT_WRITE_BUFFER=0 KiB
     volumes:
       - /archive:/opt/archive-manager/archive
+    #network_mode: "host"
     ports:
       - 9988:9988
+      - 8086:8086
     deploy:
       resources:
         reservations:
@@ -374,7 +378,7 @@ services:
   signalling-server:
     container_name: signalling-server
     hostname: signalling-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:0.10.7f
+    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:latest
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
     network_mode: host
@@ -516,7 +520,7 @@ services:
   gate-client:
     container_name: gate-client
     hostname: gate-client
-    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.76-rc.16
+    image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.75-rc.9
     ports:
       - 8181:80
       - 8445:445
@@ -606,45 +610,33 @@ services:
 #      - 49152-65535:49152-65535
     volumes:
       - ./mediamtx_config/mediamtx.yml:/mediamtx.yml
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
     logging:
       driver: "json-file"
       options:
         max-file: "2"
         max-size: "200m"
-    restart: on-failure
 
   mediamtx-controller:
     image: 192.168.100.242:5012/orspo/rigel/service/mediamtx-controller:0.2.4
     container_name: mediamtx_controller
     environment:
       - FMT_LEVEL=info,mediamtx_controller=debug,mailbox::amqp_lapin::metrics=off
-      - MAILBOX_ADDRS=192.168.202.221:5672
-      - MAILBOX_LOGIN=user
-      - MAILBOX_PASSWORD=pass
+     # - MEDIAMTX_API=http://192.10.10.1:9997
+     # - MEDIAMTX_WEBRTC=http://10.10.10.1:8889
+#      - MEDIAMTX_RTSP=rtsp://10.10.10.1:8554
+#      - MAILBOX_ADDRS=10.201.0.1:5672
       - MEDIAMTX_API=http://${MEDIA_SERVER_IP}:9997
       - MEDIAMTX_WEBRTC=http://${MEDIA_SERVER_IP}:8889
       - MEDIAMTX_RTSP=rtsp://${MEDIA_SERVER_IP}:8554
-    volumes:
-      - ./mediamtx_config/mediamtx-servers.yml:/mediamtx_servers.yml
+      - MAILBOX_ADDRS=192.168.202.221:5672
+      - MAILBOX_LOGIN=user
+      - MAILBOX_PASSWORD=pass
     network_mode: host
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 150G
     logging:
       driver: "json-file"
       options:
         max-file: "2"
         max-size: "200m"
-    restart: on-failure
 
 networks:
   default:

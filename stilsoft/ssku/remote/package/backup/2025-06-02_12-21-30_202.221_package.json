@@ -24,18 +24,18 @@
   "version": {
     "brdmk": "1.0.24",
     "stl724": "1.0.21",
-    "sdp850": "1.2.1",
+    "sdp850": "1.1.12",
     "termalcamera": "1.10.3",
     "sdp8122": "1.2.17",
-    "objectdetector": "1.4.3",
+    "objectdetector": "1.2.12",
     "sdp8660t": "1.4.11",
-    "rtspstream": "0.17.0",
+    "rtspstream": "0.16.7",
     "sts177": "1.0.37",
-    "sdp858i": "1.2.9",
+    "sdp858i": "1.4.0",
     "sts507": "1.0.9",
     "sdp881": "1.5.20",
     "stl725": "1.0.25",
     "sdp8083": "1.13.1",
-    "onvifcamera": "1.1.14"
+    "onvifcamera": "1.1.12"
   }
 }
