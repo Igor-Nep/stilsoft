@@ -5,15 +5,17 @@ from remote import Remote
 
 #Remote('192.168.202.221').hosts_check()
 '''камеры на vs90'''
-#DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_before_a5000')
-#DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10030, to_n=10090, file_name='reserved_221_a500_for30.txt')
+#DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_before_a5000_05.06')
+#DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10060, to_n=10089, file_name='reserved_a5000_for60.txt')
 #DbSsku('192.168.202.221').reset_needed_modules(from_n=10000, to_n=10090)
-#ApiSsku('192.168.202.221').add_suml('192.168.203.200',0,30)
-#ApiSsku('192.168.207.68').add_rtsp(1,15)
-#ApiSsku('192.168.202.221').add_link(from_n=0, to_n=30)
-#ApiSsku('192.168.202.221').add_vs('192.168.202.188',0,1)
+#ApiSsku('192.168.202.221').add_suml('192.168.203.200',0,29)
+#ApiSsku('192.168.202.221').add_vs('192.168.202.188',0,29)
+#ApiSsku('192.168.202.221').add_link(from_n=0, to_n=29)
+#ApiSsku('192.168.202.221').del_link(from_n=60, to_n=89)
+#print(ApiSsku('192.168.202.221').get_module_by_name('Камера 10045'))
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
 #ApiSsku('192.168.202.10').mode_archive_by_name(mode="splitInterval",value="1m",name="213-шка")
+#ApiSsku('192.168.207.68').add_rtsp(1,15)
 
 #Remote('192.168.202.221').docker_restart('archive-manager')
 #ApiSsku('192.168.202.221').change_ip('192.168.203.200')
@@ -31,8 +33,12 @@ from remote import Remote
 #Remote('192.168.207.69').docker_check_exit()
 #Remote('192.168.207.68').mtx_check_rtp()
 
+'''postman'''
+#Postman().post('/api/data/system/zone')
+#Postman().delete('/api/data/system/zone/')
+
 '''сверка версий'''
-Remote('192.168.202.10').update_versions()
+Remote('192.168.207.68').update_versions()
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
@@ -71,12 +77,9 @@ Remote('192.168.202.10').update_versions()
 #Remote('192.168.207.68').check_versions_by_logs('ssku')
 
 
-#ApiSsku('192.168.202.10').needed_notifications()
+#ApiSsku('192.168.207.68').needed_notifications()
 
 '''мониторинг остановки сервисов'''
 #Remote('192.168.207.68').docker_chech()
 
 #Postman().post('/api/events/maping')
-
-        
-

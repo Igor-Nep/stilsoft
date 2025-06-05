@@ -173,3 +173,6 @@ class DbSsku:
         rows = self.db.execute(select).fetchall()
         row_list = [row[0] for row in rows]
         print(set(row_list))
+
+    def del_link(self,module_id):
+        self.db.execute(f"delete from system.objectlink where member = '{module_id}'")    

@@ -12,10 +12,61 @@ class Postman():
                         "192.168.202.10":{"name":"user","password":"stilsoft","type":"ssku"},
                         "192.168.207.68":{"name":"user","password":"stilsoft1","type":"ssku"}
                         }
+        
+        host_file =  open('c:/windows/system32/drivers/etc/hosts', 'r')
+        len_host = int(len(host_file.readlines()))
+        host_file.seek(0,0)
+        active_host = []
+        for _ in range(0, len_host):
+            s = host_file.readline()#.split(' ')[0]
+            if '#' not in s:
+                active_host.append(s)
+        newti=str(active_host[0])
+        self.terminal('blue',(newti))
+        host_file.close()
 
 
     def check(self):
         print(self.servers[self.ip]['type'])
+
+
+    def cls(self):
+        import sys
+        sys.stdout.write('\r' + ' ' * 100 + '\r')
+        sys.stdout.flush()        
+
+    def status(self,status_code):
+        if status_code == 200:
+            self.terminal('green',status_code)
+        elif 399<status_code<499:
+            self.terminal('yellow',status_code)
+        elif 499<status_code<500:
+            self.terminal('red',status_code)
+        else:
+            self.terminal('non',status_code)
+
+
+    def terminal(self,paint,text,nextrow=True):
+        import sys
+        from color import color
+        self.cls()
+        if paint == 'yellow':
+            sys.stdout.write(f'{color.grey('[')}{color.yellow(f'{text}')}{color.grey(']')}')
+        elif paint == 'green':
+            sys.stdout.write(f'{color.grey('[')}{color.green(f'{text}')}{color.grey(']')}')
+        elif paint == 'red':
+            sys.stdout.write(f'{color.grey('[')}{color.red(f'{text}')}{color.grey(']')}')
+        elif paint == 'blue':
+            sys.stdout.write(f'{color.grey('[')}{color.blue(f'{text}')}{color.grey(']')}')
+        elif paint == 'grey':
+            sys.stdout.write(f'{color.grey('[')}{color.grey(f'{text}')}{color.grey(']')}')
+        elif paint == 'non':
+            sys.stdout.write(f'{color.grey('[')}{color.non(f'{text}')}{color.grey(']')}')
+        elif paint == 'mod':    
+            sys.stdout.write(f'{color.grey('[')}{text}{color.grey(']')}')
+        sys.stdout.flush()
+        if nextrow:
+            sys.stdout.write('\n')
 
     
     def hosts(self):
@@ -57,12 +108,6 @@ class Postman():
             return body
 
 
-
-    def get(self, uri):
-        resp = requests.get(self.url+f'{uri}',headers=self.get_token(), verify=False)
-        print(resp.json())
-
-
     def get_sub_zones(self, url):
         zone_id = []
         sub_zone_id = []
@@ -87,26 +132,39 @@ class Postman():
                 print(f'FINDED {i}')
 
 
+    def get(self,url):
+        resp = requests.get(self.url+f'{url}',headers=self.get_token(),verify=False)
+        self.terminal('blue','BODY')
+        print(resp.json())
+        self.status(resp.status_code)
+
 
 
     def delete(self, url):
         resp = requests.delete(self.url+f'{url}',headers=self.get_token(), verify=False)
-        print(resp.json())    
+        try:
+            self.terminal('blue','BODY')
+            print(resp.json())#['data'][0]['timestamp'])
+        except Exception as err:
+            self.terminal('blue','NONE')
+            self.terminal('non',err)    
+        self.status(resp.status_code)   
 
 
     def post(self, url):
-        from api import ApiSsku
-        id = ApiSsku().get_user_id()
+        from api import ApiSsku       
         body = self.make_json('D:\work\WHPython\stilsoft\ssku\postman/body.json')
         #body_ = json.dumps(body)
         #body_ = body_.replace("%%ID%%", id)
         #body = json.loads(body_)
         resp = requests.post(self.url+f'{url}',headers=self.get_token(), json=body, verify=False)
-        print(resp.json()['data'][0]['timestamp'])
-
-   # def post(self, url, body):
-
-   #         pre_body =
+        try:
+            self.terminal('blue','BODY')
+            print(resp.json())#['data'][0]['timestamp'])
+        except Exception as err:
+            self.terminal('blue','NONE')
+            self.terminal('non',err)    
+        self.status(resp.status_code)
 
     def put_anal(self):
         from api import ApiSsku

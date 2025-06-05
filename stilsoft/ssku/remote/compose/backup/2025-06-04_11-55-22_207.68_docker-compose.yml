@@ -25,12 +25,16 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   postgres:
     container_name: postgres
     hostname: postgres
     image: 192.168.100.242:5012/orspo/rigel/service/postgres-images:postgres-16
-
     user: postgres
     volumes:
       - postgresql-data:/var/lib/postgresql/data
@@ -57,6 +61,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   api-gateway-tls:
     container_name: api-gateway-tls
@@ -91,6 +100,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   api-gateway:
     container_name: api-gateway
@@ -121,6 +135,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   component-registry:
     container_name: component-registry
@@ -149,11 +168,16 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   health-monitor:
     container_name: health-monitor
     hostname: health-monitor
-    image: 192.168.100.242:5012/orspo/rigel/service/health-monitor:1.1.5
+    image: 192.168.100.242:5012/orspo/rigel/service/health-monitor:1.1.7
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - DB_SRV=${DATABASE_SERVICE_ENDPOINT}
@@ -166,8 +190,6 @@ services:
       - MAILBOX_PREFETCH_COUNT=100
     ports:
       - 10000:10000
-    depends_on:
-      - database-service
     deploy:
       resources:
         reservations:
@@ -180,6 +202,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   event-monitor:
     container_name: event-monitor
@@ -212,6 +239,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   config-service:
     container_name: config-service
@@ -244,11 +276,16 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   database-service:
     container_name: database-service
     hostname: database-service
-    image: 192.168.100.242:5012/orspo/rigel/service/database-service:1.1.61
+    image: 192.168.100.242:5012/orspo/rigel/service/database-service:1.1.59
     ports:
       - 8080:8080
     environment:
@@ -260,6 +297,8 @@ services:
       - MAILBOX_ADDRS=${RABBITMQ_ENDPOINT}
       - MAILBOX_LOGIN=${RABBITMQ_USER}
       - MAILBOX_PASSWORD=${RABBITMQ_PASS}
+      - MAILBOX_HOST=${GATEWAY_IP}
+      - MAILBOX_PORT=${RABBITMQ_CLI_PORT}
     depends_on:
       postgres:
         condition: service_healthy
@@ -275,43 +314,16 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
-
-  archive-manager:
-    privileged: true
-    container_name: archive-manager
-    hostname: archive-manager
-    image: 192.168.100.242:5012/orspo/rigel/service/archive-manager:1.7.35
-    #image: archive-manager:1.7.35
-    environment:
-      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
-      - LISTEN=0.0.0.0:${ARCHIVE_MANAGER_PORT}
-      - MAILBOX_ADDRS=${RABBITMQ_ENDPOINT}
-      - MAILBOX_LOGIN=${RABBITMQ_USER}
-      - MAILBOX_PASSWORD=${RABBITMQ_PASS}
-      - FMT_LEVEL=info,lapin=error
-      - RECORDER_RTSP_BUFFER_MODE=buffer
-      - SEGMENT_WRITE_BUFFER=2 MiB
-    volumes:
-      - /archive:/opt/archive-manager/archive
-    ports:
-      - 9988:9988
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 30G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   auth-service:
     container_name: auth-service
     hostname: auth-service
-    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.20
+    image: 192.168.100.242:5012/orspo/rigel/service/auth-service:1.2.21
     environment:
       - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
       - LISTEN=0.0.0.0:${AUTH_SERVICE_PORT}
@@ -324,6 +336,8 @@ services:
       - MAILBOX_ADDRS=${RABBITMQ_ENDPOINT}
       - MAILBOX_LOGIN=${RABBITMQ_USER}
       - MAILBOX_PASSWORD=${RABBITMQ_PASS}
+      - MAILBOX_HOST=${GATEWAY_IP}
+      - MAILBOX_PORT=${RABBITMQ_CLI_PORT}
       - HASH_REQUIRED=true
     ports:
       - 9090:9090
@@ -341,104 +355,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
-
-  media-server:
-    container_name: media-server
-    hostname: media-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server:1.16.0-alpha.10
-    labels:
-      - autoheal=true
-    environment:
-      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
-      - FMT_LEVEL=info
-      - SIGNALLER_ADDRESS=ws://${MEDIA_SERVER_IP}:8443
-      - MAILBOX_ADDRS=${RABBITMQ_ENDPOINT}
-      - MAILBOX_LOGIN=${RABBITMQ_USER}
-      - MAILBOX_PASSWORD=${RABBITMQ_PASS}
-      - BUFFER_LATENCY=0
-      - RTSP_PROTO=auto
-    network_mode: host
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
-
-  signalling-server:
-    container_name: signalling-server
-    hostname: signalling-server
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-signalling-server:0.10.7f
-    environment:
-      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
-    network_mode: host
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
-
-  webrtc-www:
-    container_name: webrtc-www
-    hostname: webrtc-www
-    image: 192.168.100.242:5012/orspo/rigel/service/media-server/webrtc-www:1.1.1
-    ports:
-      - 8099:80
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
-
-  node-manager:
-    container_name: node-manager
-    hostname: node-manager
-    image: 192.168.100.242:5012/orspo/rigel/service/node-runner:1.0.5_1.3.0
-    environment:
-      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
-      - LISTEN=0.0.0.0:${NODE_MANAGER_PORT}
-      - CONFIG=/config/config.json
-      - FMT_LEVEL=info
-      - GST_PLUGIN_PATH=/opt/node_manager/plugins
-    volumes:
-      - ./node-manager/config:/config
-      - ./node-manager/plugins:/opt/node_manager/plugins
-      - ./node-manager/runtime:/opt/node_manager/runtime
-    network_mode: host
-    depends_on:
-      - database-service
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   event-combiner:
     container_name: event-combiner
@@ -468,6 +389,11 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
   prometheus-discovery:
     container_name: prometheus-discovery
@@ -490,36 +416,22 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
-  autoheal-service:
-    container_name: autoheal-service
-    hostname: autoheal-service
-    image: 192.168.100.242:5012/orspo/rigel/service/autoheal:latest
-    environment:
-      - AUTOHEAL_ONLY_MONITOR_RUNNING=true
-      - AUTOHEAL_CONTAINER_LABEL=autoheal
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
-
-  gate-client:
-    container_name: gate-client
-    hostname: gate-client
+  web-server:
+    container_name: web-server
+    hostname: web-server
     image: 192.168.100.242:5012/orspo/rigel/service/gate-client:5.0.76-rc.16
     ports:
+      - 8443:443
       - 8181:80
-      - 8445:445
+    volumes:
+      - ./web_server/nginx/conf.d:/etc/nginx/conf.d
+      - ./web_server/nginx/ssl:/etc/nginx/certs
     deploy:
       resources:
         reservations:
@@ -532,128 +444,49 @@ services:
         max-file: "2"
         max-size: "200m"
     restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
+
+  node-manager:
+    container_name: node-manager
+    hostname: node-manager
+    image: 192.168.100.242:5012/orspo/rigel/service/node-runner:1.0.5_1.3.0
+    environment:
+      - PROMETHEUS_DISCOVERY=http://${DEBUG_SERVICE}
+      - LISTEN=0.0.0.0:${NODE_MANAGER_PORT}
+      - CONFIG=/config/config.json
+      - FMT_LEVEL=info
+      - GST_PLUGIN_PATH=/opt/node_manager/plugins
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
- #     - ./data/www/dist-front:/usr/share/nginx/html
-      - ./certs:/etc/nginx/certs
-
-  mediamtx-web-debug:
-    container_name: mediamtx-web-debug
-    hostname: mediamtx-web-debug
-    image: 192.168.100.242:5012/orspo/rigel/service/mediamtx-webrtc-debug-client:1.0.0
-    environment:
-      - MEDIAMTX_API_URL=http://192.168.202.221:9997
-      - WEBRTC_API_URL=http://192.168.202.221:8889
-    ports:
-      - 8185:80
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
-
-  hls-web-debug:
-    container_name: hls-web-debug
-    hostname: hls-web-debug
-    image: 192.168.100.242:5012/orspo/rigel/service/hls-debug-client:1.0.0
-    environment:
-      - API_GATEAWAY_URL=http://192.168.202.221:8189
-      - ARCHIVE_DEEP_MINUTES=5
-      - TRANSCODE_ENABLED=true
-    ports:
-      - 8186:80
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: unless-stopped
-
-  mediamtx-server:
-    hostname: mediamtx_server
-    image:  192.168.100.242:5012/orspo/rigel/service/mediamtx:1.11.3
-    container_name: mediamtx-server
-#    network_mode: "host"
-#    privileged: true
-#    ulimits:
-#      nofile: 65535
-#      nproc: 65535
-    environment:
-      - MTX_RTSPTRANSPORTS=tcp
-      - MTX_WEBRTCADDITIONALHOSTS=192.168.202.221
-    ports:
-      - 9998:9998/tcp
-      - 9997:9997/tcp
-      - 8889:8889/tcp
-      - 8554:8554/tcp
-      - 1935:1935/tcp
-      - 8189:8189/udp
-# rtp      - 8000:8000/udp
-#rtcp      - 8001:8001/udp
-#      - 49152-65535:49152-65535
-    volumes:
-      - ./mediamtx_config/mediamtx.yml:/mediamtx.yml
-    deploy:
-      resources:
-        reservations:
-          memory: 100M
-        limits:
-          memory: 3G
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "200m"
-    restart: on-failure
-
-  mediamtx-controller:
-    image: 192.168.100.242:5012/orspo/rigel/service/mediamtx-controller:0.2.4
-    container_name: mediamtx_controller
-    environment:
-      - FMT_LEVEL=info,mediamtx_controller=debug,mailbox::amqp_lapin::metrics=off
-      - MAILBOX_ADDRS=192.168.202.221:5672
-      - MAILBOX_LOGIN=user
-      - MAILBOX_PASSWORD=pass
-      - MEDIAMTX_API=http://${MEDIA_SERVER_IP}:9997
-      - MEDIAMTX_WEBRTC=http://${MEDIA_SERVER_IP}:8889
-      - MEDIAMTX_RTSP=rtsp://${MEDIA_SERVER_IP}:8554
-    volumes:
-      - ./mediamtx_config/mediamtx-servers.yml:/mediamtx_servers.yml
+      - ./node-manager/config:/config
+      - ./node-manager/plugins:/opt/node_manager/plugins
+      - ./node-manager/runtime:/opt/node_manager/runtime
     network_mode: host
     deploy:
       resources:
         reservations:
           memory: 100M
         limits:
-          memory: 150G
+          memory: 3G
     logging:
       driver: "json-file"
       options:
         max-file: "2"
         max-size: "200m"
-    restart: on-failure
+    restart: unless-stopped
+    extra_hosts:
+      - "server.app.ru:10.201.0.1"
+      - "server.video.ru:${VIDEO_SERVER_IP}"
+      - "server.db.ru:${DB_SAVE_SERVER_IP}"
+      - "gate.synerget.ru:10.201.0.1"
 
 networks:
   default:
     external:
-      name: external-net
-  #bond_network:
-#    external:
-#      name: bond0-macvlan-net
+      name: server-external-net
+
 volumes:
   postgresql-data:
-  geoserver_data_sxf:
-  postgres_data_sxf:
