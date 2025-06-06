@@ -133,38 +133,62 @@ class Postman():
 
 
     def get(self,url):
-        resp = requests.get(self.url+f'{url}',headers=self.get_token(),verify=False)
-        self.terminal('blue','BODY')
-        print(resp.json())
-        self.status(resp.status_code)
+        try:
+            resp = requests.get(self.url+f'{url}',headers=self.get_token(),verify=False)
+        except Exception as err:
+            self.terminal('mod','can not make request')
+            self.terminal('red',err)
+        try:        
+            self.terminal('yellow','body:')
+            self.terminal('mod',resp.json())
+        except Exception as err:
+            self.terminal('red',err) 
+        try:       
+            self.status(resp.status_code)
+        except Exception as err:
+            self.terminal('red',err)    
 
 
 
     def delete(self, url):
-        resp = requests.delete(self.url+f'{url}',headers=self.get_token(), verify=False)
         try:
-            self.terminal('blue','BODY')
+            resp = requests.delete(self.url+f'{url}',headers=self.get_token(), verify=False)
+        except Exception as err:
+            self.terminal('mod','can not make request')
+            self.terminal('red',err)
+        try:
+            self.terminal('yellow','body:')
             print(resp.json())#['data'][0]['timestamp'])
         except Exception as err:
-            self.terminal('blue','NONE')
-            self.terminal('non',err)    
-        self.status(resp.status_code)   
+            self.terminal('yellow','none')
+            self.terminal('red',err)
+        try:        
+            self.status(resp.status_code)   
+        except Exception as err:
+            self.terminal('red',err)    
 
 
-    def post(self, url):
+    def post(self,url,body='body.json'):
         from api import ApiSsku       
-        body = self.make_json('D:\work\WHPython\stilsoft\ssku\postman/body.json')
+        data = self.make_json(f'D:\work\WHPython\stilsoft\ssku\postman\{body}')
         #body_ = json.dumps(body)
         #body_ = body_.replace("%%ID%%", id)
         #body = json.loads(body_)
-        resp = requests.post(self.url+f'{url}',headers=self.get_token(), json=body, verify=False)
         try:
-            self.terminal('blue','BODY')
+            resp = requests.post(self.url+f'{url}',headers=self.get_token(), json=data, verify=False)
+        except Exception as err:
+            self.terminal('mod','can not make request')
+            self.terminal('red',err)            
+        try:
+            self.terminal('yellow','body:')
             print(resp.json())#['data'][0]['timestamp'])
         except Exception as err:
-            self.terminal('blue','NONE')
-            self.terminal('non',err)    
-        self.status(resp.status_code)
+            self.terminal('yellow','none')
+            self.terminal('red',err)
+        try:        
+            self.status(resp.status_code)
+        except Exception as err:
+            self.terminal('red',err)    
 
     def put_anal(self):
         from api import ApiSsku

@@ -9,7 +9,7 @@ import random
 import json
 import time
 from time import sleep
-
+from color import color
 
 class ApiSsku():
 
@@ -29,7 +29,37 @@ class ApiSsku():
                 if self.ip not in s:
                     print('\033[5;31m[WRONG SERVER IN HOSTS]\033[0m')
                     sleep(3)
-                    exit()
+                    exit()            
+
+
+    def cls(self):
+        import sys
+        sys.stdout.write('\r' + ' ' * 100 + '\r')
+        sys.stdout.flush() 
+
+
+    def terminal(self,paint,text,nextrow=True):
+        import sys
+        from color import color
+        self.cls()
+        if paint == 'yellow':
+            sys.stdout.write(f'{color.grey('[')}{color.yellow(f'{text}')}{color.grey(']')}')
+        elif paint == 'green':
+            sys.stdout.write(f'{color.grey('[')}{color.green(f'{text}')}{color.grey(']')}')
+        elif paint == 'red':
+            sys.stdout.write(f'{color.grey('[')}{color.red(f'{text}')}{color.grey(']')}')
+        elif paint == 'blue':
+            sys.stdout.write(f'{color.grey('[')}{color.blue(f'{text}')}{color.grey(']')}')
+        elif paint == 'grey':
+            sys.stdout.write(f'{color.grey('[')}{color.grey(f'{text}')}{color.grey(']')}')
+        elif paint == 'non':
+            sys.stdout.write(f'{color.grey('[')}{color.non(f'{text}')}{color.grey(']')}')
+        elif paint == 'mod':    
+            sys.stdout.write(f'{color.grey('[')}{text}{color.grey(']')}')
+        sys.stdout.flush()
+        if nextrow:
+            sys.stdout.write('\n')
+
 
     
     def get_token(self, login='admin', password='adm777'):
@@ -48,18 +78,21 @@ class ApiSsku():
         return my_token
     
 
-    def refresh_token(self): 
+    def refresh_token(self):
+            print(f'DEBUG refresh {color.blue(self.glob_start_time)}')
+            print(f'DEBUG refresh token {color.grey(self.token)}') 
             if self.token == '':
                 self.token = self.get_token()
 
-            elif time.time()-self.glob_start_time>359:
+            elif time.time()-self.glob_start_time>359.0:
+                print(f'DEBUG refresh DEC 360 {color.yellow(time.time()-self.glob_start_time)}') 
                 self.token = self.get_token()
                 self.glob_start_time = time.time()
             
             else:
                 self.token = self.token
+                print(f'DEBUG refresh ELSE {color.red(time.time()-self.glob_start_time)}')
               
-
 
     def refresh_file_token(self):
         warnings.filterwarnings('ignore')
@@ -159,8 +192,9 @@ class ApiSsku():
             return resp.json()['data'][i]['id']
 
     
-    def get_module_by_name(self, tit): 
-        resp = requests.get(self.url+'/api/data/system/module', headers=self.get_token(), verify=False)
+    def get_module_by_name(self, tit):
+        self.refresh_token() 
+        resp = requests.get(self.url+'/api/data/system/module', headers=self.token, verify=False)
         for item in resp.json()['data']:
                 
                 if item['title'] == tit:
@@ -356,6 +390,18 @@ class ApiSsku():
                 print(resp)
 
 
+    def status(self,status_code):
+        if status_code == 200:
+            self.terminal('green',status_code)
+        elif 399<status_code<499:
+            self.terminal('yellow',status_code)
+        elif 499<status_code<500:
+            self.terminal('red',status_code)
+        else:
+            self.terminal('non',status_code)
+
+
+
     def postman(self):
           warnings.filterwarnings('ignore')
           import msvcrt
@@ -440,25 +486,33 @@ class ApiSsku():
         return(put_arm_resp.json())
    
 
-    def post_incident(self):
+    def post_incident(self,timer=0.2):
         warnings.filterwarnings('ignore')
+        from time import sleep
         os.system('cls')
+        self.refresh_token()
+        #print(f'DEBUG glob_time {color.blue(self.glob_start_time)}')
         tit_cam = input('Введите наименование камеры: ')
-
-
-        body_i= '{"data":'+'{'+'}'+f',"timestamp":"2021-11-23T07:46:49.324Z","sourceId":"{self.get_module_by_name(tit_cam)}"'+'}'
-        #body_h= '{'+f'"eventCode":4150,"source":"ae109d47-8743-4b46-ab9e-166dc2117682","timestamp":"{self.get_time()}","user":"ff7ab29a-9ad8-428c-9d68-39e8bf9cc7d1"'+'}'
-        bodyi = json.loads(body_i)
-        #bodyh = json.loads(body_h)
         i = int(input('Количество инцидентов: '))
         
         for _ in range(0, i):
-            self.refresh_token()
-            #resp_h = requests.post(self.url+'/api/data/events/history',headers=self.token,json=bodyh,verify=False)
-            resp_i = requests.post(self.url+'/api/events/incident',headers=self.token,json=bodyi,verify=False)
-            print(resp_i)
+            #print(f'DEBUG incident: {color.blue(self.glob_start_time)}')
+            #print(f'DEBUG incident: {color.yellow(time.time()-self.glob_start_time)}')
             
-        return(resp_i)
+            timing=self.get_time()
+            body_i= '{"data":'+'{'+'}'+f',"timestamp":"{timing}","sourceId":"{self.get_module_by_name(tit_cam)}"'+'}'
+            bodyi = json.loads(body_i)
+            resp_i = requests.post(self.url+'/api/events/incident',headers=self.token,json=bodyi,verify=False)
+            try:
+                self.terminal('yellow','body:')
+                self.terminal('mod',resp_i.json())
+            except Exception as err:
+                self.terminal('red',err)
+            try:
+                self.status(resp_i.status_code)
+            except Exception as err:
+                self.terminal('red',err)
+            sleep(timer)    
 
 
     def add_module(self):
@@ -505,7 +559,7 @@ class ApiSsku():
         self.refresh_token()
         warnings.filterwarnings('ignore')
         os.system('cls')
-        with open('D:\work\WHPython\stilsoft\ssku/device_list.json', 'r', encoding='utf-8') as file:   
+        with open('D:/work/WHPython/stilsoft/ssku/api/devices/device_list.json', 'r', encoding='utf-8') as file:   
             module_list = json.load(file)
             module_count = len(module_list)
             name_index = 0
@@ -515,7 +569,7 @@ class ApiSsku():
                 module_type = v['type']
                 integrator_list = ['scud','ksbo']
                 if module_type not in integrator_list:
-                     with open('D:\work\WHPython\stilsoft\ssku/video_module_mask.json', 'r', encoding='utf-8') as file:
+                     with open('D:/work/WHPython/stilsoft/ssku/api/devices/video_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
                           pre_body = pre_body.replace("%%NODE%%", self.get_node('video'))
@@ -525,7 +579,7 @@ class ApiSsku():
                           pre_body = pre_body.replace("%%TYPE%%", module_type)
                           body = json.loads(pre_body)
                 elif module_type in integrator_list:
-                     with open('D:\work\WHPython\stilsoft\ssku/integrator_module_mask.json', 'r', encoding='utf-8') as file:
+                     with open('D:/work/WHPython/stilsoft/ssku/api/devices/integrator_module_mask.json', 'r', encoding='utf-8') as file:
                           pre_body_ = json.load(file)
                           pre_body = json.dumps(pre_body_)
                           pre_body = pre_body.replace("%%NODE%%", self.get_need_node('integrator'))
@@ -536,10 +590,13 @@ class ApiSsku():
                           body = json.loads(pre_body)
                 else:
                      print( f'ERROR IN module_list IN LINE {name_index}')
-                print('[done]')
-                resp = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body, verify=False)
-                name_index += 1   
-            return resp.status_code
+                try:     
+                    resp = requests.post(self.url +'/api/data/system/module', headers=self.token, json=body, verify=False)
+                    name_index += 1   
+                    self.status(resp.status_code)
+                except Exception as err:
+                    self.terminal('red',err)    
+            
 
     def change_ip(self,ip):
          self.refresh_token()

@@ -20,7 +20,7 @@
     "mediamtx-web-debug": "1.0.0",
     "hls-debug-client": "1.0.0",
     "mediamtx": "1.11.3",
-    "mediamtx-controller": "0.2.4",
+    "mediamtx-controller": "0.3.1",
     "autoheal": "latest",
     "app": "5.0.12-rc.10"
     }
