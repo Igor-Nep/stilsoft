@@ -40,11 +40,11 @@ from remote import Remote
 #Postman().delete('/api/data/system/zone/')
 
 '''сверка версий'''
-Remote('192.168.202.126').update_versions()
+Remote('192.168.207.68').update_versions()
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
-#Remote('192.168.207.69').push_lib_targeting('192.168.207.69','sdp858i','1.4.2-alpha.1') 
+#Remote('192.168.202.126').push_lib_targeting('192.168.202.126','sdp858i','1.2.10') 
 
 #ApiSsku('192.168.207.68').enable_module(module_name='Камера 101',enabled=False)
 #ApiSsku('192.168.202.126').check_module_state(module_name='Этаж 3. Вход')

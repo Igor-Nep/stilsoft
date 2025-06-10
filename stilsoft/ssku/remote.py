@@ -698,6 +698,10 @@ class Remote:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+        same_video=False
+        for value in self.video_partner.values():
+            if ip in value and ip in self.video_partner.keys():
+                same_video=True
 
         print('change services versions > ')
 
@@ -725,7 +729,18 @@ class Remote:
         except Exception as err:
             print(f'open docker-compose.yml error: {color.red(err)}')
             return
-
+        if same_video:
+            try:
+                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_same_video_docker-compose.yml')
+                sleep(1)
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml')
+                sleep(1)
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml', 'r', encoding='utf-8') as file:
+                    same_video_docker_lines = file.readlines()
+            except Exception as err:
+                print(f'open same video docker-compose.yml error: {color.red(err)}')
+                return
         changes = False
         
         for service_name, new_version in service_list.items():
@@ -740,6 +755,19 @@ class Remote:
                             continue
                         else:
                             break
+        if same_video:                    
+            for service_name, new_version in service_list.items():
+                for i, line in enumerate(same_video_docker_lines):
+                    if f'{service_name}:' in line and 'image:' in line:
+                        current_version = line.split(':')[-1].strip()
+                        if current_version != new_version:
+                            print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
+                            same_video_docker_lines[i] = line.replace(current_version, new_version)
+                            changes = True
+                            if service_name == 'api-gateway':
+                                continue
+                            else:
+                                break
 
         if changes:
             try:
@@ -749,25 +777,55 @@ class Remote:
 
             except Exception as err:
                 print(f'writing docker-compose.yml error: {color.red(err)}')
+            if same_video:
+                try:
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml', 'w', encoding='utf-8') as file:
+                        file.writelines(same_video_docker_lines)
+                    self.terminal('non','done')
+
+                except Exception as err:
+                    print(f'writing same video docker-compose.yml error: {color.red(err)}')    
         else:
             print(color.yellow('docker-compose is up to date')) 
         if changes:
             answer = 'y'
             if answer == 'y':
-                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
-                print('copying docker-compose.yml to server')
-                sleep(1)
-
-                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.configurate[ip]['back_dir']}')
-                sleep(1)
-                
                 try:
-                    stdin.write(self.configurate[ip]['password']+'\n')
-                    stdin.flush()
-                    print(stderr.read().decode())
-                except:
-                    next
-                sleep(1) 
+                    sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                    print('copying docker-compose.yml to server')
+                    sleep(1)
+
+                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.configurate[ip]['back_dir']}')
+                    sleep(1)
+                    try:
+                        stdin.write(self.configurate[ip]['password']+'\n')
+                        stdin.flush()
+                        print(stderr.read().decode())
+                    except:
+                        next
+                    sleep(1)
+                except Exception as err:
+                    print(f'can not copy docker-compose.yml to back dir {color.red(err)}')
+                if same_video:
+                    try:
+                        sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml', f'/home/user/same_video_docker-compose.yml')
+                        print('copying same video docker-compose.yml to server')
+                        sleep(1)
+
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/same_video_docker-compose.yml {self.same_video_configurate[ip]['back_dir']}docker-compose.yml')
+                        sleep(1)
+                        try:
+                            stdin.write(self.same_video_configurate[ip]['password']+'\n')
+                            stdin.flush()
+                            print(stderr.read().decode())
+                        except:
+                            next
+                        sleep(1)                        
+                    except Exception as err:
+                        print(f'can not copy same video docker-compose.yml to back dir {color.red(err)}')
+
+
+ 
                 stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
                 print('updating docker-compose')
                 print(stdout.read().decode())
@@ -800,10 +858,41 @@ class Remote:
                     print(f'delete local temp file error {err}')
                     pass
                 self.terminal('green','done')
+
+                if same_video:
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[ip]['back_dir']}; docker-compose up -d')
+                    print('updating video docker-compose')
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[ip]['back_dir']} && docker-compose ps')
+                    status = stdout.read().decode()    
+                    for line in status.split('\n'):
+                        if 'Exit' in line or "Restarting" in line:
+                            module_name = line.split()[0]
+                            print(f'{module_name} остановлен')
+                            try:
+                                print(f'restarting {module_name}')
+                                stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[ip]['back_dir']} && docker-compose restart {module_name}')
+                                status = stderr.read().decode()
+                            except:
+                                print(f'can not restart docker-compose')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[ip]['back_dir']} && docker-compose ps')
+                            status = stdout.read().decode()
+                            for line in status.split('\n'):
+                                if 'Exit' in line or 'Restarting' in line:
+                                    module_name = line.split()[0]
+                                    print(f'{module_name} проблема запуска')
+                    
+                    print('video docker-compose is updated')             
+                    ssh.exec_command(f'rm /home/user/same_video_docker-compose.yml')
+                    print('deleting temp files  ... ', end='')
+
             else:
                 try:
-                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
+                    #os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                    if same_video:
+                        os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml')
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
@@ -815,7 +904,10 @@ class Remote:
         import paramiko, os
         from color import color
         from time import sleep
-
+        same_video=False
+        for value in self.video_partner.values():
+            if ip in value and ip in self.video_partner.keys():
+                same_video=True
     
         with paramiko.SSHClient() as ssh:
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -832,43 +924,81 @@ class Remote:
                     return
 
                 plugins_dir = f'{self.configurate[ip]['back_dir']}/node-manager/plugins'
-
-                try:
-                    sftp.put(f'{lib_dir}/lib{lib_name}.so', f'/home/user/lib{lib_name}.so')
-                    sleep(2)
-                    print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)}\r')
-                    print('stop node-manager >')
-                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
-                    sleep(2)
-                    print(stdout.read().decode())
-                    print(stderr.read().decode())
-                
-                    print('copying updated lib >')
-                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
-                    sleep(2)
+                if same_video:
+                    video_plugins_dir = f'{self.same_video_configurate[ip]['back_dir']}/node-manager/plugins'
+                if not same_video:
                     try:
-                        stdin.write(f'{self.configurate[ip]['password']}\n')
-                    except:
+                        sftp.put(f'{lib_dir}/lib{lib_name}.so', f'/home/user/lib{lib_name}.so')
+                        sleep(2)
+                        print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)}\r')
+                        print('stop node-manager >')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                        sleep(2)
+                        print(stdout.read().decode())
+                        print(stderr.read().decode())
+                
+                        print('copying updated lib >')
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {plugins_dir}')
+                        sleep(2)
+                        try:
+                            stdin.write(f'{self.configurate[ip]['password']}\n')
+                        except:
 
-                        next
-                    self.terminal('non','done')
+                            next
+                        self.terminal('non','done')
                     
 
-                    print('restart node-manager >')
-                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
-                    sleep(2)
-                    print(stdout.read().decode())
-                    print(stderr.read().decode()) 
-                    self.terminal('non','done')
-                except Exception as err:
-                    print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version}: {str(err)}')
-                finally:
-                    try:
-                        sftp.remove(f'/home/user/lib{lib_name}.so') 
+                        print('restart node-manager >')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                        sleep(2)
+                        print(stdout.read().decode())
+                        print(stderr.read().decode()) 
+                        self.terminal('non','done')
                     except Exception as err:
-                        print(f'can not delete temp lib files: {err}')
-                        pass
+                        print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version}: {str(err)}')
+                    finally:
+                        try:
+                            sftp.remove(f'/home/user/lib{lib_name}.so') 
+                        except Exception as err:
+                            print(f'can not delete temp lib files: {err}')
+                            pass
 
+                if same_video:
+                    try:
+                        sftp.put(f'{lib_dir}/lib{lib_name}.so', f'/home/user/lib{lib_name}.so')
+                        sleep(2)
+                        print(f'update lib {color.grey(lib_name)} to {color.green(lib_version)}\r')
+                        print('stop node-manager >')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                        sleep(2)
+                        print(stdout.read().decode())
+                        print(stderr.read().decode())
+                
+                        print('copying updated lib >')
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/lib{lib_name}.so {video_plugins_dir}')
+                        sleep(2)
+                        try:
+                            stdin.write(f'{self.same_video_configurate[ip]['password']}\n')
+                        except:
+
+                            next
+                        self.terminal('non','done')
+                    
+
+                        print('restart video node-manager >')
+                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                        sleep(2)
+                        print(stdout.read().decode())
+                        print(stderr.read().decode()) 
+                        self.terminal('non','done')
+                    except Exception as err:
+                        print(f'{color.red("ERROR: ")}ошибка при копировании библиотеки {lib_name} {lib_version}: {str(err)}')
+                    finally:
+                        try:
+                            sftp.remove(f'/home/user/lib{lib_name}.so') 
+                        except Exception as err:
+                            print(f'can not delete temp lib files: {err}')
+                            pass            
         self.terminal('non','done')
 
 
@@ -927,6 +1057,10 @@ class Remote:
         from time import sleep
         from datetime import datetime
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        same_video=False
+        for value in self.video_partner.values():
+            if ip in value and ip in self.video_partner.keys():
+                same_video=True        
         package = True
         lib_error = False
         module_change_list = {}
@@ -1101,13 +1235,14 @@ class Remote:
         need_changes = self.check_versions(project)
 
         if need_changes:
+
             answer = input(f'обновить версии на {self.ip}? (y/n): ')
             if answer == 'y':
                 for item in need_changes:
                     if 'app_service' in item:
                         self.change_servise_versions(self.ip,project)
-                    elif 'video_service' in item:
-                        self.change_servise_versions(self.video_partner[self.ip],project)
+                    elif 'video_service':
+                            self.change_servise_versions(self.ip,project)
                     elif 'app_module' in item:
                         self.change_modules_versions(self.ip,project)
 
