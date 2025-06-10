@@ -690,7 +690,7 @@ class Remote:
                 self.terminal('yellow','done')
 
 
-    def change_servise_versions(self, ip, project):
+    def change_servise_versions(self, ip, project, video=False):
         from color import color
         import paramiko, json, os
         from time import sleep
@@ -702,7 +702,8 @@ class Remote:
         for value in self.video_partner.values():
             if ip in value and ip in self.video_partner.keys():
                 same_video=True
-
+        if video:
+            print(f'DEBUG take video arg')
         print('change services versions > ')
 
         print(f'connected {color.grey(ip)}')
@@ -716,19 +717,32 @@ class Remote:
         except Exception as err:
             print(f'open service_list.json error: {color.red(err)}')
             return
-
-        try:
-            sftp_client = ssh.open_sftp()
-            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
-            sleep(1)
-            sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
-            sleep(1)
-            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
-                docker_lines = file.readlines()
-        except Exception as err:
-            print(f'open docker-compose.yml error: {color.red(err)}')
-            return
+        if not video:
+            try:
+                sftp_client = ssh.open_sftp()
+                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
+                sleep(1)
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                sleep(1)
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+                    docker_lines = file.readlines()
+            except Exception as err:
+                print(f'open docker-compose.yml error: {color.red(err)}')
+                return
+        if video:
+            try:
+                sftp_client = ssh.open_sftp()
+                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_video_docker-compose.yml')
+                sleep(1)
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml')
+                sleep(1)
+                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+                    video_docker_lines = file.readlines()
+            except Exception as err:
+                print(f'open docker-compose.yml error: {color.red(err)}')
+                return            
         if same_video:
             try:
                 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -742,19 +756,32 @@ class Remote:
                 print(f'open same video docker-compose.yml error: {color.red(err)}')
                 return
         changes = False
-        
-        for service_name, new_version in service_list.items():
-            for i, line in enumerate(docker_lines):
-                if f'{service_name}:' in line and 'image:' in line:
-                    current_version = line.split(':')[-1].strip()
-                    if current_version != new_version:
-                        print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
-                        docker_lines[i] = line.replace(current_version, new_version)
-                        changes = True
-                        if service_name == 'api-gateway':
-                            continue
-                        else:
-                            break
+        if not video:
+            for service_name, new_version in service_list.items():
+                for i, line in enumerate(docker_lines):
+                    if f'{service_name}:' in line and 'image:' in line:
+                        current_version = line.split(':')[-1].strip()
+                        if current_version != new_version:
+                            print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
+                            docker_lines[i] = line.replace(current_version, new_version)
+                            changes = True
+                            if service_name == 'api-gateway':
+                                continue
+                            else:
+                                break
+        if video:
+            for service_name, new_version in service_list.items():
+                for i, line in enumerate(video_docker_lines):
+                    if f'{service_name}:' in line and 'image:' in line:
+                        current_version = line.split(':')[-1].strip()
+                        if current_version != new_version:
+                            print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
+                            video_docker_lines[i] = line.replace(current_version, new_version)
+                            changes = True
+                            if service_name == 'api-gateway':
+                                continue
+                            else:
+                                break
         if same_video:                    
             for service_name, new_version in service_list.items():
                 for i, line in enumerate(same_video_docker_lines):
@@ -770,13 +797,22 @@ class Remote:
                                 break
 
         if changes:
-            try:
-                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
-                    file.writelines(docker_lines)
-                self.terminal('non','done')
+            if not video:
+                try:
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
+                        file.writelines(docker_lines)
+                    self.terminal('non','done')
 
-            except Exception as err:
-                print(f'writing docker-compose.yml error: {color.red(err)}')
+                except Exception as err:
+                    print(f'writing docker-compose.yml error: {color.red(err)}')
+            if video:
+                try:
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', 'w', encoding='utf-8') as file:
+                        file.writelines(video_docker_lines)
+                    self.terminal('non','done')
+
+                except Exception as err:
+                    print(f'writing docker-compose.yml error: {color.red(err)}')                    
             if same_video:
                 try:
                     with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml', 'w', encoding='utf-8') as file:
@@ -1242,7 +1278,7 @@ class Remote:
                     if 'app_service' in item:
                         self.change_servise_versions(self.ip,project)
                     elif 'video_service':
-                            self.change_servise_versions(self.ip,project)
+                            self.change_servise_versions(self.ip,project,video=True)
                     elif 'app_module' in item:
                         self.change_modules_versions(self.ip,project)
 
