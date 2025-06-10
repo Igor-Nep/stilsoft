@@ -79,19 +79,18 @@ class ApiSsku():
     
 
     def refresh_token(self):
-            print(f'DEBUG refresh {color.blue(self.glob_start_time)}')
-            print(f'DEBUG refresh token {color.grey(self.token)}') 
+
             if self.token == '':
                 self.token = self.get_token()
 
             elif time.time()-self.glob_start_time>359.0:
-                print(f'DEBUG refresh DEC 360 {color.yellow(time.time()-self.glob_start_time)}') 
+
                 self.token = self.get_token()
                 self.glob_start_time = time.time()
             
             else:
                 self.token = self.token
-                print(f'DEBUG refresh ELSE {color.red(time.time()-self.glob_start_time)}')
+
               
 
     def refresh_file_token(self):
@@ -125,7 +124,7 @@ class ApiSsku():
         creds = {       
             'login': 'admin',
             'password': 'adm777',
-            "hash": "edab4970-4d9b-11ef-a454-b1120eae1a88"
+            "hash": "1dab4970-4d9b-11ef-a454-b1120eae1a88"
             }
         resp = requests.post(self.url+'/api/auth/login', json=creds, verify=False)
         bearer = (f'Bearer {resp.json()["access_token"]}')
@@ -653,7 +652,19 @@ class ApiSsku():
             n+=1
             os.system('cls')
             print(f'link {link_pref}{i} {n}/{to_n-from_n+1}> [{req}]')
-        
+
+    def add_link_manual(self,host=None, member=None):
+        self.refresh_token()
+        warnings.filterwarnings('ignore')
+        os.system('cls')
+        host_body = self.get_module_by_name(host)
+        member_body = self.get_module_by_name(member)
+        body = '{'+f'"host":"{host_body}","member":"{member_body}","role":"videoSource","order":1,"data":'+'{'+'"detectionEnabled": true'+'}'+'}'
+        body_ = body = json.loads(body)
+        req = requests.post(self.url +'/api/data/system/objectlink', headers=self.token, json=body_, verify=False)
+        os.system('cls')
+        print(f'{self.status(req.status_code)}')
+
 
     def del_link(self, from_n=None, to_n=None):
         print(f'DEBUG: from = {from_n}')
@@ -861,6 +872,7 @@ class ApiSsku():
         nul={}
         msp_null = msgpack.packb(nul)
         resp = requests.post(self.url+f'/api/modules/{module_id}/ModuleStateRequest',headers=head, data=msp_null, verify=False )
+        print(f'id: {module_id}')
         print(msgpack.unpackb(resp.content))
 
         if 'offline' in msgpack.unpackb(resp.content)['states']:
@@ -869,7 +881,23 @@ class ApiSsku():
             return 'ONLINE'
         else:
             return msgpack.unpackb(resp.content)['states']
-        
+
+    def enable_module(self,module_name,enabled):
+        warnings.filterwarnings('ignore')
+        module_id = self.get_module_id_by_name(module_name)
+        head = {
+            'Authorization': self.small_token(),
+            'Content-type': 'application/x-msgpack'
+                    }
+        if enabled == True:
+            nul= "{\n  \"enabled\": true\n}"
+        elif enabled == False:
+            nul = "{\n  \"enabled\": false\n}"    
+        msp_null = msgpack.packb(nul)
+        resp = requests.post(self.url+f'/api/modules/{module_id}//MediaStream/ToggleSourceReading',headers=head, data=msp_null, verify=False )
+        #print(msgpack.unpackb(resp.content))
+        print(resp.status_code)
+
 
     def check_inident_mapping(self):
         import sys

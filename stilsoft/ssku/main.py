@@ -10,7 +10,8 @@ from remote import Remote
 #DbSsku('192.168.202.221').reset_needed_modules(from_n=10000, to_n=10090)
 #ApiSsku('192.168.202.221').add_suml('192.168.203.200',0,29)
 #ApiSsku('192.168.202.221').add_vs('192.168.202.112',0,29)
-#ApiSsku('192.168.202.221').add_link(from_n=0, to_n=29)
+#ApiSsku('192.168.202.10').add_link(from_n=0, to_n=29)
+#ApiSsku('192.168.202.10').add_link_manual(host='test_sprint', member='Камера 210')
 #ApiSsku('192.168.202.221').del_link(from_n=60, to_n=89)
 #print(ApiSsku('192.168.202.221').get_module_by_name('Камера 10045'))
 #ApiSsku('192.168.202.221').mode_archive("splitInterval","1m")
@@ -39,11 +40,15 @@ from remote import Remote
 #Postman().delete('/api/data/system/zone/')
 
 '''сверка версий'''
-Remote('192.168.207.68').update_versions()
+Remote('192.168.202.126').update_versions()
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
-#Remote('192.168.202.9').push_lib_targeting('192.168.202.9','sdp858i','1.4.0') 
+#Remote('192.168.207.69').push_lib_targeting('192.168.207.69','sdp858i','1.4.2-alpha.1') 
+
+#ApiSsku('192.168.207.68').enable_module(module_name='Камера 101',enabled=False)
+#ApiSsku('192.168.202.126').check_module_state(module_name='Этаж 3. Вход')
+
 
 '''добавление камер'''
 #ApiSsku('192.168.207.68').add_module_by_json()
@@ -53,7 +58,7 @@ Remote('192.168.207.68').update_versions()
 
 '''обновление модулей'''
 #Remote('192.168.207.68').push_pack('sdp858i')
-#Remote('192.168.202.221').push_lib('libobjectdetector')
+#Remote('192.168.202.9').push_lib('libobjectdetector')
 
 #Postman().get('api/data/system/module')
 

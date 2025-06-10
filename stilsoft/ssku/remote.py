@@ -25,11 +25,22 @@ class Remote:
         "192.168.207.69": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-video/origin/backend", "registry_dir":"", "need_video":False, "compose_name":"docker-compose.yml"},
         "192.168.202.18": {"name":"user", "password":"stilsoft", "back_dir":"/opt/helios/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
         "192.168.202.221": {"name":"user", "password":"stilsoft", "back_dir":"/opt/vs90/origin/backend", "registry_dir":"/component-registry/registry", "need_video":False},
-        "192.168.202.200": {"name":"user", "password":"stilsoft", "back_dir":"/opt/onvif-server", "registry_dir":"/config", "need_video":False}
+        "192.168.202.200": {"name":"user", "password":"stilsoft", "back_dir":"/opt/onvif-server", "registry_dir":"/config", "need_video":False},
+        "192.168.202.129": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True},
+        "192.168.202.121": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-video/origin/backend/", "registry_dir":"", "need_video":False},
+        "192.168.202.23": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-video/origin/backend/", "registry_dir":"", "need_video":False},
+        "192.168.202.126": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-app/origin/backend/", "registry_dir":"/component-registry/registry", "need_video":True}
         }
 
-        self.video_partner = {"192.168.202.10":"192.168.202.9",
-                              "192.168.207.68":"192.168.207.69"
+
+        self.same_video_configurate = {
+        "192.168.202.126": {"name":"user", "password":"stilsoft", "back_dir":"/opt/server-video/origin/backend/", "registry_dir":"", "need_video":False}
+        }
+
+        self.video_partner = {"192.168.202.10":["192.168.202.9"],
+                              "192.168.207.68":["192.168.207.69"],
+                              "192.168.202.129":["192.168.202.121","192.168.202.23"],
+                              "192.168.202.126":["192.168.202.126"]
                               }
         
         self.GREEN = '\033[32m'
@@ -245,7 +256,7 @@ class Remote:
         from color import color
         import paramiko, json, os
         from time import sleep
-
+        same_video=False
         need_change = []
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -266,7 +277,11 @@ class Remote:
             server_indicator = 'on video-server:  '
         else:
             server_indicator = ''
-
+        for value in self.video_partner.values():
+            if self.ip in value and self.ip in self.video_partner.keys():
+                same_video=True
+                
+        print(f'DEBUG same video = {same_video}')
         try:
             sftp_client = ssh.open_sftp()
         except:
@@ -281,12 +296,23 @@ class Remote:
             next
 
         try:
-            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
+            sftp_client.get(f'{self.config('back_dir')}{self.config('registry_dir')}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
             sleep(1)
+            
+
                 
         except:
             print(color.red('can not get package file'))
             next
+        if same_video:
+            try:
+                print(f'DEBUG get docker video {self.same_video_configurate[self.ip]['back_dir']}')
+                sftp_client.get(f'{self.same_video_configurate[self.ip]['back_dir']}docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker.txt')
+                sleep(1)
+            except:
+                print(color.red('can not get same video docker file'))
+                next
+
         sftp_client.close()                 
         try:
             print(color.yellow('check modules versions \r'))
@@ -326,29 +352,51 @@ class Remote:
             with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
                 service_list = json.load(file)
                 name_index = 0
-                service_keys_list = list(service_list.keys())     
-                for k,v in service_list.items():
-                    service_name = service_keys_list[name_index]
-                    try:
-                        with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
-                            outer = file.read()
+                service_keys_list = list(service_list.keys())  
+                if not same_video:   
+                    for k,v in service_list.items():
+                        service_name = service_keys_list[name_index]
+                        try:
+                            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
+                                outer = file.read()
                             
-                        for line in outer.split('\n'):
-                                if 'image:' in line and f'{service_name}:' in line and '#' not in line:
+                            for line in outer.split('\n'):
+                                    if 'image:' in line and f'{service_name}:' in line and '#' not in line:
+                                        item = line.split(':')
+                                        docker_service_version = item[-1]
+                                        if v == docker_service_version:
+                                            print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
+                                        else:
+                                            print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                            need_change.append('app_service')
+                                    else:
+                                        pass
+
+                        except:
+                            print('can not open docker file')
+                            next
+                        name_index+=1
+                if same_video:
+                    for k,v in service_list.items():
+                        service_name = service_keys_list[name_index]
+                        try:
+                            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker.txt', 'r') as file:  
+                                outer = file.read()
+                            for line in outer.split('\n'):
+                                if 'image:' in line and f'{service_name}:' in line and '#' not in line:     
                                     item = line.split(':')
                                     docker_service_version = item[-1]
                                     if v == docker_service_version:
                                         print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
-                                    else:
+                                    else:    
                                         print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
                                         need_change.append('app_service')
                                 else:
                                     pass
-
-                    except:
-                        print('can not open docker file')
-                        next
-                    name_index+=1
+                        except:
+                            print('can not open same video docker file')
+                            next
+                        name_index+=1                    
             if self.ip not in self.video_partner.keys():
                 self.terminal('green','done')
      
@@ -357,55 +405,55 @@ class Remote:
             print('error with open sevice_list'+'_'*30)
             next
         ssh.close()
-        
+        ip = self.video_partner[self.ip][0]
         if self.ip in self.video_partner.keys():
             server_indicator = 'on video-server:  '
-            try:    
-                ip = self.video_partner[self.ip]
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
-                sftp_client = ssh.open_sftp()
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
-                sftp_client.close()
-                
+            for i in range(len(self.video_partner[self.ip])):
+                try:    
+                    ip = self.video_partner[self.ip][i-1]
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                    sftp_client = ssh.open_sftp()
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
+                    sftp_client.close()
             
-            except:
-                print('can not connect to video server')
-                next
-            try:
-                with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
-                    service_list = json.load(file)
-                    name_index = 0
-                    service_keys_list = list(service_list.keys())     
-                    for k,v in service_list.items():
-                        service_name = service_keys_list[name_index]
-                        try:
-                            with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
-                                outer = file.read()
-                            for line in outer.split('\n'):
-                                    if 'image:' in line and f'{service_name}:' in line and '#' not in line:
-                                        item = line.split(':')
-                                        docker_service_version = item[-1]
-                                        finded_services.append(service_name)
-                                        if v == docker_service_version:
-                                            print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
-                                        else:
-                                            print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
-                                            need_change.append('video_service')
+                except:
+                    print('can not connect to video server')
+                    next
+                try:
+                    with open(f'{json_path}/service_list.json', 'r', encoding='utf-8') as file:
+                        service_list = json.load(file)
+                        name_index = 0
+                        service_keys_list = list(service_list.keys())     
+                        for k,v in service_list.items():
+                            service_name = service_keys_list[name_index]
+                            try:
+                                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt', 'r') as file:
+                                    outer = file.read()
+                                for line in outer.split('\n'):
+                                        if 'image:' in line and f'{service_name}:' in line and '#' not in line:
+                                            item = line.split(':')
+                                            docker_service_version = item[-1]
+                                            finded_services.append(service_name)
+                                            if v == docker_service_version:
+                                                print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.green(docker_service_version)}')
+                                            else:
+                                                print(f'{server_indicator}{service_name}'+' '*(32-len(service_name))+f'{color.grey(v)}  {color.red(docker_service_version)}')
+                                                need_change.append('video_service')
 
-                        except:
-                            next
-                        name_index+=1
-            except:
-                print('can not open service_list')
-            try:
-                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
-                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
-            except Exception as err:
-                print(f'can not remove local temp files. {err}')    
+                            except:
+                                next
+                            name_index+=1
+                except:
+                    print('can not open service_list')
+                try:
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
+                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
+                except Exception as err:
+                    print(f'can not remove local temp files. {err}')    
             
-            self.terminal('green','done')
+                self.terminal('green','done')
 
         return list(set(need_change))                      
 
@@ -901,9 +949,9 @@ class Remote:
             return
         if package:
             try:
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
                 sleep(1)
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
                 sleep(1)
                 with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
                     package_lines = file.readlines()

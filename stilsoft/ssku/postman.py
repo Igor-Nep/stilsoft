@@ -149,6 +149,28 @@ class Postman():
             self.terminal('red',err)    
 
 
+    def enable_camera(self,ip,camera,enabled):
+        import sys
+        sys.path.append('D:\work\WHPython\stilsoft')
+        from ssku.api import ApiSsku
+        module_id = ApiSsku(ip).get_module_id_by_name(camera)
+        head = {
+            'Authorization': ApiSsku(ip).small_token(),
+            'Content-type': 'application/x-msgpack'
+                    }
+      
+        if enabled == False:
+            msp_null = msgpack.packb("{\n  \"enabled\": true\n}")
+            #msp_null = msgpack.packb('{"enabled": false }')
+        elif enabled == True:
+            nul = '{'+'"enabled": true }'
+        
+        resp = requests.post(self.url+f'/api/modules/64dcf041-b3b4-49cc-a102-6a26bcf9bf12/MediaStream/ToggleSourceReading',headers=head, data=msp_null, verify=False )
+        print(resp.status_code)
+
+    
+
+
 
     def delete(self, url):
         try:

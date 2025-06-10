@@ -1,0 +1,25 @@
+{
+  "name": "origin",
+  "p_type": "origin",
+  "info": {
+    "modified": "06-06-2025 13:17:38"
+  },
+  "checksum": {
+    "mbeg_plus": "2260820803295700619",
+    "onvifcamera": "8414431538534642032",
+    "objectdetector": "14754166142885659861",
+    "sdp858i": "13574449819597540367",
+    "rtspstream": "14066488644501292350",
+    "sdp850": "11235206656024579603",
+    "sts411": "5206727061727212875"
+  },
+  "version": {
+    "sdp858i": "1.4.2-alpha.1",
+    "objectdetector": "1.4.3",
+    "onvifcamera": "1.1.14",
+    "sdp850": "1.3.2-alpha.1",
+    "mbeg_plus": "0.1.9",
+    "rtspstream": "0.17.0",
+    "sts411": "0.1.2"
+  }
+}
