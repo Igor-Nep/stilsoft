@@ -281,7 +281,7 @@ class Remote:
             if self.ip in value and self.ip in self.video_partner.keys():
                 same_video=True
                 
-        print(f'DEBUG same video = {same_video}')
+
         try:
             sftp_client = ssh.open_sftp()
         except:
@@ -306,7 +306,7 @@ class Remote:
             next
         if same_video:
             try:
-                print(f'DEBUG get docker video {self.same_video_configurate[self.ip]['back_dir']}')
+
                 sftp_client.get(f'{self.same_video_configurate[self.ip]['back_dir']}docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker.txt')
                 sleep(1)
             except:
@@ -695,15 +695,17 @@ class Remote:
         import paramiko, json, os
         from time import sleep
         from datetime import datetime
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         same_video=False
+        changes = False
+        video_list=[]
         for value in self.video_partner.values():
             if ip in value and ip in self.video_partner.keys():
                 same_video=True
         if video:
-            print(f'DEBUG take video arg')
+            for value in self.video_partner[ip]:               
+                video_list.append(str(value))
+
         print('change services versions > ')
 
         print(f'connected {color.grey(ip)}')
@@ -719,33 +721,129 @@ class Remote:
             return
         if not video:
             try:
-                sftp_client = ssh.open_sftp()
-                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
-                sleep(1)
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
-                sleep(1)
-                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
-                    docker_lines = file.readlines()
+                try:
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                    sftp_client = ssh.open_sftp()
+                    sftp_client = ssh.open_sftp()
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
+                    sleep(1)
+                except Exception as err:
+                    print(f'can not get docker {err}')    
+                try:
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                    sleep(1)
+                except Exception as err:
+                    print(f'can not gen docker {err}')
+                try:        
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
+                        docker_lines = file.readlines()
+                except Exception as err:
+                    print(f'can not get docker {err}')        
             except Exception as err:
                 print(f'open docker-compose.yml error: {color.red(err)}')
                 return
         if video:
             try:
-                sftp_client = ssh.open_sftp()
-                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_video_docker-compose.yml')
-                sleep(1)
-                sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml')
-                sleep(1)
-                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'r', encoding='utf-8') as file:
-                    video_docker_lines = file.readlines()
+                for ipv in video_list:
+                    log_pref = str(ipv).strip().split('.')[-2]+'.'+str(ipv).strip().split('.')[-1]
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ipv, port=22, username=self.configurate[ipv]['name'], password=self.configurate[ipv]['password'])
+                    print(f'connect to {ipv}')
+                    sftp_client = ssh.open_sftp()
+                    sftp_client.get(f'{self.configurate[ipv]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_video_docker-compose.yml')
+                    sleep(1)
+                    sftp_client.get(f'{self.configurate[ipv]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml')
+                    sleep(1)
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', 'r', encoding='utf-8') as file:
+                        video_docker_lines = file.readlines()
+
+                        for service_name, new_version in service_list.items():
+                            for i, line in enumerate(video_docker_lines):
+                                if f'{service_name}:' in line and 'image:' in line:
+                                    current_version = line.split(':')[-1].strip()
+                                    if current_version != new_version:
+                                        print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
+                                        video_docker_lines[i] = line.replace(current_version, new_version)
+                                        changes = True
+                                        if service_name == 'api-gateway':
+                                            continue
+                                        else:
+                                            break
+                                        
+                        if changes:
+                            print('is changes!')
+                            try:
+                                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', 'w', encoding='utf-8') as file:
+                                    file.writelines(video_docker_lines)
+                                self.terminal('non','done')
+                            except Exception as err:
+                                print(f'writing docker-compose.yml error: {color.red(err)}') 
+
+                            try:
+
+                                sftp_client = ssh.open_sftp()
+                                sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', f'/home/user/video_docker-compose.yml')
+                                print('copying docker-compose.yml to server')
+                                sleep(1)
+
+                                stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/video_docker-compose.yml {self.configurate[ipv]['back_dir']}/docker-compose.yml')
+                                sleep(1)
+                                try:
+                                    stdin.write(self.configurate[ipv]['password']+'\n')
+                                    stdin.flush()
+                                    print(stderr.read().decode())
+                                except:
+                                    next
+                                sleep(1)
+                            except Exception as err:
+                                print(f'can not copy docker-compose.yml to back dir#5 {ipv} {color.red(err)}') 
+
+
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ipv]['back_dir']}; docker-compose up -d')
+                            print(f'updating {ipv} docker-compose')
+                            print(stdout.read().decode())
+                            print(stderr.read().decode())
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ipv]['back_dir']} && docker-compose ps')
+                            status = stdout.read().decode()    
+                            for line in status.split('\n'):
+                                if 'Exit' in line or "Restarting" in line:
+                                    module_name = line.split()[0]
+                                    print(f'{module_name} остановлен')
+                                    try:
+                                        print(f'restarting {module_name}')
+                                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ipv]['back_dir']} && docker-compose restart {module_name}')
+                                        status = stderr.read().decode()
+                                    except:
+                                        print(f'can not restart {ipv} docker-compose')
+                                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ipv]['back_dir']} && docker-compose ps')
+                                    status = stdout.read().decode()
+                                    for line in status.split('\n'):
+                                        if 'Exit' in line or 'Restarting' in line:
+                                            module_name = line.split()[0]
+                                            print(f'{module_name} проблема запуска')
+                    
+                        print(f'docker-compose {ipv} is updated')             
+                        ssh.exec_command(f'rm /home/user/video_docker-compose.yml')
+                        print('deleting temp files  ... ', end='')
+                        try:
+                            os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml')
+                        except Exception as err:
+                            print(f'delete local temp file error {err}')
+                            pass
+                        self.terminal('green','done')               
             except Exception as err:
                 print(f'open docker-compose.yml error: {color.red(err)}')
                 return            
         if same_video:
             try:
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
                 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                sftp_client = ssh.open_sftp()
                 sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_same_video_docker-compose.yml')
                 sleep(1)
                 sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml')
@@ -769,19 +867,7 @@ class Remote:
                                 continue
                             else:
                                 break
-        if video:
-            for service_name, new_version in service_list.items():
-                for i, line in enumerate(video_docker_lines):
-                    if f'{service_name}:' in line and 'image:' in line:
-                        current_version = line.split(':')[-1].strip()
-                        if current_version != new_version:
-                            print(f'update {color.grey(service_name)} from {color.grey(current_version)} to {color.green(new_version)}  ... \r')
-                            video_docker_lines[i] = line.replace(current_version, new_version)
-                            changes = True
-                            if service_name == 'api-gateway':
-                                continue
-                            else:
-                                break
+
         if same_video:                    
             for service_name, new_version in service_list.items():
                 for i, line in enumerate(same_video_docker_lines):
@@ -802,23 +888,14 @@ class Remote:
                     with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', 'w', encoding='utf-8') as file:
                         file.writelines(docker_lines)
                     self.terminal('non','done')
-
                 except Exception as err:
-                    print(f'writing docker-compose.yml error: {color.red(err)}')
-            if video:
-                try:
-                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', 'w', encoding='utf-8') as file:
-                        file.writelines(video_docker_lines)
-                    self.terminal('non','done')
-
-                except Exception as err:
-                    print(f'writing docker-compose.yml error: {color.red(err)}')                    
+                    print(f'writing docker-compose.yml error: {color.red(err)}')                              
+            
             if same_video:
                 try:
                     with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml', 'w', encoding='utf-8') as file:
                         file.writelines(same_video_docker_lines)
                     self.terminal('non','done')
-
                 except Exception as err:
                     print(f'writing same video docker-compose.yml error: {color.red(err)}')    
         else:
@@ -826,29 +903,39 @@ class Remote:
         if changes:
             answer = 'y'
             if answer == 'y':
-                try:
-                    sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
-                    print('copying docker-compose.yml to server')
-                    sleep(1)
-
-                    stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.configurate[ip]['back_dir']}')
-                    sleep(1)
+                if not video:
                     try:
-                        stdin.write(self.configurate[ip]['password']+'\n')
-                        stdin.flush()
-                        print(stderr.read().decode())
-                    except:
-                        next
-                    sleep(1)
-                except Exception as err:
-                    print(f'can not copy docker-compose.yml to back dir {color.red(err)}')
+                        ssh = paramiko.SSHClient()
+                        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                        ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                        sftp_client = ssh.open_sftp()
+                        sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml', f'/home/user/docker-compose.yml')
+                        print('copying docker-compose.yml to server')
+                        sleep(1)
+
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/docker-compose.yml {self.configurate[ip]['back_dir']}')
+                        sleep(1)
+                        try:
+                            stdin.write(self.configurate[ip]['password']+'\n')
+                            stdin.flush()
+                            print(stderr.read().decode())
+                        except:
+                            next
+                        sleep(1)
+                    except Exception as err:
+                        print(f'can not copy docker-compose.yml to back dir {color.red(err)}')                    
+
                 if same_video:
                     try:
+                        ssh = paramiko.SSHClient()
+                        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                        ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                        sftp_client = ssh.open_sftp()
                         sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml', f'/home/user/same_video_docker-compose.yml')
                         print('copying same video docker-compose.yml to server')
                         sleep(1)
 
-                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/same_video_docker-compose.yml {self.same_video_configurate[ip]['back_dir']}docker-compose.yml')
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/same_video_docker-compose.yml {self.same_video_configurate[ip]['back_dir']}/docker-compose.yml')
                         sleep(1)
                         try:
                             stdin.write(self.same_video_configurate[ip]['password']+'\n')
@@ -860,42 +947,47 @@ class Remote:
                     except Exception as err:
                         print(f'can not copy same video docker-compose.yml to back dir {color.red(err)}')
 
-
- 
-                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
-                print('updating docker-compose')
-                print(stdout.read().decode())
-                print(stderr.read().decode())
-                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
-                status = stdout.read().decode()    
-                for line in status.split('\n'):
-                    if 'Exit' in line or "Restarting" in line:
-                        module_name = line.split()[0]
-                        print(f'{module_name} остановлен')
-                        try:
-                            print(f'restarting {module_name}')
-                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose restart {module_name}')
-                            status = stderr.read().decode()
-                        except:
-                            print(f'can not restart docker-compose')
-                        stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
-                        status = stdout.read().decode()
-                        for line in status.split('\n'):
-                            if 'Exit' in line or 'Restarting' in line:
-                                module_name = line.split()[0]
-                                print(f'{module_name} проблема запуска')
+                if not video:
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']}; docker-compose up -d')
+                    print('updating docker-compose')
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
+                    status = stdout.read().decode()    
+                    for line in status.split('\n'):
+                        if 'Exit' in line or "Restarting" in line:
+                            module_name = line.split()[0]
+                            print(f'{module_name} остановлен')
+                            try:
+                                print(f'restarting {module_name}')
+                                stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose restart {module_name}')
+                                status = stderr.read().decode()
+                            except:
+                                print(f'can not restart docker-compose')
+                            stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[ip]['back_dir']} && docker-compose ps')
+                            status = stdout.read().decode()
+                            for line in status.split('\n'):
+                                if 'Exit' in line or 'Restarting' in line:
+                                    module_name = line.split()[0]
+                                    print(f'{module_name} проблема запуска')
                     
-                print('docker-compose is updated')             
-                ssh.exec_command(f'rm /home/user/docker-compose.yml')
-                print('deleting temp files  ... ', end='')
-                try:
-                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
-                except Exception as err:
-                    print(f'delete local temp file error {err}')
-                    pass
-                self.terminal('green','done')
+                    print('docker-compose is updated')             
+                    ssh.exec_command(f'rm /home/user/docker-compose.yml')
+                    print('deleting temp files  ... ', end='')
+                    try:
+                        os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                    except Exception as err:
+                        print(f'delete local temp file error {err}')
+                        pass
+                    self.terminal('green','done')
 
                 if same_video:
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
                     stdin, stdout, stderr = ssh.exec_command(f'cd {self.same_video_configurate[ip]['back_dir']}; docker-compose up -d')
                     print('updating video docker-compose')
                     print(stdout.read().decode())
@@ -919,16 +1011,24 @@ class Remote:
                                     module_name = line.split()[0]
                                     print(f'{module_name} проблема запуска')
                     
-                    print('video docker-compose is updated')             
+                    print('docker-compose is updated')             
                     ssh.exec_command(f'rm /home/user/same_video_docker-compose.yml')
                     print('deleting temp files  ... ', end='')
+                    try:
+                        os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml')
+                    except Exception as err:
+                        print(f'delete local temp file error {err}')
+                        pass
+                    self.terminal('green','done')
 
             else:
                 try:
-                    #os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose//backup/{timestamp}_{log_pref}_docker-compose.yml')
-                    os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
+                    if not video:
+                        os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker-compose.yml')
                     if same_video:
                         os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker-compose.yml')
+                    if video:
+                        os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml')                        
                 except Exception as err:
                     print(f'delete local temp files error {err}')
                     pass
@@ -1276,10 +1376,13 @@ class Remote:
             if answer == 'y':
                 for item in need_changes:
                     if 'app_service' in item:
+                        print('DEBUG take app_service')
                         self.change_servise_versions(self.ip,project)
                     elif 'video_service':
+                            print('DEBUG take video_service')
                             self.change_servise_versions(self.ip,project,video=True)
                     elif 'app_module' in item:
+                        print('DEBUG take app_module')
                         self.change_modules_versions(self.ip,project)
 
             else:
@@ -1620,7 +1723,6 @@ class Remote:
             file_ = file.read()
             for line in file_.split('\n'):
                 service_list.append(line)
-                print(f'DEBUG: service list: {service_list}')
 
         need_timer = True
         for service in service_list:

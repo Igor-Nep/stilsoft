@@ -40,7 +40,7 @@ from remote import Remote
 #Postman().delete('/api/data/system/zone/')
 
 '''сверка версий'''
-Remote('192.168.207.68').update_versions()
+Remote('192.168.202.129').update_versions()
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
