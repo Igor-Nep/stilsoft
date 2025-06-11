@@ -307,7 +307,7 @@ class Remote:
         if same_video:
             try:
 
-                sftp_client.get(f'{self.same_video_configurate[self.ip]['back_dir']}docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker.txt')
+                sftp_client.get(f'{self.same_video_configurate[self.ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_same_video_docker.txt')
                 sleep(1)
             except:
                 print(color.red('can not get same video docker file'))
@@ -450,8 +450,8 @@ class Remote:
                 try:
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_docker.txt')
                     os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.txt')
-                except Exception as err:
-                    print(f'can not remove local temp files. {err}')    
+                except:
+                      pass
             
                 self.terminal('green','done')
 
@@ -702,6 +702,7 @@ class Remote:
         for value in self.video_partner.values():
             if ip in value and ip in self.video_partner.keys():
                 same_video=True
+                print(f'DEBUG take same video')
         if video:
             for value in self.video_partner[ip]:               
                 video_list.append(str(value))
@@ -725,7 +726,6 @@ class Remote:
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
-                    sftp_client = ssh.open_sftp()
                     sftp_client = ssh.open_sftp()
                     sftp_client.get(f'{self.configurate[ip]['back_dir']}/docker-compose.yml', f'D:/work/WHPython/stilsoft/ssku/remote/compose/backup/{timestamp}_{log_pref}_docker-compose.yml')
                     sleep(1)
@@ -774,16 +774,17 @@ class Remote:
                                             break
                                         
                         if changes:
-                            print('is changes!')
                             try:
-                                with open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', 'w', encoding='utf-8') as file:
-                                    file.writelines(video_docker_lines)
+                                file = open(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', 'w', encoding='utf-8')
+                                file.writelines(video_docker_lines)
                                 self.terminal('non','done')
                             except Exception as err:
-                                print(f'writing docker-compose.yml error: {color.red(err)}') 
+                                print(f'open and writing docker-compose.yml error: {color.red(err)}') 
+                            finally:
+                                if file:
+                                    file.close()    
 
                             try:
-
                                 sftp_client = ssh.open_sftp()
                                 sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/compose/{log_pref}_video_docker-compose.yml', f'/home/user/video_docker-compose.yml')
                                 print('copying docker-compose.yml to server')
@@ -1196,7 +1197,8 @@ class Remote:
         same_video=False
         for value in self.video_partner.values():
             if ip in value and ip in self.video_partner.keys():
-                same_video=True        
+                same_video=True  
+                print('DEBUG take same video (module)')      
         package = True
         lib_error = False
         module_change_list = {}
@@ -1375,15 +1377,16 @@ class Remote:
             answer = input(f'обновить версии на {self.ip}? (y/n): ')
             if answer == 'y':
                 for item in need_changes:
-                    if 'app_service' in item:
+                    if 'app_module' in item:
+                        print('DEBUG take app_module')
+                        self.change_modules_versions(self.ip,project)                    
+                    elif 'app_service' in item:
                         print('DEBUG take app_service')
                         self.change_servise_versions(self.ip,project)
                     elif 'video_service':
                             print('DEBUG take video_service')
                             self.change_servise_versions(self.ip,project,video=True)
-                    elif 'app_module' in item:
-                        print('DEBUG take app_module')
-                        self.change_modules_versions(self.ip,project)
+
 
             else:
                 self.terminal('red','exit')
@@ -1392,6 +1395,245 @@ class Remote:
             print(color.yellow('versions is up-to-date'))
 
 
+
+    def change_modules_versions_test(self, ip, project, videos=False):
+        from color import color
+        import paramiko, json, os
+        from time import sleep
+        from datetime import datetime
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        same_video=False
+        module_changes = False
+        video_list = []
+        for value in self.video_partner.values():
+            if ip in value and ip in self.video_partner.keys():
+                same_video=True  
+                print('DEBUG take same video (module)')      
+        if videos:
+            for value in self.video_partner[ip]:
+                video_list.append(str(value))
+        package = True
+        lib_error = False
+        module_change_list = {}
+        print('change modules versions > ')
+        print(f'connected {color.grey(ip)}')
+
+        log_pref = str(self.ip).strip().split('.')[-2]+'.'+str(self.ip).strip().split('.')[-1]
+        json_path = f'D:/work/WHPython/stilsoft/ssku/remote/json/{project}'
+
+        try:
+            with open(f'{json_path}/module_list.json', 'r', encoding='utf-8') as file:
+                module_list = json.load(file)
+        except Exception as err:
+            print(f'open module_list.json error: {color.red(err)}')
+            return
+        if not videos:
+            try:
+                try:
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                    sftp_client = ssh.open_sftp()
+                    sleep(1)
+                except Exception as err:
+                    print(f'can not connect to {ip}')
+
+                try:
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                    sleep(1)
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                    sleep(1)
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
+                        package_lines = file.readlines()                    
+                except Exception as err:
+                        print(f'write package.json to dict error: {color.red(err)}')
+            except Exception as err:
+                print(f'get and read package.json error: {err}')
+                return
+        if videos:
+            try:
+                for ipv in video_list:
+                    log_pref = str(ipv).strip().split('.')[-2]+'.'+str(ipv).strip().split('.')[-1]
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(ip, port=22, username=self.configurate[ip]['name'], password=self.configurate[ip]['password'])
+                    sftp_client = ssh.open_sftp()
+                    sleep(1)
+                except Exception as err:
+                    print(f'can not connect to {ip}')
+
+                try:
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/backup/{timestamp}_{log_pref}_package.json')
+                    sleep(1)
+                    sftp_client.get(f'{self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/origin/package.json', f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                    sleep(1)
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'r', encoding='utf-8') as file:
+                        package_lines = file.readlines()                    
+                except Exception as err:
+                        print(f'write package.json to dict error: {color.red(err)}')
+            except Exception as err:
+                print(f'get and read package.json error: {err}')
+                return            
+                
+                
+
+        
+        if package:
+            for module_name, new_version in module_list.items():
+                for i, line in enumerate(package_lines):
+                    if f'{module_name}' in line:
+                        crr_version = line.split(':')[1].strip()
+                        if ',' in line:
+                            current_version = crr_version.split(',')[0]
+                        else:
+                            current_version = crr_version
+                        if current_version[1:-1] != new_version:
+                            if len(current_version) < 17:
+                                print(f'update {color.grey(module_name)} form {color.grey(current_version[1:-1])} to {color.green(new_version)}')
+                                module_change_list[module_name] = new_version
+                                lib_dir = f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}'
+                                if os.path.exists(f'{lib_dir}/lib{module_name}.so'):
+                                    pass
+                                else:
+                                    print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} версии {color.grey(new_version)} отсутствует в локальном репозитории')
+                                    lib_error = True
+                                    continue
+                                package_lines[i] = line.replace(f'{current_version[1:-1]}', f'{new_version}')
+                            else: 
+                                continue    
+                            module_changes = True
+  
+                            break
+
+        if module_changes:
+            try:
+                if package:
+                    with open(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', 'w', encoding='utf-8') as file:
+                        file.writelines(package_lines)
+                else:
+                    if package:
+                        print(color.yellow('module list is up-to-date'))
+            except Exception as err:
+                if package:
+                    print(f'writing package.json error: {color.red(err)}')
+        else:
+            if not lib_error:
+                print(color.yellow('module list is up-to-date'))                
+        if ip in self.video_partner.values():
+            module_changes = True
+            
+        if module_changes :
+                if package:
+                    try:
+                        sftp_client.put(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json', f'/home/user/package.json')
+                        print(f'copying package.json to server \r')
+                        sleep(2)
+                    except Exception as err:
+                        print(f'{color.red("ERROR: ")}copying package.json to server error: {err}')
+                    try:    
+                        stdin, stdout, stderr = ssh.exec_command(f'sudo -S cp /home/user/package.json {self.configurate[ip]['back_dir']}{self.configurate[ip]['registry_dir']}/')
+                        sleep(1)
+                    except Exception as err:
+                        print(f'{color.red("ERROR: ")}copying package.json to server error: {err}')
+                    try:
+                        stdin.write(self.configurate[ip]['password']+'\n')
+                        stdin.flush()
+                        print(stderr.read().decode())
+                    except:
+                        next
+                    sleep(1)
+                    self.terminal('non','done')                     
+                if len(module_change_list) > 0:
+                    print('updating module list >')
+                    print('stop node-manager: ')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose stop node-manager')
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                    sleep(2)
+                    for module_name, new_version in module_change_list.items():
+                        if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
+                            try:
+                                self.push_lib_target(ip, module_name, new_version)
+                            except Exception as err:
+                                print(f'update {module_name} {new_version} error {err}')
+                        else:
+                            print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} {color.grey(new_version)} отсутствует в локальном репозитории')
+                    
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[self.ip]['back_dir']}; docker-compose restart node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                try:
+                    sftp_client.remove(f'/home/user/package.json')
+                except Exception as err:
+                    print(f'can not delete package.json fom /user: {err}')    
+                sftp_client.close()
+                ssh.close()    
+                self.terminal('green','done')
+        if ip in self.video_partner.keys():
+
+            video_ip = self.video_partner[ip]
+
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(video_ip, port=22, username=self.configurate[video_ip]['name'], password=self.configurate[video_ip]['password'])
+            sftp_client = ssh.open_sftp()
+            print('change modules versions > ')
+            print(f'connected {color.grey(video_ip)}')
+  
+            if len(module_change_list) > 0:
+                    print('updating module list >')
+                    print('stop node-manager: ')
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[video_ip]['back_dir']}; docker-compose stop node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+                    for module_name, new_version in module_change_list.items():
+                        if os.path.exists(f'D:/work/WHPython/stilsoft/lib/{module_name}/{new_version}/lib{module_name}.so'):
+                            try:
+                                
+                                self.push_lib_target(video_ip, module_name, new_version)
+                            except Exception as err:
+                                print(f'update {module_name} {new_version} error {err}')
+                        else:
+                            print(f'{color.red("ERROR: ")}библиотека {color.grey(module_name)} {color.grey(new_version)} отсутствует в локальном репозитории')
+                    
+                    stdin, stdout, stderr = ssh.exec_command(f'cd {self.configurate[video_ip]['back_dir']}; docker-compose restart node-manager')
+                    sleep(2)
+                    print(stdout.read().decode())
+                    print(stderr.read().decode())
+            self.terminal('green','done')
+            try:
+                os.remove(f'D:/work/WHPython/stilsoft/ssku/remote/package/{log_pref}_package.json')
+                
+            except Exception as err:
+                print(f'delte local temp file error {err}')    
+
+    def update_versions(self, project='ssku'):
+        from color import color
+        need_changes = self.check_versions(project)
+
+        if need_changes:
+
+            answer = input(f'обновить версии на {self.ip}? (y/n): ')
+            if answer == 'y':
+                for item in need_changes:
+                    if 'app_module' in item:
+                        print('DEBUG take app_module')
+                        self.change_modules_versions(self.ip,project)                    
+                    elif 'app_service' in item:
+                        print('DEBUG take app_service')
+                        self.change_servise_versions(self.ip,project)
+                    elif 'video_service':
+                            print('DEBUG take video_service')
+                            self.change_servise_versions(self.ip,project,video=True)
+
+
+            else:
+                self.terminal('red','exit')
+                exit()            
+        else:
+            print(color.yellow('versions is up-to-date'))
                
 
 

@@ -5,7 +5,7 @@ from remote import Remote
 
 #Remote('192.168.202.221').hosts_check()
 '''камеры на vs90'''
-#DbSsku('192.168.202.221').archive_and_del_all_modules(file='kill_before_a5000_06.06')
+#DbSsku('192.168.202.126').archive_and_del_all_modules(file='kill_126')
 #DbSsku('192.168.202.221').archive_and_del_needed_modules(from_n=10060, to_n=10089, file_name='reserved_a5000_for60.txt')
 #DbSsku('192.168.202.221').reset_needed_modules(from_n=10000, to_n=10090)
 #ApiSsku('192.168.202.221').add_suml('192.168.203.200',0,29)
@@ -40,7 +40,7 @@ from remote import Remote
 #Postman().delete('/api/data/system/zone/')
 
 '''сверка версий'''
-Remote('192.168.202.129').update_versions()
+Remote('192.168.207.68').update_versions()
 #Remote('192.168.202.10').check_versions('ssku')
 #Remote('192.168.207.69').change_versions_modules('ssku')
 #self.push_lib_target(ip, module_name, new_version)
@@ -51,13 +51,13 @@ Remote('192.168.202.129').update_versions()
 
 
 '''добавление камер'''
-#ApiSsku('192.168.207.68').add_module_by_json()
+#ApiSsku('192.168.202.126').add_module_by_json()
 
 '''создание инцидентов'''
 #ApiSsku('192.168.207.68').post_incident()
 
 '''обновление модулей'''
-#Remote('192.168.207.68').push_pack('sdp858i')
+#Remote('192.168.207.68').push_pack('sdp850')
 #Remote('192.168.202.9').push_lib('libobjectdetector')
 
 #Postman().get('api/data/system/module')
